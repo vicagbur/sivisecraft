@@ -1,0 +1,831 @@
+/* ============================================================================
+   PICHI STUDIO — Landing de Colección Cápsula Neo-Castiza (Drop #1 Madrid)
+   Diseño e Impresión 3D por Víctor Aguado • Ecosistema SiviseCraft Oficial
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap');
+
+:root {
+    --pichi-bg: #07070a;
+    --pichi-bg-surface: #0e0e14;
+    --pichi-bg-card: #14141c;
+    --pichi-text: #ffffff;
+    --pichi-muted: #9494a8;
+    --pichi-clavel: #ff0055;
+    --pichi-clavel-glow: rgba(255, 0, 85, 0.35);
+    --pichi-metro-blue: #0066d6;
+    --pichi-chulapo-black: #111116;
+    --pichi-teal: #0d9488;
+    --pichi-gold: #f59e0b;
+    --pichi-border: rgba(255, 255, 255, 0.08);
+    --pichi-border-hover: rgba(255, 0, 85, 0.4);
+
+    --font-pichi-title: 'Syne', sans-serif;
+    --font-pichi-head: 'Space Grotesk', sans-serif;
+    --font-pichi-body: 'Plus Jakarta Sans', sans-serif;
+
+    --radius-pichi-lg: 20px;
+    --radius-pichi-md: 12px;
+    --radius-pichi-sm: 8px;
+    --pichi-transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset y base scoped */
+body.pichi-body {
+    background-color: var(--pichi-bg);
+    color: var(--pichi-text);
+    font-family: var(--pichi-font-body);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Textura sutil Pata de Gallo (Chulapo Verbena) */
+.pata-gallo-canvas {
+    background:
+        linear-gradient(-45deg, #07070a 25%, transparent 25%, transparent 75%, #07070a 75%),
+        linear-gradient(45deg, #07070a 25%, transparent 25%, transparent 75%, #07070a 75%),
+        linear-gradient(45deg, #0e0e14 25%, transparent 25%, transparent 75%, #0e0e14 75%),
+        linear-gradient(-45deg, #0e0e14 25%, transparent 25%, transparent 75%, #0e0e14 75%);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px, 14px 0, 0 14px;
+}
+
+/* Barra superior de conexión con SiviseCraft */
+.pichi-bridge-bar {
+    background: #000000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 24px;
+    font-size: 0.84rem;
+    color: var(--pichi-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: relative;
+    z-index: 101;
+}
+
+.pichi-bridge-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--pichi-transition);
+}
+
+.pichi-bridge-bar a:hover {
+    color: var(--pichi-clavel);
+}
+
+/* Header Navbar de Pichi Studio */
+header.pichi-header {
+    border-bottom: 1px solid var(--pichi-border);
+    padding: 16px 0;
+    background: rgba(7, 7, 10, 0.85);
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.pichi-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.pichi-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.pichi-logo-badge {
+    width: 32px;
+    height: 32px;
+    background: var(--pichi-clavel);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 16px var(--pichi-clavel-glow);
+    font-weight: 800;
+    font-family: var(--font-pichi-title);
+    color: #fff;
+    font-size: 1rem;
+}
+
+.pichi-logo-text {
+    font-family: var(--font-pichi-head);
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+.pichi-logo-text span {
+    color: var(--pichi-clavel);
+    font-weight: 600;
+    margin-left: 3px;
+    font-size: 1.15rem;
+}
+
+.pichi-nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.pichi-nav-links a {
+    color: var(--pichi-muted);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: var(--pichi-transition);
+}
+
+.pichi-nav-links a:hover {
+    color: #fff;
+}
+
+.pichi-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-pichi-primary {
+    background: var(--pichi-clavel);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 20px;
+    border-radius: var(--radius-pichi-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--pichi-clavel-glow);
+    transition: var(--pichi-transition);
+}
+
+.btn-pichi-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5);
+    background: #ff1a6b;
+}
+
+.btn-pichi-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 10px 20px;
+    border-radius: var(--radius-pichi-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--pichi-border);
+    cursor: pointer;
+    transition: var(--pichi-transition);
+}
+
+.btn-pichi-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hero Section Pichi */
+.pichi-hero {
+    padding: 72px 0 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pichi-hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: center;
+}
+
+.pichi-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--pichi-clavel);
+    font-family: var(--font-pichi-head);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(255, 0, 85, 0.1);
+    border: 1px solid rgba(255, 0, 85, 0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+}
+
+.pichi-hero h1 {
+    font-family: var(--font-pichi-title);
+    font-size: 3.4rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+}
+
+.pichi-hero h1 span.clavel-highlight {
+    color: var(--pichi-clavel);
+    text-shadow: 0 0 30px var(--pichi-clavel-glow);
+}
+
+.pichi-hero p {
+    font-size: 1.12rem;
+    color: var(--pichi-muted);
+    margin-bottom: 32px;
+    line-height: 1.65;
+    max-width: 540px;
+}
+
+.pichi-hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+}
+
+.pichi-hero-visual {
+    position: relative;
+}
+
+.pichi-hero-card {
+    background: var(--pichi-bg-surface);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-lg);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    transition: var(--pichi-transition);
+}
+
+.pichi-hero-card:hover {
+    border-color: var(--pichi-border-hover);
+    transform: translateY(-4px);
+}
+
+.pichi-hero-card img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+.pichi-hero-overlay-tag {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    background: rgba(14, 14, 20, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-md);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Trust Bar */
+.pichi-trust-strip {
+    background: var(--pichi-bg-surface);
+    border-top: 1px solid var(--pichi-border);
+    border-bottom: 1px solid var(--pichi-border);
+    padding: 24px 0;
+}
+
+.pichi-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.pichi-trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.pichi-trust-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.pichi-trust-item h4 {
+    font-family: var(--font-pichi-head);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 3px 0;
+}
+
+.pichi-trust-item p {
+    font-size: 0.8rem;
+    color: var(--pichi-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Sección Personalizador Interactivo de Rombo */
+.pichi-customizer-section {
+    padding: 80px 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255, 0, 85, 0.08) 0%, transparent 70%);
+}
+
+.pichi-section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 48px auto;
+}
+
+.pichi-section-header h2 {
+    font-family: var(--font-pichi-title);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.pichi-section-header p {
+    color: var(--pichi-muted);
+    font-size: 1.05rem;
+}
+
+.pichi-customizer-box {
+    background: var(--pichi-bg-surface);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-lg);
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    overflow: hidden;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.pichi-svg-stage {
+    padding: 40px;
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--pichi-border);
+    position: relative;
+}
+
+.pichi-stage-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--pichi-border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-family: var(--font-pichi-head);
+    color: var(--pichi-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.pichi-controls {
+    padding: 36px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.pichi-form-group {
+    margin-bottom: 22px;
+}
+
+.pichi-form-group label {
+    display: block;
+    font-family: var(--font-pichi-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pichi-muted);
+    margin-bottom: 8px;
+}
+
+.pichi-input-text {
+    width: 100%;
+    background: var(--pichi-bg-card);
+    border: 1px solid var(--pichi-border);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: var(--radius-pichi-sm);
+    font-family: var(--font-pichi-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    transition: var(--pichi-transition);
+}
+
+.pichi-input-text:focus {
+    outline: none;
+    border-color: var(--pichi-clavel);
+    box-shadow: 0 0 16px var(--pichi-clavel-glow);
+}
+
+.pichi-pill-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.pichi-pill-btn {
+    background: var(--pichi-bg-card);
+    border: 1px solid var(--pichi-border);
+    color: var(--pichi-muted);
+    padding: 10px 12px;
+    border-radius: var(--radius-pichi-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--pichi-transition);
+    text-align: center;
+}
+
+.pichi-pill-btn:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.pichi-pill-btn.active {
+    background: rgba(255, 0, 85, 0.12);
+    border-color: var(--pichi-clavel);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.25);
+}
+
+.pichi-select-hardware {
+    width: 100%;
+    background: var(--pichi-bg-card);
+    border: 1px solid var(--pichi-border);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: var(--radius-pichi-sm);
+    font-size: 0.92rem;
+    cursor: pointer;
+}
+
+.pichi-price-cta-row {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--pichi-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.pichi-price-total {
+    font-family: var(--font-pichi-head);
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.pichi-price-total span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--pichi-muted);
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Grid de Catálogo de Productos Pichi */
+.pichi-catalog-section {
+    padding: 80px 0;
+}
+
+.pichi-products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+.pichi-product-card {
+    background: var(--pichi-bg-surface);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: var(--pichi-transition);
+    position: relative;
+}
+
+.pichi-product-card:hover {
+    border-color: var(--pichi-border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+}
+
+.pichi-product-card.featured-bundle {
+    border-color: var(--pichi-clavel);
+    box-shadow: 0 0 24px var(--pichi-clavel-glow);
+}
+
+.pichi-product-media {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background: #000;
+}
+
+.pichi-product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.pichi-product-card:hover .pichi-product-media img {
+    transform: scale(1.05);
+}
+
+.pichi-card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(14, 14, 20, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--pichi-border);
+    color: #fff;
+    font-size: 0.72rem;
+    font-family: var(--font-pichi-head);
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.pichi-card-badge.badge-clavel {
+    background: var(--pichi-clavel);
+    color: #fff;
+    border: none;
+}
+
+.pichi-product-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.pichi-product-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.pichi-product-title-row h3 {
+    font-family: var(--font-pichi-head);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.pichi-card-price {
+    font-family: var(--font-pichi-head);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--pichi-clavel);
+    white-space: nowrap;
+}
+
+.pichi-card-old-price {
+    text-decoration: line-through;
+    color: var(--pichi-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-right: 6px;
+}
+
+.pichi-product-desc {
+    color: var(--pichi-muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    flex-grow: 1;
+}
+
+.pichi-product-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Manifiesto Neo-Castizo */
+.pichi-manifesto {
+    padding: 70px 0;
+    background: var(--pichi-bg-surface);
+    border-top: 1px solid var(--pichi-border);
+    border-bottom: 1px solid var(--pichi-border);
+}
+
+.pichi-manifesto-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 48px;
+    align-items: center;
+}
+
+.pichi-manifesto-content h2 {
+    font-family: var(--font-pichi-title);
+    font-size: 2.3rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    line-height: 1.15;
+}
+
+.pichi-manifesto-content p {
+    color: var(--pichi-muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 16px;
+}
+
+.pichi-manifesto-box {
+    background: var(--pichi-bg-card);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-md);
+    padding: 24px;
+    border-left: 4px solid var(--pichi-clavel);
+}
+
+/* FAQ Accordion */
+.pichi-faq-section {
+    padding: 80px 0;
+}
+
+.pichi-accordion {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pichi-accordion-item {
+    background: var(--pichi-bg-surface);
+    border: 1px solid var(--pichi-border);
+    border-radius: var(--radius-pichi-sm);
+    overflow: hidden;
+    transition: var(--pichi-transition);
+}
+
+.pichi-accordion-item:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pichi-accordion-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 20px 24px;
+    font-family: var(--font-pichi-head);
+    font-size: 1.02rem;
+    font-weight: 700;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.pichi-accordion-icon {
+    font-size: 1.3rem;
+    color: var(--pichi-clavel);
+    transition: transform 0.25s ease;
+}
+
+.pichi-accordion-item.open .pichi-accordion-icon {
+    transform: rotate(45deg);
+}
+
+.pichi-accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 24px;
+    color: var(--pichi-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.pichi-accordion-item.open .pichi-accordion-body {
+    max-height: 300px;
+    padding-bottom: 20px;
+}
+
+/* Call to Action Final / WhatsApp Eventos */
+.pichi-b2b-cta {
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.15) 0%, rgba(0, 102, 214, 0.12) 100%);
+    border: 1px solid var(--pichi-border-hover);
+    border-radius: var(--radius-pichi-lg);
+    padding: 48px;
+    text-align: center;
+    margin: 40px auto 80px auto;
+    max-width: 900px;
+}
+
+.pichi-b2b-cta h3 {
+    font-family: var(--font-pichi-title);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.pichi-b2b-cta p {
+    color: var(--pichi-muted);
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto 24px auto;
+}
+
+/* Footer Pichi */
+footer.pichi-footer {
+    border-top: 1px solid var(--pichi-border);
+    padding: 40px 0;
+    background: #040406;
+    color: var(--pichi-muted);
+    font-size: 0.85rem;
+}
+
+/* Adaptación Responsive */
+@media (max-width: 992px) {
+    .pichi-hero-grid,
+    .pichi-customizer-box,
+    .pichi-manifesto-grid {
+        grid-template-columns: 1fr;
+    }
+    .pichi-svg-stage {
+        border-right: none;
+        border-bottom: 1px solid var(--pichi-border);
+    }
+    .pichi-trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .pichi-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .pichi-hero h1 {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .pichi-nav-links {
+        display: none;
+    }
+    .pichi-products-grid,
+    .pichi-trust-grid {
+        grid-template-columns: 1fr;
+    }
+    .pichi-hero h1 {
+        font-size: 2.2rem;
+    }
+    .pichi-controls {
+        padding: 24px 20px;
+    }
+    .pichi-b2b-cta {
+        padding: 32px 20px;
+    }
+    .pichi-price-cta-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .pichi-price-cta-row button {
+        width: 100%;
+    }
+}

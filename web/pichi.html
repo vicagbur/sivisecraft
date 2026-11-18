@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PICHI Studio — Accesorios Neo-Castizos Impresos en 3D | Colección Oficial SiviseCraft</title>
+    <meta name="description" content="Joyería urbana, pendientes pata de gallo, broches de clavel y rombos de metro de Madrid personalizados. Fabricados en 3D con textura PEI mate en Madrid por Víctor Aguado.">
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pichi.css">
+</head>
+<body class="pichi-body pata-gallo-canvas">
+
+    <!-- Barra Superior de Conexión con Tienda SiviseCraft -->
+    <div class="pichi-bridge-bar">
+        <div>
+            <a href="index.html">
+                &larr; Volver al Taller SiviseCraft
+            </a>
+            <span style="opacity: 0.4; margin: 0 8px;">|</span>
+            <span>Colección Cápsula Oficial <strong>Pichi Studio</strong></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <span>🎁 Envío <strong>GRATIS</strong> en pedidos +45€</span>
+            <button onclick="toggleCartDrawer(true)" style="background:transparent; border:none; color:#fff; font-size:0.84rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                🛒 Ver Cesta (<span id="pichi-cart-count">0</span>)
+            </button>
+        </div>
+    </div>
+
+    <!-- Header Navbar -->
+    <header class="pichi-header">
+        <div class="container pichi-navbar">
+            <a href="pichi.html" class="pichi-logo">
+                <div class="pichi-logo-badge">P</div>
+                <div class="pichi-logo-text">PICHI<span>Studio</span></div>
+            </a>
+            <nav>
+                <ul class="pichi-nav-links">
+                    <li><a href="#customizer">Personalizador 3D</a></li>
+                    <li><a href="#coleccion">Colección</a></li>
+                    <li><a href="#manifiesto">Concepto PEI</a></li>
+                    <li><a href="#eventos">Eventos & Bodas</a></li>
+                    <li><a href="#faq">Dudas</a></li>
+                </ul>
+            </nav>
+            <div class="pichi-nav-actions">
+                <button class="btn-pichi-secondary" onclick="openTrackingModal()" style="padding: 8px 14px; font-size: 0.82rem;">
+                    📦 Mis Pedidos
+                </button>
+                <a href="#customizer" class="btn-pichi-primary" style="padding: 9px 18px; font-size: 0.86rem;">
+                    Diseñar Rombo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="pichi-hero">
+        <div class="container pichi-hero-grid">
+            <div>
+                <div class="pichi-kicker">
+                    <span>🔴 CÁPSULA #1</span> • NEO-CASTIZO POP HECHO EN MADRID
+                </div>
+                <h1>
+                    Del Rastro a tu solapa.<br>
+                    <span class="clavel-highlight">Diseño madrileño en 3D.</span>
+                </h1>
+                <p>
+                    Pendientes, llaveros e imanes icónicos inspirados en la iconografía madrileña. Fabricados localmente en nuestro taller mediante impresión 3D multi-color con <strong>acabado mate texturizado en cama PEI</strong> y ganchos de acero quirúrgico hipoalergénico.
+                </p>
+                <div class="pichi-hero-cta">
+                    <a href="#customizer" class="btn-pichi-primary">
+                        🎨 Diseñar Rombo Metro (en vivo)
+                    </a>
+                    <a href="#coleccion" class="btn-pichi-secondary">
+                        🛍️ Ver Colección y Packs
+                    </a>
+                </div>
+                <div style="display:flex; gap:20px; font-size:0.85rem; color:var(--pichi-muted); align-items:center;">
+                    <div>⚡ <strong>24/48h</strong> fabricación</div>
+                    <div>•</div>
+                    <div>🌿 <strong>PLA Vegetal</strong></div>
+                    <div>•</div>
+                    <div>🧷 <strong>Acero Antialérgico</strong></div>
+                </div>
+            </div>
+            <div class="pichi-hero-visual">
+                <div class="pichi-hero-card">
+                    <img src="img/pichi_pack_real.jpg" alt="Pichi Studio Colección Prototipos Reales">
+                    <div class="pichi-hero-overlay-tag">
+                        <div>
+                            <div style="font-family:var(--font-pichi-head); font-weight:700; font-size:0.95rem; color:#fff;">Pack Verbena Completo</div>
+                            <div style="font-size:0.78rem; color:var(--pichi-muted);">Rombo Metro + Clavel 3D + Gato + Pendientes</div>
+                        </div>
+                        <span style="font-family:var(--font-pichi-head); font-weight:800; font-size:1.2rem; color:var(--pichi-clavel);">18,00 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="pichi-trust-strip">
+        <div class="container pichi-trust-grid">
+            <div class="pichi-trust-item">
+                <div class="pichi-trust-icon">🏙️</div>
+                <div>
+                    <h4>100% Hecho en Madrid</h4>
+                    <p>Diseño y fabricación en nuestro taller propio con Bambu Lab A1 de alta precisión.</p>
+                </div>
+            </div>
+            <div class="pichi-trust-item">
+                <div class="pichi-trust-icon">✨</div>
+                <div>
+                    <h4>Acabado Texturizado PEI</h4>
+                    <p>Textura arenada mate premium que elimina el brillo de plástico barato.</p>
+                </div>
+            </div>
+            <div class="pichi-trust-item">
+                <div class="pichi-trust-icon">🧷</div>
+                <div>
+                    <h4>Acero Quirúrgico</h4>
+                    <p>Fornituras antialérgicas que cuidan tu piel y no se oxidan con el tiempo.</p>
+                </div>
+            </div>
+            <div class="pichi-trust-item">
+                <div class="pichi-trust-icon">📦</div>
+                <div>
+                    <h4>Punto Pack o Domicilio</h4>
+                    <p>Desde 3,95 € con seguimiento 24/48h. Envío <strong>GRATIS</strong> en pedidos > 45€.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Personalizador Interactivo de Rombo de Metro -->
+    <section class="pichi-customizer-section" id="customizer">
+        <div class="container">
+            <div class="pichi-section-header">
+                <span class="pichi-kicker">HERRAMIENTA EN TIEMPO REAL</span>
+                <h2>Diseña tu Llavero Rombo</h2>
+                <p>Escribe tu estación favorita, tu barrio, tu apodo o el nombre de quien más quieres. Previsualiza la pieza en tiempo real antes de encargarla.</p>
+            </div>
+
+            <div class="pichi-customizer-box">
+                <!-- Columna Izquierda: Vista Previa SVG -->
+                <div class="pichi-svg-stage">
+                    <span class="pichi-stage-badge">Vista Previa Textil & 3D</span>
+                    
+                    <svg id="pichi-rombo-svg" viewBox="0 0 400 350" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 360px; height: auto;">
+                        <!-- Fondo blanco interior -->
+                        <polygon points="200,35 365,175 200,315 35,175" fill="#ffffff" />
+                        
+                        <!-- Rombo exterior principal -->
+                        <polygon id="svg-pichi-border" points="200,35 365,175 200,315 35,175" stroke="#ff0055" stroke-width="22" stroke-linejoin="round" fill="none" />
+                        
+                        <!-- Barra horizontal central -->
+                        <rect id="svg-pichi-bar" x="25" y="142" width="350" height="66" fill="#0066d6" rx="4" />
+                        
+                        <!-- Texto de estación / personalizado -->
+                        <text id="svg-pichi-text" x="200" y="188" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="32" fill="#ffffff" text-anchor="middle" letter-spacing="1">MALASAÑA</text>
+                        
+                        <!-- Subtítulo MADRID -->
+                        <text x="200" y="265" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#8e8e9c" text-anchor="middle" letter-spacing="4">MADRID</text>
+                        
+                        <!-- Agujero de anilla -->
+                        <circle cx="200" cy="22" r="8" fill="#14141c" stroke="#333" stroke-width="2" />
+                        <circle cx="200" cy="22" r="3" fill="#07070a" />
+                    </svg>
+
+                    <div style="font-size:0.75rem; color:var(--pichi-muted); margin-top:20px; text-align:center;">
+                        📐 Dimensiones aprox: 60 x 50 x 4 mm • Peso ultraligero: 12 gramos
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Controles del Personalizador -->
+                <div class="pichi-controls">
+                    <div>
+                        <!-- Input de texto -->
+                        <div class="pichi-form-group">
+                            <label for="custom-rombo-text">Texto Central (Máx. 11 Letras)</label>
+                            <input type="text" id="custom-rombo-text" class="pichi-input-text" value="MALASAÑA" maxlength="11" oninput="updatePichiSvgPreview()">
+                            <small style="color:var(--pichi-muted); font-size:0.76rem; display:block; margin-top:4px;">Ejemplos: SOL, CHUECA, RETIRO, LAVAPIÉS, GOYA, TU NOMBRE</small>
+                        </div>
+
+                        <!-- Paleta de Color -->
+                        <div class="pichi-form-group">
+                            <label>Combinación de Colores PLA</label>
+                            <div class="pichi-pill-selector">
+                                <button type="button" class="pichi-pill-btn active" data-scheme="clasico" onclick="setPichiScheme('clasico', this)">
+                                    🔴 Clásico Metro
+                                </button>
+                                <button type="button" class="pichi-pill-btn" data-scheme="chulapo" onclick="setPichiScheme('chulapo', this)">
+                                    🎩 Chulapo Noir
+                                </button>
+                                <button type="button" class="pichi-pill-btn" data-scheme="gato" onclick="setPichiScheme('gato', this)">
+                                    🐱 Gato Turquesa
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de Herraje -->
+                        <div class="pichi-form-group">
+                            <label for="custom-rombo-hardware">Herraje o Tipo de Accesorio</label>
+                            <select id="custom-rombo-hardware" class="pichi-select-hardware" onchange="updatePichiSvgPreview()">
+                                <option value="llavero" data-extra="0.00">Anilla Llavero Acero Inox (+0,00 €)</option>
+                                <option value="cordon" data-extra="0.50">Cordón Colgante para Móvil (+0,50 €)</option>
+                                <option value="broche" data-extra="0.20">Pin / Broche Alfiler de Solapa (+0,20 €)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Precio y Añadir al Carrito -->
+                    <div class="pichi-price-cta-row">
+                        <div>
+                            <div class="pichi-price-total">
+                                <span>Precio por Unidad:</span>
+                                <div id="custom-rombo-price-display">6,00 €</div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-pichi-primary" onclick="addCustomRomboToCart()" style="font-size:1.05rem; padding:14px 26px;">
+                            🛒 Añadir a mi Cesta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo de Piezas y Packs de la Colección -->
+    <section class="pichi-catalog-section" id="coleccion">
+        <div class="container">
+            <div class="pichi-section-header">
+                <span class="pichi-kicker">CATÁLOGO DROP #1</span>
+                <h2>Piezas de la Colección Neo-Castiza</h2>
+                <p>Todas las piezas se entregan montadas a mano en tarjetas de soporte kraft recicladas de alta calidad, listas para regalar o estrenar en la verbena.</p>
+            </div>
+
+            <div class="pichi-products-grid">
+
+                <!-- 1. Broche Clavel Relief -->
+                <div class="pichi-product-card">
+                    <div class="pichi-product-media">
+                        <span class="pichi-card-badge badge-clavel">Superventas</span>
+                        <img src="img/pichi_clavel_real.jpg" alt="Broche Clavel Relief 3D">
+                    </div>
+                    <div class="pichi-product-body">
+                        <div class="pichi-product-title-row">
+                            <h3>Broche Clavel Relief 3D</h3>
+                            <span class="pichi-card-price">5,00 €</span>
+                        </div>
+                        <p class="pichi-product-desc">
+                            Clavel geométrico de estilo roseta con pétalos concéntricos en rojo brillante texturizado y perfilado negro en relieve. Broche trasero de seguridad.
+                        </p>
+                        <div class="pichi-product-actions">
+                            <button class="btn-pichi-primary" style="width:100%;" onclick="addPichiCatalogItem('pichi_clavel', 'Broche Clavel Relief 3D', 5.00, 'img/pichi_clavel_real.jpg', 'Acabado: Rojo Clavel & Negro')">
+                                Añadir a la Cesta • 5,00 €
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Siluetas Gatos Madrileños -->
+                <div class="pichi-product-card">
+                    <div class="pichi-product-media">
+                        <span class="pichi-card-badge">Icono de Madrid</span>
+                        <img src="img/pichi_gatos_real.jpg" alt="Siluetas Gatos Madrileños">
+                    </div>
+                    <div class="pichi-product-body">
+                        <div class="pichi-product-title-row">
+                            <h3>Silueta Gato Madrileño (Pin / Llavero)</h3>
+                            <span class="pichi-card-price">5,00 €</span>
+                        </div>
+                        <p class="pichi-product-desc">
+                            El homenaje definitivo a los "gatos" de Madrid: silueta felina minimalista de líneas geométricas depuradas. Disponible en negro mate o blanco azabache.
+                        </p>
+                        <div class="pichi-product-actions">
+                            <button class="btn-pichi-primary" style="width:100%;" onclick="addPichiCatalogItem('pichi_gatos', 'Silueta Gato Madrileño (Pin/Llavero)', 5.00, 'img/pichi_gatos_real.jpg', 'Modelo: Llavero Acero Negro Mate')">
+                                Añadir a la Cesta • 5,00 €
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Pendientes Pata de Gallo -->
+                <div class="pichi-product-card">
+                    <div class="pichi-product-media">
+                        <span class="pichi-card-badge">Acero Quirúrgico</span>
+                        <img src="img/pichi_studio.png" alt="Pendientes Pata de Gallo">
+                    </div>
+                    <div class="pichi-product-body">
+                        <div class="pichi-product-title-row">
+                            <h3>Pendientes Pata de Gallo</h3>
+                            <span class="pichi-card-price">10,00 €</span>
+                        </div>
+                        <p class="pichi-product-desc">
+                            Pendientes colgantes ultraligeros impresos con el icónico patrón houndstooth chulapo. Ganchos de acero quirúrgico aptos para pieles reactivas y alérgicas.
+                        </p>
+                        <div class="pichi-product-actions">
+                            <button class="btn-pichi-primary" style="width:100%;" onclick="addPichiCatalogItem('pichi_pendientes', 'Pendientes Pata de Gallo Houndstooth', 10.00, 'img/pichi_studio.png', 'Ganchos: Acero Quirúrgico Hipoalergénico')">
+                                Añadir a la Cesta • 10,00 €
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Llavero Rombo Sol Estándar -->
+                <div class="pichi-product-card">
+                    <div class="pichi-product-media">
+                        <span class="pichi-card-badge">Kilómetro Cero</span>
+                        <img src="img/pichi_pack_real.jpg" alt="Llavero Rombo Metro Sol">
+                    </div>
+                    <div class="pichi-product-body">
+                        <div class="pichi-product-title-row">
+                            <h3>Llavero Rombo "SOL"</h3>
+                            <span class="pichi-card-price">6,00 €</span>
+                        </div>
+                        <p class="pichi-product-desc">
+                            La edición estándar del rombo madrileño con la estación icónica del Kilómetro Cero. Incluye anilla plana de acero ultra-resistente.
+                        </p>
+                        <div class="pichi-product-actions">
+                            <button class="btn-pichi-primary" style="width:100%;" onclick="addPichiCatalogItem('pichi_rombo_sol', 'Llavero Rombo Metro SOL', 6.00, 'img/pichi_pack_real.jpg', 'Texto: SOL • Anilla Acero Inox')">
+                                Añadir a la Cesta • 6,00 €
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. PACK VERBENA COMPLETO (HERO BUNDLE) -->
+                <div class="pichi-product-card featured-bundle" style="grid-column: span 2;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; height: 100%;">
+                        <div class="pichi-product-media" style="height: 100%;">
+                            <span class="pichi-card-badge badge-clavel" style="font-size:0.82rem; padding:6px 14px;">🔥 Pack Ahorro 5€</span>
+                            <img src="img/pichi_pack_real.jpg" alt="Pack Verbena Completo Pichi Studio">
+                        </div>
+                        <div class="pichi-product-body" style="padding: 28px;">
+                            <div class="pichi-product-title-row">
+                                <div>
+                                    <h3 style="font-size: 1.4rem;">Pack Verbena Completo</h3>
+                                    <span style="font-size:0.8rem; color:var(--pichi-clavel); font-weight:700;">Set Completo de Coleccionista Madrileño</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span class="pichi-card-old-price">23,00 €</span>
+                                    <span class="pichi-card-price" style="font-size: 1.6rem;">18,00 €</span>
+                                </div>
+                            </div>
+                            <p class="pichi-product-desc" style="font-size: 0.95rem; margin-top: 8px;">
+                                El regalo perfecto o kit festivo definitivo: incluye <strong>1 Par de Pendientes Pata de Gallo + 1 Broche Clavel 3D + 1 Llavero Rombo Metro (o personalizado) + 1 Pin Gato Madrileño</strong> montados en tarjetas kraft listas para regalar. Ahorras 5€ respecto a su compra individual.
+                            </p>
+                            <div class="pichi-product-actions" style="margin-top: auto;">
+                                <button class="btn-pichi-primary" style="width:100%; padding: 14px; font-size: 1.05rem;" onclick="addPichiCatalogItem('pichi_pack_verbena', 'Pack Verbena Completo (Set 4 Piezas)', 18.00, 'img/pichi_pack_real.jpg', 'Contenido: Pendientes + Broche Clavel + Rombo Metro + Gato (Ahorro 5€)')">
+                                    🛒 Añadir Pack Verbena al Carrito (18,00 €)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Manifiesto Neo-Castizo -->
+    <section class="pichi-manifesto" id="manifiesto">
+        <div class="container pichi-manifesto-grid">
+            <div class="pichi-manifesto-content">
+                <span class="pichi-kicker">DISEÑO PARAMÉTRICO LOCAL</span>
+                <h2>El Clavel de la Revolución Digital</h2>
+                <p>
+                    La iconografía de Madrid —los claveles rojos, las gorras de chulapo, la pata de gallo de las verbenas— es eterna, pero su forma de llevarla pedía evolucionar.
+                </p>
+                <p>
+                    Aprovechamos las <strong>camas de impresión PEI texturizadas</strong> de nuestra granja de impresión en Madrid para otorgar a cada pieza un acabado mate granulado muy sofisticado. Eliminamos el brillo del plástico barato y logramos piezas ligeras, resistentes y con el tacto de la joyería urbana contemporánea.
+                </p>
+            </div>
+            <div>
+                <div class="pichi-manifesto-box">
+                    <h4 style="font-family:var(--font-pichi-head); margin-bottom:8px; font-size:1.1rem; color:#fff;">📦 Packaging Kraft Sostenible</h4>
+                    <p style="margin:0; font-size:0.92rem; color:var(--pichi-muted);">
+                        Cada accesorio se entrega insertado en tarjetas kraft recicladas impresas con la identidad de PICHI Studio. Listas para llevar directamente a una boda castiza, colgar en tu mochila o sorprender a alguien que adore Madrid.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B2B / Bodas y Eventos CTA -->
+    <section class="container" id="eventos">
+        <div class="pichi-b2b-cta">
+            <span class="pichi-kicker" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.2); color:#fff;">ENCARGOS A MEDIDA</span>
+            <h3>¿Organizas una boda, evento o tienes una tienda en Madrid?</h3>
+            <p>
+                Creamos tiradas personalizadas de rombos de metro con la fecha de tu enlace, broches de clavel para invitados o siluetas corporativas de Madrid con descuentos especiales por volumen.
+            </p>
+            <a href="https://wa.me/34600000000?text=Hola%20Victor!%20He%20visto%20Pichi%20Studio%20y%20me%20gustaria%20pedir%20presupuesto%20para%20una%20tirada%20de%20piezas%20castizas." target="_blank" rel="noopener" class="btn-pichi-primary" style="background:#25d366; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);">
+                💬 Consultar por WhatsApp en 1 Clic
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="pichi-faq-section" id="faq">
+        <div class="container">
+            <div class="pichi-section-header">
+                <span class="pichi-kicker">RESOLVIENDO DUDAS</span>
+                <h2>Preguntas Frecuentes</h2>
+                <p>Todo lo que necesitas saber sobre los materiales, acabados y envíos de PICHI Studio.</p>
+            </div>
+
+            <div class="pichi-accordion">
+                <div class="pichi-accordion-item">
+                    <button class="pichi-accordion-btn" onclick="togglePichiAccordion(this)">
+                        <span>¿De qué material están hechas las piezas?</span>
+                        <span class="pichi-accordion-icon">+</span>
+                    </button>
+                    <div class="pichi-accordion-body">
+                        Utilizamos PLA (Ácido Poliláctico) biodegradable y reciclable de origen vegetal (almidón de maíz) impreso en 3D de alta densidad. Es un material ligero, ultra resistente y no contiene plásticos tóxicos.
+                    </div>
+                </div>
+
+                <div class="pichi-accordion-item">
+                    <button class="pichi-accordion-btn" onclick="togglePichiAccordion(this)">
+                        <span>¿Los pendientes o broches dan alergia?</span>
+                        <span class="pichi-accordion-icon">+</span>
+                    </button>
+                    <div class="pichi-accordion-body">
+                        No. Todos nuestros pendientes llevan fornituras de <strong>acero quirúrgico hipoalergénico</strong> apto para pieles sensibles y reactivas. Las anillas de los llaveros son de acero inoxidable cepillado para que no se deformen ni se oxiden.
+                    </div>
+                </div>
+
+                <div class="pichi-accordion-item">
+                    <button class="pichi-accordion-btn" onclick="togglePichiAccordion(this)">
+                        <span>¿Cuánto tarda en llegar mi pedido?</span>
+                        <span class="pichi-accordion-icon">+</span>
+                    </button>
+                    <div class="pichi-accordion-body">
+                        Fabricamos cada encargo en nuestro taller en 24/48h. El envío por Punto Pack / Taquilla InPost tarda 3-4 días laborables (3,95 €) y la entrega a domicilio urgente 24/48h (4,95 €). En pedidos superiores a 45,00 € el envío es totalmente <strong>GRATUITO</strong>.
+                    </div>
+                </div>
+
+                <div class="pichi-accordion-item">
+                    <button class="pichi-accordion-btn" onclick="togglePichiAccordion(this)">
+                        <span>¿Cómo puedo pagar mi pedido?</span>
+                        <span class="pichi-accordion-icon">+</span>
+                    </button>
+                    <div class="pichi-accordion-body">
+                        Puedes pagar directamente mediante <strong>Bizum (0% comisiones)</strong> o con <strong>Tarjeta de crédito/débito</strong> a través de nuestra pasarela segura de Stripe. El carrito está unificado con toda la tienda oficial SiviseCraft.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pichi-footer">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--pichi-clavel); font-weight:800; font-family:var(--font-pichi-title);">P</span>
+                <span>PICHI Studio es una colección cápsula creada e impresa en 3D en Madrid por Víctor Aguado para <strong>SiviseCraft</strong>.</span>
+            </div>
+            <div style="display:flex; gap:18px;">
+                <a href="index.html" style="color:var(--pichi-text); text-decoration:none; font-weight:700;">Tienda SiviseCraft</a>
+                <a href="catalogo.html" style="color:var(--pichi-muted); text-decoration:none;">Catálogo Completo</a>
+                <a href="https://www.etsy.com/es/shop/SiviseCraft" target="_blank" rel="noopener" style="color:var(--pichi-muted); text-decoration:none;">Etsy Oficial</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contenedor donde data.js inyecta el Carrito Lateral, Modal de Detalle, Seguimiento y Checkout -->
+    <div id="shared-modals-mount"></div>
+
+    <!-- Scripts Oficiales de la Tienda -->
+    <script src="data.js"></script>
+    <script>
+        // Esquemas de color para el Personalizador de Rombo
+        let pichiCurrentScheme = "clasico";
+        const PICHI_SCHEMES = {
+            clasico: { border: "#ff0055", bar: "#0066d6", name: "Clásico Metro" },
+            chulapo: { border: "#ffffff", bar: "#ff0055", name: "Chulapo Noir" },
+            gato:    { border: "#0d9488", bar: "#db2777", name: "Gato Turquesa" }
+        };
+
+        function setPichiScheme(scheme, btnEl) {
+            pichiCurrentScheme = scheme;
+            document.querySelectorAll(".pichi-pill-btn").forEach(b => b.classList.remove("active"));
+            if (btnEl) btnEl.classList.add("active");
+            updatePichiSvgPreview();
+        }
+
+        function updatePichiSvgPreview() {
+            const input = document.getElementById("custom-rombo-text");
+            const cleanText = (input.value || "SOL").toUpperCase();
+            document.getElementById("svg-pichi-text").textContent = cleanText;
+
+            const scheme = PICHI_SCHEMES[pichiCurrentScheme] || PICHI_SCHEMES.clasico;
+            document.getElementById("svg-pichi-border").setAttribute("stroke", scheme.border);
+            document.getElementById("svg-pichi-bar").setAttribute("fill", scheme.bar);
+
+            const select = document.getElementById("custom-rombo-hardware");
+            const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
+            document.getElementById("custom-rombo-price-display").textContent = formatPrice(6.00 + extra);
+        }
+
+        function addCustomRomboToCart() {
+            const rawText = (document.getElementById("custom-rombo-text").value || "SOL").toUpperCase();
+            const select = document.getElementById("custom-rombo-hardware");
+            const hardwareLabel = select.options[select.selectedIndex].text.replace(/\s*\([^)]*\)/g, "");
+            const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
+            const finalPrice = 6.00 + extra;
+            const schemeName = PICHI_SCHEMES[pichiCurrentScheme].name;
+
+            const meta = `Texto: "${rawText}" • Color: ${schemeName} • ${hardwareLabel}`;
+            
+            addDirectItemToCart({
+                id: "pichi_rombo_custom",
+                cartId: `pichi_rombo__${rawText}__${pichiCurrentScheme}__${select.value}`,
+                name: `Rombo Metro "${rawText}"`,
+                price: finalPrice,
+                image: "img/pichi_pack_real.jpg",
+                qty: 1,
+                meta: meta
+            });
+        }
+
+        function addPichiCatalogItem(id, name, price, image, meta) {
+            addDirectItemToCart({
+                id: id,
+                cartId: `${id}__${meta || 'standard'}`,
+                name: name,
+                price: price,
+                image: image,
+                qty: 1,
+                meta: meta || ""
+            });
+        }
+
+        function togglePichiAccordion(btn) {
+            const item = btn.closest(".pichi-accordion-item");
+            const isOpen = item.classList.contains("open");
+            document.querySelectorAll(".pichi-accordion-item").forEach(i => i.classList.remove("open"));
+            if (!isOpen) {
+                item.classList.add("open");
+            }
+        }
+
+        function syncPichiCartCounters() {
+            const cart = getCart();
+            const count = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+            const badge = document.getElementById("pichi-cart-count");
+            if (badge) badge.textContent = count;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            injectSharedStoreModals();
+            updatePichiSvgPreview();
+            syncPichiCartCounters();
+            window.addEventListener("storage", syncPichiCartCounters);
+
+            // Hook cart drawer open/close sync
+            const origToggleCartDrawer = window.toggleCartDrawer;
+            window.toggleCartDrawer = function(forceOpen) {
+                origToggleCartDrawer(forceOpen);
+                syncPichiCartCounters();
+            };
+        });
+    </script>
+</body>
+</html>

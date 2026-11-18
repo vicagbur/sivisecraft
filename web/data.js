@@ -738,6 +738,31 @@ function addProductToCartFromDOM(productId, containerPrefix = "card") {
     }
 }
 
+// Añadir un producto directamente al carrito (útil para landings temáticas como Pichi Studio, packs o configuradores personalizados)
+function addDirectItemToCart(item) {
+    if (!item || !item.name || typeof item.price !== "number") return;
+    let cart = getCart();
+    const cartId = item.cartId || (item.meta ? `${item.id || 'custom'}__${item.meta}` : (item.id || 'custom'));
+    const existing = cart.find(i => i.cartId === cartId);
+    if (existing) {
+        existing.qty += (item.qty || 1);
+    } else {
+        cart.push({
+            id: item.id || "custom",
+            cartId: cartId,
+            name: item.name,
+            price: item.price,
+            image: item.image || "img/logo.svg",
+            qty: item.qty || 1,
+            meta: item.meta || ""
+        });
+    }
+    saveCart(cart);
+    updateCartUI();
+    showToast(`Añadido: ${item.name}`);
+    toggleCartDrawer(true);
+}
+
 // Actualizar precio en vivo cuando el usuario cambia una variante (ej. Pack 2 TinyTan o Dragon Ball Normal/LED)
 function onVariantChange(productId, containerPrefix = "card") {
     const product = PRODUCTS.find(p => p.id === productId);
