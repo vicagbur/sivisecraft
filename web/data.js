@@ -18,14 +18,14 @@ const STORE_CONFIG = {
     etsyText: "4.9★ (+70 pedidos • +12 países)"
 };
 
-// Tramos Oficiales de Envío (Fase 2 Roadmap)
+// Tramos Oficiales de Envío (100% Mensajería con Seguimiento — Sin entregas en mano)
 const SHIPPING_TIERS = {
     inpost: {
         id: "inpost",
         label: "📦 Punto Pack / InPost (Península)",
         baseCost: 3.95,
         freeOverThreshold: true,
-        eta: "Entrega en Punto Pack (3-4 días laborables)",
+        eta: "Entrega en Punto Pack o Taquilla InPost (3-4 días laborables)",
         needsAddress: true,
         addressHint: "Indica tu dirección o el nombre de tu Punto Pack InPost más cercano"
     },
@@ -34,18 +34,9 @@ const SHIPPING_TIERS = {
         label: "🚚 Domicilio 24/48h (Península)",
         baseCost: 4.95,
         freeOverThreshold: true,
-        eta: "Entrega urgente en domicilio (24/48h tras fabricación)",
+        eta: "Entrega urgente en domicilio con seguimiento (24/48h tras fabricación)",
         needsAddress: true,
         addressHint: "Calle, número, piso y puerta para entrega a domicilio"
-    },
-    madrid: {
-        id: "madrid",
-        label: "📍 Recogida en mano en Madrid (0,00 €)",
-        baseCost: 0.00,
-        freeOverThreshold: false,
-        eta: "Recogida gratuita en Madrid (acordamos día y hora por WhatsApp)",
-        needsAddress: false,
-        addressHint: "Zona Madrid — Te escribiremos por WhatsApp al terminar tu pieza"
     },
     eu: {
         id: "eu",
@@ -993,10 +984,10 @@ function openProductDetail(productId) {
                 </p>
                 ${variantsHTML}
                 <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;">
-                    <div>📍 <strong>Recogida en Madrid:</strong> 0,00 €</div>
                     <div>📦 <strong>Punto Pack InPost:</strong> 3,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
                     <div>🚚 <strong>Domicilio 24/48h:</strong> 4,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
-                    <div>🎁 <strong>Detalle sorpresa incluido</strong> en cada paquete</div>
+                    <div>🌍 <strong>Unión Europea Certificado:</strong> 9,90 €</div>
+                    <div>🎁 <strong>Detalle sorpresa 3D incluido</strong> en cada paquete</div>
                 </div>
                 <div style="margin-top:auto;">
                     ${p.custom
@@ -1056,10 +1047,7 @@ function updateCartUI() {
     const freeBannerText = document.getElementById("free-shipping-text");
     const freeBannerFill = document.getElementById("free-shipping-fill");
     if (freeBannerText && freeBannerFill) {
-        if (currentTierId === "madrid") {
-            freeBannerText.innerHTML = `📍 <strong>Recogida en Madrid seleccionada:</strong> ¡Envío <strong>0,00 €</strong>!`;
-            freeBannerFill.style.width = "100%";
-        } else if (currentTierId === "eu") {
+        if (currentTierId === "eu") {
             freeBannerText.innerHTML = `🌍 <strong>Envío Internacional UE Certificado:</strong> Tarifa plana 9,90 €`;
             freeBannerFill.style.width = "100%";
         } else if (subtotal >= STORE_CONFIG.freeShippingThreshold) {
