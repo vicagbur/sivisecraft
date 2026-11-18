@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiviseCraft — Expositores 3D de Colección, K-Pop & Taller Digital (Tienda Oficial)</title>
+    <meta name="description" content="Tienda oficial de SiviseCraft (Madrid). Expositores impresos en 3D para colecciones McDonald's y Burger King (Tiny Tan BTS, Dragon Ball LED, Mandalorian, Stranger Things, Stitch, Mario Kart, Friends), Calendario Derpy K-Pop y regalos personalizados. Envío gratis desde 45€ y pago por Bizum o Stripe.">
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra Superior de Envío y Ventajas Web Oficial -->
+    <div class="top-promo-bar">
+        🎁 <strong>ENVÍO GRATIS</strong> en pedidos +45€ <span class="sep">|</span>
+        📦 Punto Pack InPost <strong>3,95 €</strong> • Domicilio 24/48h <strong>4,95 €</strong> • 📍 Recogida Madrid <strong>0,00 €</strong> <span class="sep">|</span>
+        📱 Pago rápido con <strong>Bizum (0% comisión)</strong> o Tarjeta Stripe
+    </div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo-block">
+                <img src="img/logo.svg" alt="Logo SiviseCraft">
+                <div class="logo-text">Sivise<span>Craft</span></div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Inicio</a></li>
+                    <li><a href="catalogo.html">Catálogo Completo (17)</a></li>
+                    <li><a href="#superventas">Superventas</a></li>
+                    <li><a href="#resenas">Reseñas Reales</a></li>
+                    <li><a href="#envios">Envíos y Taller</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="cart-icon-btn" onclick="toggleCartDrawer()" aria-label="Abrir Carrito">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span>Cesta</span>
+                    <span id="cart-badge" class="cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <span class="tag">✨ Taller Digital 3D en Madrid • Precio Directo sin Comisiones</span>
+                <h1>Expositores a medida para tus <span>colecciones favoritas</span>.</h1>
+                <p>
+                    Diseñamos e imprimimos en 3D soportes calibrados al milímetro para colecciones de <strong>McDonald's y Burger King</strong> (<em>Tiny Tan BTS, Dragon Ball con luz LED, Mandalorian y Grogu, Stranger Things, Stitch, Mario Kart, Friends, Minecraft, Miércoles</em>), joyeros K-Pop y litofanías artísticas.
+                </p>
+                <div class="hero-cta-row">
+                    <a href="#superventas" class="btn btn-primary" style="width: auto;">Ver Expositores y Precios</a>
+                    <a href="catalogo.html" class="btn btn-secondary" style="width: auto;">Catálogo Completo (17 modelos)</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3>+70</h3>
+                        <p>Pedidos en Etsy (+12 países)</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>5.0★</h3>
+                        <p>Wallapop (35 val.) y Vinted (13 val.)</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>0,00 €</h3>
+                        <p>Recogida en Madrid o pedidos >45€</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>PLA Eco</h3>
+                        <p>Impresión Bambu Lab de precisión</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Escaparate 2x2 con Fotos Reales del Taller -->
+            <div class="hero-showcase-card">
+                <div class="hero-showcase-grid">
+                    <a href="javascript:void(0)" onclick="openProductDetail('exp_mandalorian')" class="hero-showcase-item" title="Ver Expositor Mandalorian y Grogu">
+                        <img src="img/mandalorian_1.jpg" alt="Expositor The Mandalorian y Grogu">
+                        <div class="hero-showcase-label">
+                            <span>Mandalorian & Grogu</span>
+                            <span class="price">20,00 €</span>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openProductDetail('exp_stranger_things')" class="hero-showcase-item" title="Ver Expositor Stranger Things">
+                        <img src="img/stranger_1.jpg" alt="Expositor Stranger Things Welcome to Hawkins">
+                        <div class="hero-showcase-label">
+                            <span>Stranger Things 4 Gradas</span>
+                            <span class="price">22,50 €</span>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openProductDetail('exp_tinytan_7')" class="hero-showcase-item" title="Ver Expositor Tiny Tan BTS">
+                        <img src="img/tinytan_nombres.jpg" alt="Expositor Tiny Tan BTS 7 figuras">
+                        <div class="hero-showcase-label">
+                            <span>Tiny Tan BTS (Pack x2 32€)</span>
+                            <span class="price">18,00 €</span>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openProductDetail('adviento_derpy')" class="hero-showcase-item" title="Ver Calendario Adviento Derpy K-Pop">
+                        <img src="img/derpy_1.jpg" alt="Calendario Adviento Joyero Derpy K-Pop">
+                        <div class="hero-showcase-label">
+                            <span>Joyero Derpy 24 Cajones</span>
+                            <span class="price">40,00 €</span>
+                        </div>
+                    </a>
+                </div>
+                <div style="text-align:center; font-size:0.76rem; color:var(--text-secondary); margin-top:12px;">
+                    📷 <strong>Fotos reales de nuestro taller</strong> • Haz clic en cualquier pieza para ampliar galería y vídeo
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ventajas de Comprar en la Web Oficial -->
+    <section class="trust-strip">
+        <div class="container trust-grid">
+            <div class="trust-item">
+                <div class="trust-icon">💶</div>
+                <div>
+                    <h4>Mejor Precio Garantizado</h4>
+                    <p>Hasta un 25% más barato que en Etsy al ahorrar las comisiones e impuestos de intermediarios.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🎁</div>
+                <div>
+                    <h4>Llavero 3D de Regalo</h4>
+                    <p>Todos nuestros paquetes incluyen un detalle impreso en 3D y nota de agradecimiento hecha a mano.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">🚚</div>
+                <div>
+                    <h4>Envíos Desde 0€ / 3,95€</h4>
+                    <p>Recogida gratis en Madrid, Punto Pack InPost (3,95€), Domicilio 24/48h (4,95€) y Gratis desde 45€.</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">📱</div>
+                <div>
+                    <h4>Pago por Bizum o Stripe</h4>
+                    <p>Paga en segundos con Bizum (0% comisión), tarjeta bancaria y contacto directo con Víctor por WhatsApp.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Superventas Directos (Los 11 Protagonistas + Resto del Catálogo) -->
+    <section id="superventas" style="padding: 72px 0;">
+        <div class="container">
+            <div class="section-header">
+                <span class="kicker">// CATÁLOGO UNIFICADO OFICIAL (ETSY + WALLAPOP + VINTED)</span>
+                <h2>Expositores y Diseños 3D más Vendidos</h2>
+                <p>Selecciona color, versión (Normal o con Luz LED) o Pack Ahorro directamente en cada tarjeta y añádelo a tu cesta.</p>
+            </div>
+
+            <!-- Pestañas rápidas en portada -->
+            <div class="filter-tabs" style="justify-content: center; margin-bottom: 32px;">
+                <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (17)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('expositores', this)">Expositores McDonald's & BK</button>
+                <button class="filter-btn" onclick="filterHomeProducts('kpop', this)">K-Pop (Tiny Tan & Derpy)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('arte', this)">Arte, Litofanías & Relojes</button>
+                <button class="filter-btn" onclick="filterHomeProducts('personalizables', this)">Regalos Personalizables & Metro</button>
+            </div>
+
+            <div id="home-product-grid" class="product-grid">
+                <!-- Se carga dinámicamente desde data.js -->
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="catalogo.html" class="btn btn-teal" style="width: auto; padding: 14px 32px;">
+                    Abrir Buscador Técnico de Catálogo &rarr;
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Reseñas Reales Verificadas (reviews.json) -->
+    <section id="resenas" class="reviews-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="kicker">// OPINIONES VERIFICADAS DE CLIENTES REALES</span>
+                <h2>Lo que dicen coleccionistas de toda Europa</h2>
+                <p>Reseñas reales importadas íntegramente de nuestros pedidos verificados en Etsy, Wallapop y Vinted.</p>
+            </div>
+
+            <div class="reviews-summary-bar">
+                <div class="reviews-score-big">
+                    <div class="reviews-score-number">4.9</div>
+                    <div>
+                        <div class="reviews-stars">★★★★★</div>
+                        <div style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;">
+                            Media global en +115 pedidos entregados
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-channel-pills">
+                    <div class="channel-pill">🧡 <strong>Etsy:</strong> +70 pedidos en +12 países</div>
+                    <div class="channel-pill">💚 <strong>Wallapop:</strong> 5.0★ (35 valoraciones • 26 ventas)</div>
+                    <div class="channel-pill">🩵 <strong>Vinted:</strong> 5.0★ (13 valoraciones)</div>
+                </div>
+            </div>
+
+            <div id="home-reviews-grid" class="reviews-grid">
+                <!-- Se carga dinámicamente desde VERIFIED_REVIEWS en data.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarifas de Envío Transparentes, Taller y Preguntas Frecuentes -->
+    <section id="envios" style="padding: 72px 0;">
+        <div class="container">
+            <div class="section-header">
+                <span class="kicker">// TRANSPARENCIA TOTAL EN ENVÍOS Y FABRICACIÓN</span>
+                <h2>Tarifas de Envío y Preguntas Frecuentes</h2>
+                <p>Calculamos automáticamente tu tarifa óptima en el carrito según tu destino e importe.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-bottom: 48px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 22px; border-radius: var(--radius-lg);">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📍</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.05rem; margin-bottom: 4px;">Recogida en Madrid</h3>
+                    <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--accent-pichi); margin-bottom: 6px;">0,00 €</div>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary);">Entrega en mano gratuita en Madrid capital acordando horario por WhatsApp.</p>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 22px; border-radius: var(--radius-lg);">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📦</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.05rem; margin-bottom: 4px;">Punto Pack / InPost</h3>
+                    <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--accent-pichi); margin-bottom: 6px;">3,95 €</div>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary);">Recoge cómodamente en tu tienda o taquilla InPost más cercana en Península.</p>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 22px; border-radius: var(--radius-lg);">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🚚</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.05rem; margin-bottom: 4px;">Domicilio 24/48h</h3>
+                    <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--accent-pichi); margin-bottom: 6px;">4,95 €</div>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary);">Envío certificado urgente con seguimiento directo hasta la puerta de tu casa.</p>
+                </div>
+                <div style="background: var(--bg-card); border: 2px solid var(--accent-stripe); padding: 22px; border-radius: var(--radius-lg);">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🎁</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.05rem; margin-bottom: 4px;">Pedidos +45,00 €</h3>
+                    <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--accent-stripe); margin-bottom: 6px;">ENVÍO GRATIS</div>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary);">Automático en el carrito tanto para Punto Pack como para Domicilio en Península. (Unión Europea: 9,90 €).</p>
+                </div>
+            </div>
+
+            <!-- Bio del Taller -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 36px; border-radius: var(--radius-lg); max-width: 880px; margin: 0 auto;">
+                <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-pichi); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; font-weight:700;">
+                    // TALLER SIVISECRAFT MADRID • VÍCTOR AGUADO
+                </div>
+                <h3 style="font-family: var(--font-title); font-size: 1.65rem; font-weight: 800; margin-bottom: 12px;">
+                    Diseñado por un coleccionista, impreso con precisión Bambu Lab
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.94rem; line-height: 1.7; margin-bottom: 12px;">
+                    Detrás de cada expositor de <strong>SiviseCraft</strong> hay horas de diseño paramétrico en CAD midiendo cada peana, cápsula o figura original para que encaje a la primera sin holguras ni caídas. Imprimimos bajo demanda en nuestro taller de Madrid utilizando filamento ecológico PLA de origen vegetal con superficies texturizadas PEI.
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.94rem; line-height: 1.7;">
+                    ¿Buscas un color especial o un expositor a medida para otra colección? Escríbenos en las notas de tu pedido o por WhatsApp al finalizar la compra y lo preparamos para ti.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--border); padding: 40px 0; background: var(--bg-card);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <a href="index.html" class="logo-block">
+                <img src="img/logo.svg" alt="Logo SiviseCraft" style="height:28px;">
+                <div class="logo-text" style="font-size: 1.25rem;">Sivise<span>Craft</span></div>
+            </a>
+            <div style="font-size: 0.82rem; color: var(--text-secondary);">
+                &copy; 2026 <strong>www.sivisecraft.es</strong> — Diseño e Impresión 3D en Madrid por Víctor Aguado.
+            </div>
+            <div style="display: flex; gap: 18px; align-items:center;">
+                <a href="catalogo.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Catálogo</a>
+                <a href="https://www.etsy.com/es/shop/SiviseCraft" target="_blank" rel="noopener" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Etsy Oficial</a>
+                <a href="#resenas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Reseñas (4.9★)</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contenedor donde data.js inyecta el Carrito Lateral, Modal de Detalle, Personalizador Rombo y Checkout -->
+    <div id="shared-modals-mount"></div>
+
+    <script src="data.js"></script>
+    <script>
+        function filterHomeProducts(category, btnEl) {
+            if (btnEl) {
+                document.querySelectorAll(".filter-tabs .filter-btn").forEach(b => b.classList.remove("active"));
+                btnEl.classList.add("active");
+            }
+            const grid = document.getElementById("home-product-grid");
+            const filtered = category === "all"
+                ? PRODUCTS
+                : PRODUCTS.filter(p => p.category === category);
+            grid.innerHTML = filtered.map(p => buildProductCardHTML(p)).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            injectSharedStoreModals();
+            filterHomeProducts("all");
+            renderVerifiedReviews("home-reviews-grid", 12);
+            updateCartUI();
+            window.addEventListener("storage", updateCartUI);
+        });
+    </script>
+</body>
+</html>

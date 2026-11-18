@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Completo (17 Modelos) — SiviseCraft Tienda Oficial</title>
+    <meta name="description" content="Explora los 17 productos reales de SiviseCraft: Expositores Tiny Tan BTS, Dragon Ball con luz LED, Mandalorian y Grogu, Stranger Things, Stitch, Mario Kart, Friends, Minecraft, Miércoles, Sonny Angels, Calendario Adviento Derpy y Lámpara Las Meninas.">
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra Superior -->
+    <div class="top-promo-bar">
+        🎁 <strong>ENVÍO GRATIS</strong> en pedidos +45€ <span class="sep">|</span>
+        📦 Punto Pack InPost <strong>3,95 €</strong> • Domicilio 24/48h <strong>4,95 €</strong> • 📍 Recogida Madrid <strong>0,00 €</strong> <span class="sep">|</span>
+        📱 Pago rápido con <strong>Bizum (0% comisión)</strong> o Tarjeta Stripe
+    </div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo-block">
+                <img src="img/logo.svg" alt="Logo SiviseCraft">
+                <div class="logo-text">Sivise<span>Craft</span></div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="catalogo.html" class="active">Catálogo Completo (17)</a></li>
+                    <li><a href="index.html#resenas">Reseñas Reales</a></li>
+                    <li><a href="index.html#envios">Envíos y Taller</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="cart-icon-btn" onclick="toggleCartDrawer()" aria-label="Abrir Carrito">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span>Cesta</span>
+                    <span id="cart-badge" class="cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal del Catálogo -->
+    <main class="container" style="padding: 40px 24px 80px 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom: 12px;">
+            <div>
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-pichi); font-weight:700; text-transform:uppercase;">// PLANO COMPLETO DE TALLER • 17 REFERENCIAS ACTIVAS</span>
+                <h1 style="font-family: var(--font-title); font-size: 2.4rem; font-weight: 800; margin-top:4px;">Catálogo Oficial SiviseCraft</h1>
+            </div>
+            <button class="btn btn-teal" style="width:auto; padding:10px 18px;" onclick="openRomboModal()">
+                🎨 Abrir Personalizador Rombo Metro
+            </button>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">
+            Filtra por colección, busca tu serie favorita o haz clic en la foto de cualquier producto para abrir su galería de fotos reales y vídeos.
+        </p>
+
+        <!-- Barra de Búsqueda y Ordenación -->
+        <div class="catalog-toolbar">
+            <div class="search-wrapper">
+                <svg class="search-icon-svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search-input" class="search-input-field" placeholder="Buscar expositor (ej. Dragon Ball, Tiny Tan, Mandalorian, Stranger Things, Stitch, Mario Kart, Friends)..." oninput="applyCatalogView()">
+            </div>
+            <div class="sort-wrapper">
+                <label for="sort-select">Ordenar por:</label>
+                <select id="sort-select" class="sort-select" onchange="applyCatalogView()">
+                    <option value="default">Destacados / Superventas</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Pestañas de Categoría -->
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-cat="all" onclick="selectCatalogCategory('all', this)">Todos los Productos (17)</button>
+            <button class="filter-btn" data-cat="expositores" onclick="selectCatalogCategory('expositores', this)">Expositores McDonald's & Burger King</button>
+            <button class="filter-btn" data-cat="kpop" onclick="selectCatalogCategory('kpop', this)">K-Pop (BTS Tiny Tan & Derpy)</button>
+            <button class="filter-btn" data-cat="arte" onclick="selectCatalogCategory('arte', this)">Arte, Litofanías & Relojes</button>
+            <button class="filter-btn" data-cat="personalizables" onclick="selectCatalogCategory('personalizables', this)">Regalos Personalizables & Metro</button>
+        </div>
+
+        <!-- Rejilla de Productos -->
+        <div id="catalog-product-grid" class="product-grid"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--border); padding: 40px 0; background: var(--bg-card);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <a href="index.html" class="logo-block">
+                <img src="img/logo.svg" alt="Logo SiviseCraft" style="height:28px;">
+                <div class="logo-text" style="font-size: 1.25rem;">Sivise<span>Craft</span></div>
+            </a>
+            <div style="font-size: 0.82rem; color: var(--text-secondary);">
+                &copy; 2026 <strong>www.sivisecraft.es</strong> — Diseño e Impresión 3D en Madrid por Víctor Aguado.
+            </div>
+            <div style="display: flex; gap: 18px;">
+                <a href="index.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Inicio</a>
+                <a href="https://www.etsy.com/es/shop/SiviseCraft" target="_blank" rel="noopener" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Etsy Oficial</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modales Compartidos -->
+    <div id="shared-modals-mount"></div>
+
+    <script src="data.js"></script>
+    <script>
+        let currentCategory = "all";
+
+        function selectCatalogCategory(cat, btnEl) {
+            currentCategory = cat;
+            document.querySelectorAll(".filter-tabs .filter-btn").forEach(b => b.classList.remove("active"));
+            if (btnEl) btnEl.classList.add("active");
+            applyCatalogView();
+        }
+
+        function applyCatalogView() {
+            const q = (document.getElementById("search-input")?.value || "").toLowerCase().trim();
+            const sortVal = document.getElementById("sort-select")?.value || "default";
+
+            let list = PRODUCTS.filter(p => {
+                const matchCat = currentCategory === "all" || p.category === currentCategory;
+                const matchQuery = !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || (p.channelInfo && p.channelInfo.toLowerCase().includes(q));
+                return matchCat && matchQuery;
+            });
+
+            if (sortVal === "price-asc") {
+                list.sort((a, b) => a.price - b.price);
+            } else if (sortVal === "price-desc") {
+                list.sort((a, b) => b.price - a.price);
+            }
+
+            const grid = document.getElementById("catalog-product-grid");
+            if (list.length === 0) {
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); color:var(--text-secondary);">No se encontraron modelos con ese filtro. Prueba con otro término o pulsa "Todos los Productos".</div>`;
+                return;
+            }
+            grid.innerHTML = list.map(p => buildProductCardHTML(p)).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            injectSharedStoreModals();
+
+            const params = new URLSearchParams(window.location.search);
+            const filterParam = params.get("filter");
+            if (filterParam) {
+                const targetBtn = document.querySelector(`.filter-btn[data-cat="${filterParam}"]`);
+                selectCatalogCategory(filterParam, targetBtn);
+            } else {
+                applyCatalogView();
+            }
+
+            if (params.get("checkout") === "true") {
+                openDirectCheckout();
+            }
+
+            updateCartUI();
+            window.addEventListener("storage", updateCartUI);
+        });
+    </script>
+</body>
+</html>

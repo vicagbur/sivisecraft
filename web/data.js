@@ -1,0 +1,1688 @@
+// ============================================================================
+// SIVISECRAFT.ES — Base de Datos Oficial de Catálogo, Reseñas, Envíos y Carrito
+// 100% Código Propio • Coste 0€/mes • Sincronizado con Etsy, Wallapop y Vinted
+// ============================================================================
+
+const STORE_CONFIG = {
+    name: "SiviseCraft",
+    domain: "www.sivisecraft.es",
+    owner: "Víctor Aguado",
+    city: "Madrid",
+    freeShippingThreshold: 45.00, // Envío GRATIS > 45€ (Península)
+    bizumPhone: "600 000 000",    // Editable por Víctor con su móvil de Bizum/WhatsApp
+    whatsappNumber: "34600000000",// Editable para recibir el pedido directo en WhatsApp
+    contactEmail: "hola@sivisecraft.es",
+    etsyUrl: "https://www.etsy.com/es/shop/SiviseCraft",
+    wallapopText: "5★ (35 val. • +26 ventas)",
+    vintedText: "5★ (13 val.)",
+    etsyText: "4.9★ (+70 pedidos • +12 países)"
+};
+
+// Tramos Oficiales de Envío (Fase 2 Roadmap)
+const SHIPPING_TIERS = {
+    inpost: {
+        id: "inpost",
+        label: "📦 Punto Pack / InPost (Península)",
+        baseCost: 3.95,
+        freeOverThreshold: true,
+        eta: "Entrega en Punto Pack (3-4 días laborables)",
+        needsAddress: true,
+        addressHint: "Indica tu dirección o el nombre de tu Punto Pack InPost más cercano"
+    },
+    domicilio: {
+        id: "domicilio",
+        label: "🚚 Domicilio 24/48h (Península)",
+        baseCost: 4.95,
+        freeOverThreshold: true,
+        eta: "Entrega urgente en domicilio (24/48h tras fabricación)",
+        needsAddress: true,
+        addressHint: "Calle, número, piso y puerta para entrega a domicilio"
+    },
+    madrid: {
+        id: "madrid",
+        label: "📍 Recogida en mano en Madrid (0,00 €)",
+        baseCost: 0.00,
+        freeOverThreshold: false,
+        eta: "Recogida gratuita en Madrid (acordamos día y hora por WhatsApp)",
+        needsAddress: false,
+        addressHint: "Zona Madrid — Te escribiremos por WhatsApp al terminar tu pieza"
+    },
+    eu: {
+        id: "eu",
+        label: "🌍 Unión Europea Certificado (9,90 €)",
+        baseCost: 9.90,
+        freeOverThreshold: false,
+        eta: "International Tracked Shipping EU (5-8 business days)",
+        needsAddress: true,
+        addressHint: "Full street address, postal code, city and EU country"
+    }
+};
+
+// Catálogo Unificado Real (17 Productos: 11 Protagonistas Roadmap + Joyas Etsy + Pichi Studio)
+const PRODUCTS = [
+    // 1. EXPOSITOR TINY TAN 7 FIGURAS + PACKS AHORRO
+    {
+        id: "exp_tinytan_7",
+        name: "Expositor Colección Tiny Tan McDonald's (7 Figuras)",
+        price: 18.00,
+        oldPrice: 25.00,
+        category: "kpop",
+        featured: true,
+        badge: "Top Ventas Internacional",
+        badgeType: "pink",
+        channelInfo: "Best-seller en Etsy (+12 países) • Precio directo taller",
+        image: "img/tinytan_nombres.jpg",
+        gallery: [
+            "img/tinytan_nombres.jpg",
+            "img/tinytan_1.jpg",
+            "https://i.etsystatic.com/48356593/r/il/efd878/7293826835/il_fullxfull.7293826835_1gsp.jpg",
+            "https://i.etsystatic.com/48356593/r/il/3c0425/7293827383/il_fullxfull.7293827383_jut7.jpg",
+            "https://i.etsystatic.com/48356593/r/il/8765c2/7293828011/il_fullxfull.7293828011_n4fy.jpg",
+            "https://i.etsystatic.com/48356593/r/il/54972c/7245868420/il_fullxfull.7245868420_4kuw.jpg",
+            "https://i.etsystatic.com/48356593/r/il/277d08/7245868382/il_fullxfull.7245868382_sps1.jpg"
+        ],
+        desc: "Expositor a medida para las 7 figuras de la colección Tiny Tan BTS de McDonald's. Incluye logos oficiales de BTS y Tiny Tan en relieve/hendido y opción con los nombres de los 7 integrantes (RM, JIN, SUGA, J-HOPE, JIMIN, V, JUNG KOOK). Disponible en packs de ahorro para las dos ediciones (Roja y Encore Morada). Figuras no incluidas.",
+        variants: [
+            {
+                name: "Formato / Pack Ahorro",
+                options: [
+                    { label: "1 Expositor (18,00 €)", price: 18.00 },
+                    { label: "Pack Ahorro 2 Expositores (32,00 € • 16€/ud)", price: 32.00 },
+                    { label: "Pack Coleccionista 4 Expositores (64,00 € • Envío Gratis)", price: 64.00 }
+                ]
+            },
+            {
+                name: "Color Principal",
+                options: [
+                    { label: "Morado Army (Blanco en relieve)" },
+                    { label: "Rojo McDonald's (Amarillo en relieve)" },
+                    { label: "Combinado (Rojo + Morado para Packs)" }
+                ]
+            },
+            {
+                name: "Nombres en las baldas",
+                options: [
+                    { label: "Con nombres de los 7 miembros (RM, JIN, SUGA...)" },
+                    { label: "Sin nombres (solo logos BTS y Tiny Tan)" }
+                ]
+            }
+        ]
+    },
+
+    // 2. EXPOSITOR DRAGON BALL BURGER KING (CON / SIN LUZ LED)
+    {
+        id: "exp_dragon_ball",
+        name: "Expositor Dragon Ball Burger King (Normal / Con Luz LED)",
+        price: 14.00,
+        oldPrice: 19.00,
+        category: "expositores",
+        featured: true,
+        badge: "Superventas Wallapop",
+        badgeType: "gold",
+        channelInfo: "Éxito en Wallapop y Vinted • Opción LED o Normal",
+        image: "img/expositor_dragonball.jpg",
+        gallery: [
+            "img/expositor_dragonball.jpg"
+        ],
+        desc: "Expositor diseñado específicamente para lucir la colección de figuras de Dragon Ball de Burger King. Elige entre la versión con iluminación LED cálida integrada para destacar la silueta y las bolas de dragón (14,00 €) o la estructura Normal de colección completa (16,00 €). Impreso en PLA de alta densidad. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Versión del Expositor",
+                options: [
+                    { label: "Con Luz LED integrada (14,00 €)", price: 14.00 },
+                    { label: "Modelo Normal Colección Completa (16,00 €)", price: 16.00 }
+                ]
+            }
+        ]
+    },
+
+    // 3. EXPOSITOR THE MANDALORIAN & GROGU
+    {
+        id: "exp_mandalorian",
+        name: "Expositor The Mandalorian & Grogu (Star Wars)",
+        price: 20.00,
+        oldPrice: 25.00,
+        category: "expositores",
+        featured: true,
+        badge: "Nuevo Lanzamiento",
+        badgeType: "teal",
+        channelInfo: "Diseño propio en doble altura con casco Mandaloriano",
+        image: "img/mandalorian_1.jpg",
+        gallery: [
+            "img/mandalorian_1.jpg",
+            "img/mandalorian_2.jpg",
+            "img/mandalorian_3.jpg",
+            "img/mandalorian_4.jpg",
+            "https://i.etsystatic.com/48356593/r/il/2c7041/8107617851/il_fullxfull.8107617851_d665.jpg",
+            "https://i.etsystatic.com/48356593/r/il/4b4c80/8107616387/il_fullxfull.8107616387_4fz8.jpg",
+            "https://i.etsystatic.com/48356593/r/il/a4a104/8107616385/il_fullxfull.8107616385_cuwb.jpg"
+        ],
+        desc: "Expositor en negro mate y plata espacial para la colección completa de cápsulas y figuras de The Mandalorian and Grogu. Respaldo superior con el icónico casco mandaloriano en relieve multicolor, tipografía frontal en 3D y 7 bases circulares calibradas al milímetro. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Acabado",
+                options: [
+                    { label: "Negro Mate + Casco Plata Beskar (20,00 €)", price: 20.00 }
+                ]
+            }
+        ]
+    },
+
+    // 4. EXPOSITOR STRANGER THINGS "WELCOME TO HAWKINS"
+    {
+        id: "exp_stranger_things",
+        name: "Expositor Stranger Things 'Welcome to Hawkins' McDonald's",
+        price: 22.50,
+        oldPrice: 28.00,
+        category: "expositores",
+        featured: true,
+        badge: "Gran Formato 4 Gradas",
+        badgeType: "pink",
+        channelInfo: "Capacidad para las 12 figuras + sus 12 cofres/casitas",
+        image: "img/stranger_1.jpg",
+        gallery: [
+            "img/stranger_1.jpg",
+            "img/stranger_2.jpg",
+            "img/stranger_3.jpg",
+            "img/stranger_4.jpg"
+        ],
+        desc: "Estantería en 4 niveles estilo grada para exhibir la colección completa de 12 figuras de Stranger Things de McDonald's junto a sus 12 casitas/cofres de colores detrás de cada personaje. Coronada con el cartel clásico 'WELCOME TO HAWKINS' en blanco y negro. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Configuración",
+                options: [
+                    { label: "Completo 4 Gradas + Cartel Welcome to Hawkins (22,50 €)", price: 22.50 }
+                ]
+            }
+        ]
+    },
+
+    // 5. EXPOSITOR STITCH BURGER KING
+    {
+        id: "exp_stitch",
+        name: "Expositor Stitch & Angel Burger King",
+        price: 15.00,
+        oldPrice: 19.00,
+        category: "expositores",
+        featured: true,
+        badge: "Top Wallapop & Vinted",
+        badgeType: "teal",
+        channelInfo: "Uno de los favoritos en Wallapop (5★) y Vinted (5★)",
+        image: "img/expositor_stitch.jpg",
+        gallery: [
+            "img/expositor_stitch.jpg"
+        ],
+        desc: "Expositor temático impreso en 3D para organizar y lucir toda la colección de figuras de Stitch de Burger King. Encajes a medida para evitar caídas y colores vivos inspirados en Stitch y Angel. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Combinación de Color",
+                options: [
+                    { label: "Azul Stitch & Rosa Angel (15,00 €)", price: 15.00 },
+                    { label: "Azul Tropical Completo (15,00 €)", price: 15.00 },
+                    { label: "Rosa Angel Completo (15,00 €)", price: 15.00 }
+                ]
+            }
+        ]
+    },
+
+    // 6. CALENDARIO DE ADVIENTO / JOYERO DERPY K-POP DEMON HUNTERS
+    {
+        id: "adviento_derpy",
+        name: "Calendario de Adviento / Joyero Derpy (K-Pop Demon Hunters)",
+        price: 40.00,
+        oldPrice: 45.00,
+        category: "kpop",
+        featured: true,
+        badge: "Joya 24 Cajones",
+        badgeType: "gold",
+        channelInfo: "Números extraíbles: se convierte en joyero permanente",
+        image: "img/derpy_1.jpg",
+        video: "img/derpy_video.mp4",
+        gallery: [
+            "img/derpy_1.jpg",
+            "img/derpy_2.jpg",
+            "img/derpy_3.jpg",
+            "img/derpy_4.jpg",
+            "https://i.etsystatic.com/48356593/r/il/e9081b/7360675100/il_fullxfull.7360675100_tggm.jpg",
+            "https://i.etsystatic.com/48356593/r/il/dbf5d0/7360671866/il_fullxfull.7360671866_4n37.jpg",
+            "https://i.etsystatic.com/48356593/r/il/77d387/7360671884/il_fullxfull.7360671884_q6ip.jpg",
+            "https://i.etsystatic.com/48356593/r/il/f3d14f/7408590641/il_fullxfull.7408590641_cmke.jpg"
+        ],
+        desc: "Calendario de Adviento de Derpy, el tigre azul de las K-Pop Demon Hunters (Huntrix). Cuando termines de descubrir las 24 sorpresas, quita los números de los pomos y tendrás un espectacular joyero de 24 cajones (3x3x3 cm cada cajón; medidas totales 21 cm ancho x 24 cm alto x 4 cm fondo).",
+        variants: [
+            {
+                name: "Contenido del Calendario",
+                options: [
+                    { label: "Vacío para rellenar a tu gusto (40,00 €)", price: 40.00 },
+                    { label: "Con 24 Sorpresas (24 Charms K-Pop Demon Hunters) (45,00 € • Envío Gratis)", price: 45.00 }
+                ]
+            }
+        ]
+    },
+
+    // 7. EXPOSITOR MARIO KART MCDONALD'S (10 COCHES)
+    {
+        id: "exp_mariokart",
+        name: "Expositor Colección Completa Mario Kart McDonald's (10 Coches)",
+        price: 16.00,
+        oldPrice: 28.00,
+        category: "expositores",
+        featured: true,
+        badge: "Desde 16,00 €",
+        badgeType: "pink",
+        channelInfo: "Relieves de copas GP y armas de Mario Kart en laterales",
+        image: "https://i.etsystatic.com/48356593/r/il/ec6e60/6511660505/il_fullxfull.6511660505_tuwc.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/ec6e60/6511660505/il_fullxfull.6511660505_tuwc.jpg",
+            "https://i.etsystatic.com/48356593/r/il/19e629/6463558230/il_fullxfull.6463558230_66ga.jpg",
+            "https://i.etsystatic.com/48356593/r/il/4f3d4d/6511660877/il_fullxfull.6511660877_jzfu.jpg",
+            "https://i.etsystatic.com/48356593/r/il/ebf8a8/6415429872/il_fullxfull.6415429872_phrx.jpg",
+            "https://i.etsystatic.com/48356593/r/il/cb38c0/6415430382/il_fullxfull.6415430382_3thr.jpg",
+            "https://i.etsystatic.com/48356593/r/il/fc4b21/6463528739/il_fullxfull.6463528739_tg0l.jpg"
+        ],
+        desc: "Expositor de coches de Mario Kart para la colección completa de 10 karts de McDonald's. Decoraciones hendidas en laterales con los iconos de objetos/armas de Mario Kart y frontal superior con relieve de los GPs. Disponible en el nuevo modelo compacto de 2 baldas (16,00 €) o el modelo clásico de 4 baldas (28,00 €). Coches no incluidos.",
+        variants: [
+            {
+                name: "Modelo de Estantería",
+                options: [
+                    { label: "Modelo Compacto 2 Baldas (10 coches) (16,00 €)", price: 16.00 },
+                    { label: "Modelo Clásico 4 Baldas (Gran Formato) (28,00 €)", price: 28.00 }
+                ]
+            }
+        ]
+    },
+
+    // 8. EXPOSITOR MUÑECOS DE FRIENDS MCDONALD'S
+    {
+        id: "exp_friends",
+        name: "Expositor Muñecos de Friends McDonald's (Puerta de Mónica)",
+        price: 20.00,
+        oldPrice: 25.00,
+        category: "expositores",
+        featured: true,
+        badge: "Clásico 5★ Etsy",
+        badgeType: "teal",
+        channelInfo: "Morado original con el marco amarillo de la mirilla",
+        image: "https://i.etsystatic.com/48356593/r/il/919dcd/6379651938/il_fullxfull.6379651938_8vw3.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/919dcd/6379651938/il_fullxfull.6379651938_8vw3.jpg",
+            "https://i.etsystatic.com/48356593/r/il/0820a6/6376219416/il_fullxfull.6376219416_fmnm.jpg",
+            "https://i.etsystatic.com/48356593/r/il/5b2b56/6424301993/il_fullxfull.6424301993_6lum.jpg",
+            "https://i.etsystatic.com/48356593/r/il/b223d6/6424300061/il_fullxfull.6424300061_vxrn.jpg",
+            "https://i.etsystatic.com/48356593/r/il/575787/6424300065/il_fullxfull.6424300065_tfzd.jpg",
+            "https://i.etsystatic.com/48356593/r/il/7516cc/6424302727/il_fullxfull.6424302727_tosa.jpg"
+        ],
+        desc: "Expositor para las 6 figuras de Friends de McDonald's. Impreso en el icónico color morado de la puerta del apartamento de Mónica con el marco amarillo en relieve y el logo oficial de Friends hendido en el frente. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Edición",
+                options: [
+                    { label: "Morado Puerta de Mónica + Marco Amarillo (20,00 €)", price: 20.00 }
+                ]
+            }
+        ]
+    },
+
+    // 9. EXPOSITOR MINECRAFT MCDONALD'S
+    {
+        id: "exp_minecraft",
+        name: "Expositor Colección Minecraft McDonald's (6 Figuras)",
+        price: 15.00,
+        oldPrice: 20.00,
+        category: "expositores",
+        featured: true,
+        badge: "Precio Directo 15€",
+        badgeType: "pink",
+        channelInfo: "Logo M pixelado en amarillo sobre estructura roja",
+        image: "img/minecraft_1.jpg",
+        gallery: [
+            "img/minecraft_1.jpg",
+            "https://i.etsystatic.com/48356593/r/il/a973f8/6839758209/il_fullxfull.6839758209_ik8d.jpg",
+            "https://i.etsystatic.com/48356593/r/il/33b239/6791751514/il_fullxfull.6791751514_7o8w.jpg",
+            "https://i.etsystatic.com/48356593/r/il/3a6e3a/6791751540/il_fullxfull.6791751540_rpcc.jpg",
+            "https://i.etsystatic.com/48356593/r/il/4d11b6/6839758203/il_fullxfull.6839758203_ktvj.jpg"
+        ],
+        desc: "Expositor rojo con dos baldas amplias para la colección completa de 6 muñecos y cubos de McDonald's versión Minecraft. Incluye el arco de McDonald's en estética vóxel/píxel amarillo en relieve. Muñecos no incluidos.",
+        variants: [
+            {
+                name: "Acabado",
+                options: [
+                    { label: "Rojo McDonald's + Logo Pixel Amarillo (15,00 €)", price: 15.00 }
+                ]
+            }
+        ]
+    },
+
+    // 10. EXPOSITOR MIÉRCOLES (WEDNESDAY NEVERMORE)
+    {
+        id: "exp_miercoles",
+        name: "Expositor Miércoles (Wednesday Addams • Ataúd Nevermore)",
+        price: 18.00,
+        oldPrice: 22.00,
+        category: "expositores",
+        featured: true,
+        badge: "Diseño Gótico 3D",
+        badgeType: "teal",
+        channelInfo: "Con escudo Nevermore Academy en relieve bicolor",
+        image: "img/miercoles_1.jpg",
+        gallery: [
+            "img/miercoles_1.jpg"
+        ],
+        desc: "Expositor con silueta de ataúd en negro mate texturizado PEI y detalles en morado Nevermore. Incluye la tipografía 'WEDNESDAY' en el compartimento superior, el escudo 'Unitas Est Invicta 1791' de Nevermore Academy en el inferior y ranuras hexagonales a medida para las peanas de las figuras. Figuras no incluidas.",
+        variants: [
+            {
+                name: "Color",
+                options: [
+                    { label: "Negro Mate + Relieves Morado Nevermore (18,00 €)", price: 18.00 }
+                ]
+            }
+        ]
+    },
+
+    // 11. EXPOSITOR INDIVIDUAL TINY TAN MCDONALD'S
+    {
+        id: "exp_tinytan_ind",
+        name: "Expositor Individual Tiny Tan BTS McDonald's",
+        price: 6.00,
+        oldPrice: 8.00,
+        category: "kpop",
+        featured: false,
+        badge: "Personalizable 6€",
+        badgeType: "pink",
+        channelInfo: "Elige color y el nombre de tu bias de BTS en el frontal",
+        image: "https://i.etsystatic.com/48356593/r/il/318d57/7245887120/il_fullxfull.7245887120_hrx0.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/318d57/7245887120/il_fullxfull.7245887120_hrx0.jpg",
+            "https://i.etsystatic.com/48356593/r/il/c56b55/7293845331/il_fullxfull.7293845331_5r36.jpg",
+            "https://i.etsystatic.com/48356593/r/il/dc67df/7293847323/il_fullxfull.7293847323_f4ej.jpg",
+            "https://i.etsystatic.com/48356593/r/il/4f80c4/7245887896/il_fullxfull.7245887896_kp71.jpg",
+            "https://i.etsystatic.com/48356593/r/il/f949b4/7303914415/il_fullxfull.7303914415_yacv.jpg"
+        ],
+        desc: "Peana expositora individual para una figura de la colección Tiny Tan de McDonald's. Incluye logos de BTS y Tiny Tan y permite personalizar el frontal con el nombre de tu integrante favorito o 'BTS'. Disponible en morado y rojo.",
+        variants: [
+            {
+                name: "Color Principal",
+                options: [
+                    { label: "Morado Army" },
+                    { label: "Rojo McDonald's" }
+                ]
+            },
+            {
+                name: "Nombre en el Frontal",
+                options: [
+                    { label: "BTS" },
+                    { label: "RM" },
+                    { label: "JIN" },
+                    { label: "SUGA" },
+                    { label: "J-HOPE" },
+                    { label: "JIMIN" },
+                    { label: "V" },
+                    { label: "JUNG KOOK" },
+                    { label: "Ninguno (Liso)" }
+                ]
+            }
+        ]
+    },
+
+    // 12. EXPOSITOR SONNY ANGELS (HIPPERS Y CLÁSICOS)
+    {
+        id: "exp_sonny_angels",
+        name: "Expositor Sonny Angels (Modelos Hippers y Clásicos)",
+        price: 18.00,
+        oldPrice: 22.00,
+        category: "expositores",
+        featured: false,
+        badge: "Hippers & Normal",
+        badgeType: "teal",
+        channelInfo: "Dos arquitecturas según el tipo de Sonny Angel",
+        image: "https://i.etsystatic.com/48356593/r/il/efad7f/6562637742/il_fullxfull.6562637742_hheg.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/efad7f/6562637742/il_fullxfull.6562637742_hheg.jpg",
+            "https://i.etsystatic.com/48356593/r/il/31e312/6610756921/il_fullxfull.6610756921_onou.jpg",
+            "https://i.etsystatic.com/48356593/r/il/1a93b0/6610756925/il_fullxfull.6610756925_1g41.jpg",
+            "https://i.etsystatic.com/48356593/r/il/bd814b/6562637736/il_fullxfull.6562637736_l0oa.jpg",
+            "https://i.etsystatic.com/48356593/r/il/171ce9/6610756923/il_fullxfull.6610756923_4dyp.jpg"
+        ],
+        desc: "Expositor diseñado a medida para coleccionistas de Sonny Angels. Elige entre la versión especial con repisa para Sonny Angels Hippers o el soporte escalonado para Sonny Angels de pie, en tu color pastel favorito.",
+        variants: [
+            {
+                name: "Tipo de Sonny Angel",
+                options: [
+                    { label: "Modelo Hippers (para colgar/apoyar)" },
+                    { label: "Modelo Clásico (de pie)" }
+                ]
+            },
+            {
+                name: "Color Principal",
+                options: [
+                    { label: "Rosa Pastel" },
+                    { label: "Verde Menta" },
+                    { label: "Blanco Nube" }
+                ]
+            }
+        ]
+    },
+
+    // 13. LÁMPARA LITOFANÍA LAS MENINAS DE VELÁZQUEZ
+    {
+        id: "lampara_meninas",
+        name: "Lámpara Litofanía 'Las Meninas' de Velázquez (25x25 cm LED)",
+        price: 40.00,
+        oldPrice: 45.00,
+        category: "arte",
+        featured: false,
+        badge: "Arte & Luz 3D",
+        badgeType: "gold",
+        channelInfo: "Marco 25x25 cm con retroiluminación LED USB e interruptor",
+        image: "https://i.etsystatic.com/48356593/r/il/6a2743/6516118914/il_fullxfull.6516118914_4929.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/6a2743/6516118914/il_fullxfull.6516118914_4929.jpg",
+            "https://i.etsystatic.com/48356593/r/il/ad7f67/6516117182/il_fullxfull.6516117182_6gx8.jpg",
+            "https://i.etsystatic.com/48356593/r/il/428f91/6516118706/il_fullxfull.6516118706_e1qx.jpg",
+            "https://i.etsystatic.com/48356593/r/il/ad98b9/6516118730/il_fullxfull.6516118730_fxgk.jpg",
+            "https://i.etsystatic.com/48356593/r/il/37bd8a/6564244133/il_fullxfull.6564244133_h1np.jpg"
+        ],
+        desc: "Litofanía de alta resolución del cuadro 'Las Meninas' de Diego Velázquez. Al encender su iluminación LED interna, el grosor milimétrico del PLA proyecta la obra maestra con calidad fotográfica. Marco blanco de 25x25 cm con cable USB e interruptor.",
+        variants: [
+            {
+                name: "Color del Marco",
+                options: [
+                    { label: "Marco Blanco 25x25 cm + LED USB (40,00 €)", price: 40.00 }
+                ]
+            }
+        ]
+    },
+
+    // 14. RELOJ DE PARED TOY STORY (HABITACIÓN DE ANDY)
+    {
+        id: "reloj_toystory",
+        name: "Reloj de Pared Inspirado en Toy Story (Habitación de Andy)",
+        price: 18.00,
+        oldPrice: 20.00,
+        category: "arte",
+        featured: false,
+        badge: "Firma de Andy trasera",
+        badgeType: "teal",
+        channelInfo: "Manecillas inspiradas en Woody y Buzz Lightyear",
+        image: "https://i.etsystatic.com/48356593/r/il/e059bb/8264785536/il_fullxfull.8264785536_1nvg.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/e059bb/8264785536/il_fullxfull.8264785536_1nvg.jpg",
+            "https://i.etsystatic.com/48356593/r/il/9dbcd5/8312699101/il_fullxfull.8312699101_1zh8.jpg",
+            "https://i.etsystatic.com/48356593/r/il/9db59f/8312699261/il_fullxfull.8312699261_pgwq.jpg",
+            "https://i.etsystatic.com/48356593/r/il/04436e/8312698855/il_fullxfull.8312698855_dihn.jpg",
+            "https://i.etsystatic.com/48356593/r/il/af693e/8312699021/il_fullxfull.8312699021_3vmt.jpg"
+        ],
+        desc: "Reloj de pared funcional basado en Toy Story: esfera azul cielo con las nubes blancas de la habitación de Andy, números en relieve con la tipografía original, manecillas inspiradas en Buzz Lightyear y Woody, y el detalle secreto de la firma de 'ANDY' en la parte trasera.",
+        variants: [
+            {
+                name: "Modelo",
+                options: [
+                    { label: "Reloj Completo listo para colgar (18,00 €)", price: 18.00 }
+                ]
+            }
+        ]
+    },
+
+    // 15. MENINA PIXEL ART 3D
+    {
+        id: "menina_pixel",
+        name: "Cuadro Menina Pixelada 3D sobre Placa Gris",
+        price: 12.00,
+        oldPrice: 15.00,
+        category: "arte",
+        featured: false,
+        badge: "Pixel Art 3D",
+        badgeType: "pink",
+        channelInfo: "Reinterpretación retro-moderna de Velázquez",
+        image: "https://i.etsystatic.com/48356593/r/il/ff93d2/5851680165/il_fullxfull.5851680165_8zjz.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/ff93d2/5851680165/il_fullxfull.5851680165_8zjz.jpg",
+            "https://i.etsystatic.com/48356593/r/il/21ee3d/5851443547/il_fullxfull.5851443547_tf1d.jpg",
+            "https://i.etsystatic.com/48356593/r/il/ee2c5d/5851442735/il_fullxfull.5851442735_ii7w.jpg",
+            "https://i.etsystatic.com/48356593/r/il/347911/5851442737/il_fullxfull.5851442737_jtvq.jpg"
+        ],
+        desc: "Menina de Velázquez reinterpretada en Pixel Art tridimensional pieza a pieza sobre placa base gris arquitectónica. Ideal para escritorio o estantería.",
+        variants: []
+    },
+
+    // 16. BOTELLA PERSONALIZADA CORAZÓN DE MAESTRA / PROFESOR
+    {
+        id: "botella_maestra",
+        name: "Botella Cristal y Bambú Personalizada 'Corazón de Maestra/o'",
+        price: 14.00,
+        oldPrice: 15.00,
+        category: "personalizables",
+        featured: false,
+        badge: "Regalo Profes",
+        badgeType: "teal",
+        channelInfo: "500 ml de capacidad con tapón de bambú natural",
+        image: "https://i.etsystatic.com/48356593/r/il/911fcb/6078270937/il_fullxfull.6078270937_npea.jpg",
+        gallery: [
+            "https://i.etsystatic.com/48356593/r/il/911fcb/6078270937/il_fullxfull.6078270937_npea.jpg",
+            "https://i.etsystatic.com/48356593/r/il/15b39a/6030206114/il_fullxfull.6030206114_3ciw.jpg"
+        ],
+        desc: "Botella reutilizable de cristal de 500 ml con tapa de bambú y cordón. Personalizada con el nombre de la maestra, maestro, profesora o profesor. El detalle perfecto de fin de curso o agradecimiento.",
+        variants: [
+            {
+                name: "Dedicatoria",
+                options: [
+                    { label: "Maestra (Indica el nombre en notas de pedido)" },
+                    { label: "Maestro / Profesor (Indica el nombre en notas)" },
+                    { label: "Profesora (Indica el nombre en notas)" }
+                ]
+            }
+        ]
+    },
+
+    // 17. ROMBO DE METRO PERSONALIZABLE + COLECCIÓN PICHI STUDIO
+    {
+        id: "pichi_rombo",
+        name: "Rombo de Metro de Madrid Personalizable (Llavero / Pin)",
+        price: 6.00,
+        oldPrice: 7.50,
+        category: "personalizables",
+        featured: false,
+        badge: "Personalizador 3D",
+        badgeType: "pink",
+        channelInfo: "Escribe tu parada, barrio o nombre en vivo",
+        image: "img/pichi_pack_real.jpg",
+        gallery: [
+            "img/pichi_pack_real.jpg",
+            "img/pichi_gatos_real.jpg",
+            "img/pichi_clavel_real.jpg",
+            "img/pichi_studio.png"
+        ],
+        desc: "Diseña en tiempo real tu propio rombo del Metro de Madrid con hasta 11 letras (tu estación favorita, tu nombre o tu calle) y elige esquema de color (Clásico, Chulapo o Gato) y herraje.",
+        custom: true,
+        customizerType: "rombo",
+        variants: []
+    }
+];
+
+// Reseñas Verificadas Reales extraídas de c:\workspace\SIVISECRAFT\assets\etsy\reviews.json
+const VERIFIED_REVIEWS = [
+    {
+        reviewer: "Alexandra",
+        date: "24 Jul 2026",
+        rating: 5,
+        country: "🇬🇧 Internacional",
+        product: "Pack 2 Expositores Tiny Tan (Morado + Rojo)",
+        message: "I ordered two collection displays, one purple and one red. They look great, just as described and really good quality. I was also very pleasantly surprised to find 2 keychains with a handwritten message included in the package, which honestly made my day! Would definitely recommend this seller.",
+        order_id: 4114342051
+    },
+    {
+        reviewer: "Time for beads",
+        date: "09 Dic 2025",
+        rating: 5,
+        country: "🇪🇸 España",
+        product: "Expositor Colección 3D",
+        message: "Tal como se muestra en el anuncio. Buena calidad, encaja perfectamente. El vendedor me incluyó un regalo 🥰",
+        order_id: 3894431277
+    },
+    {
+        reviewer: "Petra",
+        date: "10 Mar 2026",
+        rating: 5,
+        country: "🇩🇪 Alemania",
+        product: "Expositor Muñecos Friends McDonald's",
+        message: "Die Kaufabwicklung war problemlos, in den Aufsteller passen die Friends Figuren super rein.",
+        order_id: 3910019102
+    },
+    {
+        reviewer: "Paolo",
+        date: "09 Feb 2026",
+        rating: 5,
+        country: "🇮🇹 Italia",
+        product: "Expositor Muñecos Friends McDonald's",
+        message: "Great display for the Friends McDonalds collectibles!",
+        order_id: 3933937672
+    },
+    {
+        reviewer: "Mizz",
+        date: "19 Nov 2025",
+        rating: 5,
+        country: "🌍 Internacional",
+        product: "Expositor Tiny Tan BTS",
+        message: "Very cute display for my Tinytans 💜 Great customer service too :)",
+        order_id: 3821219434
+    },
+    {
+        reviewer: "Lisa",
+        date: "23 Nov 2025",
+        rating: 5,
+        country: "🌍 Internacional",
+        product: "Expositor Colección",
+        message: "I love it! Looks exactly like on the pictures. Really beautiful to display your figures!",
+        order_id: 3820124500
+    },
+    {
+        reviewer: "TFBOYS",
+        date: "02 Mar 2026",
+        rating: 5,
+        country: "🌍 Internacional",
+        product: "Expositor + Llavero Regalo",
+        message: "The item is very good and I also liked the keychains as a gift.",
+        order_id: 3971266182
+    },
+    {
+        reviewer: "Vadim",
+        date: "27 Nov 2025",
+        rating: 5,
+        country: "🌍 Internacional",
+        product: "Expositor K-Pop BTS",
+        message: "Best thing to have for K-POP collection. Best item ever for K-POP fans!",
+        order_id: 3837410262
+    },
+    {
+        reviewer: "Erika",
+        date: "15 Oct 2025",
+        rating: 5,
+        country: "🇩🇪 Alemania",
+        product: "Expositor Tiny Tan Morado",
+        message: "Aaah💜💜💜 Es ist Wunderschön.. Ich bin sehr sehr Glücklich. DANKESCHÖN NOCHMAL ❤️❤️",
+        order_id: 3822211213
+    },
+    {
+        reviewer: "Nese",
+        date: "22 Dic 2025",
+        rating: 5,
+        country: "🇩🇪 Alemania",
+        product: "Expositor 3D",
+        message: "Toll verarbeitet und schnell geliefert.",
+        order_id: 3896854708
+    },
+    {
+        reviewer: "Heike",
+        date: "11 Dic 2025",
+        rating: 5,
+        country: "🇩🇪 Alemania",
+        product: "Expositor Colección",
+        message: "Tolles Produkt genau wie beschrieben 👍🏻",
+        order_id: 3878146675
+    },
+    {
+        reviewer: "patrickderijck",
+        date: "06 Feb 2026",
+        rating: 5,
+        country: "🇧🇪 Bélgica",
+        product: "Expositor 3D",
+        message: "Great item looks really great",
+        order_id: 3953260236
+    }
+];
+
+// ============================================================================
+// MOTOR DE CARRITO, ENVÍOS POR TRAMOS Y CHECKOUT DIRECTO (BIZUM + STRIPE)
+// ============================================================================
+const CART_STORAGE_KEY = "sivisecraft_official_cart_v1";
+const SHIPPING_STORAGE_KEY = "sivisecraft_shipping_tier_v1";
+
+function getCart() {
+    try {
+        const raw = localStorage.getItem(CART_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCart(cart) {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    updateCartUI();
+    window.dispatchEvent(new Event("storage"));
+}
+
+function getSelectedShippingTierId() {
+    const saved = localStorage.getItem(SHIPPING_STORAGE_KEY);
+    return (saved && SHIPPING_TIERS[saved]) ? saved : "inpost";
+}
+
+function setSelectedShippingTierId(tierId) {
+    if (SHIPPING_TIERS[tierId]) {
+        localStorage.setItem(SHIPPING_STORAGE_KEY, tierId);
+        updateCartUI();
+        if (document.getElementById("stripe-overlay")?.classList.contains("open")) {
+            renderCheckoutSummary();
+        }
+    }
+}
+
+function calculateShippingCost(subtotal, tierId) {
+    if (subtotal <= 0) return 0.00;
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
+    if (tier.freeOverThreshold && subtotal >= STORE_CONFIG.freeShippingThreshold) {
+        return 0.00;
+    }
+    return tier.baseCost;
+}
+
+function formatPrice(num) {
+    return num.toFixed(2).replace(".", ",") + " €";
+}
+
+function showToast(msg) {
+    let toast = document.getElementById("sc-toast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "sc-toast";
+        toast.className = "toast-notification";
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span style="color:#5eead4;font-weight:800;">✓</span> <span>${msg}</span>`;
+    toast.classList.add("show");
+    clearTimeout(window._scToastTimer);
+    window._scToastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2800);
+}
+
+// Añadir producto desde tarjeta o modal leyendo sus selectores de variante
+function addProductToCartFromDOM(productId, containerPrefix = "card") {
+    const product = PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    if (product.custom && product.customizerType === "rombo" && containerPrefix === "card") {
+        openRomboModal();
+        return;
+    }
+
+    let finalPrice = product.price;
+    const selectedOptions = [];
+
+    if (product.variants && product.variants.length > 0) {
+        product.variants.forEach((v, idx) => {
+            const selectEl = document.getElementById(`${containerPrefix}-var-${productId}-${idx}`);
+            if (selectEl) {
+                const optIndex = selectEl.selectedIndex;
+                const optObj = v.options[optIndex];
+                if (optObj) {
+                    selectedOptions.push(`${v.name}: ${optObj.label.replace(/\s*\([^)]*€[^)]*\)/g, "")}`);
+                    if (typeof optObj.price === "number") {
+                        finalPrice = optObj.price;
+                    }
+                }
+            } else if (v.options[0]) {
+                selectedOptions.push(`${v.name}: ${v.options[0].label.replace(/\s*\([^)]*€[^)]*\)/g, "")}`);
+                if (typeof v.options[0].price === "number") {
+                    finalPrice = v.options[0].price;
+                }
+            }
+        });
+    }
+
+    const metaString = selectedOptions.join(" • ");
+    const cartId = metaString ? `${product.id}__${metaString}` : product.id;
+
+    let cart = getCart();
+    const existing = cart.find(item => item.cartId === cartId);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            cartId: cartId,
+            name: product.name,
+            price: finalPrice,
+            image: product.image,
+            qty: 1,
+            meta: metaString
+        });
+    }
+
+    saveCart(cart);
+    showToast(`Añadido: ${product.name}`);
+    if (containerPrefix === "detail") {
+        closeDetailModal();
+        toggleCartDrawer(true);
+    }
+}
+
+// Actualizar precio en vivo cuando el usuario cambia una variante (ej. Pack 2 TinyTan o Dragon Ball Normal/LED)
+function onVariantChange(productId, containerPrefix = "card") {
+    const product = PRODUCTS.find(p => p.id === productId);
+    if (!product || !product.variants) return;
+
+    let newPrice = product.price;
+    product.variants.forEach((v, idx) => {
+        const selectEl = document.getElementById(`${containerPrefix}-var-${productId}-${idx}`);
+        if (selectEl) {
+            const optObj = v.options[selectEl.selectedIndex];
+            if (optObj && typeof optObj.price === "number") {
+                newPrice = optObj.price;
+            }
+        }
+    });
+
+    const priceEl = document.getElementById(`${containerPrefix}-price-${productId}`);
+    if (priceEl) {
+        priceEl.textContent = formatPrice(newPrice);
+    }
+}
+
+// Renderizar una tarjeta de producto
+function buildProductCardHTML(p) {
+    const badgeClass = p.badgeType === "teal" ? "teal" : (p.badgeType === "gold" ? "gold" : "");
+    const galleryCount = p.gallery ? p.gallery.length : 1;
+
+    let variantsHTML = "";
+    if (p.variants && p.variants.length > 0) {
+        variantsHTML = `<div class="product-variants-inline">`;
+        p.variants.forEach((v, idx) => {
+            variantsHTML += `
+                <div>
+                    <div class="variant-row-label">${v.name}</div>
+                    <select id="card-var-${p.id}-${idx}" class="variant-select-sm" onchange="onVariantChange('${p.id}', 'card')">
+                        ${v.options.map(o => `<option value="${o.label}">${o.label}</option>`).join("")}
+                    </select>
+                </div>
+            `;
+        });
+        variantsHTML += `</div>`;
+    }
+
+    return `
+        <article class="product-card" data-category="${p.category}" data-id="${p.id}">
+            <div class="product-media" onclick="openProductDetail('${p.id}')" title="Ver galería de fotos reales y detalles">
+                ${p.badge ? `<span class="product-badge ${badgeClass}">${p.badge}</span>` : ""}
+                <img src="${p.image}" alt="${p.name}" loading="lazy">
+                ${galleryCount > 1 ? `<span class="product-gallery-count">📷 ${galleryCount} fotos</span>` : ""}
+            </div>
+            <div class="product-details">
+                <div style="font-size:0.72rem; color:var(--accent-pichi); font-weight:700; margin-bottom:4px;">
+                    ${p.channelInfo || "Fabricado en nuestro taller de Madrid"}
+                </div>
+                <div class="product-header-row">
+                    <h3 onclick="openProductDetail('${p.id}')">${p.name}</h3>
+                    <div class="product-price-box">
+                        <span class="product-price" id="card-price-${p.id}">${formatPrice(p.price)}</span>
+                        ${p.oldPrice ? `<span class="product-old-price" title="Precio en plataformas con comisiones">${formatPrice(p.oldPrice)}</span>` : ""}
+                    </div>
+                </div>
+                <p class="product-desc">${p.desc}</p>
+                ${variantsHTML}
+                <div class="product-card-actions">
+                    <button class="btn-icon-only" onclick="openProductDetail('${p.id}')" title="Ver todas las fotos y descripción">
+                        🔍
+                    </button>
+                    ${p.custom
+                        ? `<button class="btn btn-teal" onclick="openRomboModal()">🎨 Personalizar 3D</button>`
+                        : `<button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'card')">Añadir al Carrito</button>`
+                    }
+                </div>
+            </div>
+        </article>
+    `;
+}
+
+// Modal de Galería y Detalle de Producto
+function openProductDetail(productId) {
+    const p = PRODUCTS.find(item => item.id === productId);
+    if (!p) return;
+
+    const modal = document.getElementById("product-detail-modal");
+    const content = document.getElementById("product-detail-body");
+    if (!modal || !content) return;
+
+    const photos = p.gallery && p.gallery.length > 0 ? p.gallery : [p.image];
+
+    let variantsHTML = "";
+    if (p.variants && p.variants.length > 0) {
+        variantsHTML = `<div style="margin: 16px 0; display:flex; flex-direction:column; gap:12px;">`;
+        p.variants.forEach((v, idx) => {
+            variantsHTML += `
+                <div>
+                    <label style="display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px;">${v.name}</label>
+                    <select id="detail-var-${p.id}-${idx}" onchange="onVariantChange('${p.id}', 'detail')">
+                        ${v.options.map(o => `<option value="${o.label}">${o.label}</option>`).join("")}
+                    </select>
+                </div>
+            `;
+        });
+        variantsHTML += `</div>`;
+    }
+
+    content.innerHTML = `
+        <div class="modal-header">
+            <h2>${p.name}</h2>
+            <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+        </div>
+        <div class="detail-modal-grid">
+            <div>
+                <div class="detail-main-media" id="detail-main-Stage">
+                    <img src="${photos[0]}" alt="${p.name}" id="detail-main-img">
+                </div>
+                <div class="detail-thumbs-row">
+                    ${photos.map((url, idx) => `
+                        <div class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailMedia('${url}', false, this)">
+                            <img src="${url}" alt="Miniatura ${idx + 1}">
+                        </div>
+                    `).join("")}
+                    ${p.video ? `
+                        <div class="detail-thumb" onclick="switchDetailMedia('${p.video}', true, this)" style="display:flex;align-items:center;justify-content:center;background:#1A1F26;color:#fff;font-size:0.7rem;font-weight:700;">
+                            ▶ Vídeo
+                        </div>
+                    ` : ""}
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+                <div style="font-size:0.78rem; color:var(--accent-pichi); font-weight:700; margin-bottom:6px;">
+                    ${p.channelInfo || "Impresión 3D de alta precisión en PLA biodegradable"}
+                </div>
+                <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px;">
+                    <span class="config-price" id="detail-price-${p.id}">${formatPrice(p.price)}</span>
+                    ${p.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-secondary); font-size:0.9rem;">En Etsy: ${formatPrice(p.oldPrice)}</span>` : ""}
+                </div>
+                <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:14px;">
+                    ${p.desc}
+                </p>
+                ${variantsHTML}
+                <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;">
+                    <div>📍 <strong>Recogida en Madrid:</strong> 0,00 €</div>
+                    <div>📦 <strong>Punto Pack InPost:</strong> 3,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
+                    <div>🚚 <strong>Domicilio 24/48h:</strong> 4,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
+                    <div>🎁 <strong>Detalle sorpresa incluido</strong> en cada paquete</div>
+                </div>
+                <div style="margin-top:auto;">
+                    ${p.custom
+                        ? `<button class="btn btn-teal" onclick="closeDetailModal(); openRomboModal();">🎨 Abrir Personalizador 3D</button>`
+                        : `<button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'detail')">🛒 Añadir al Carrito y Ver Cesta</button>`
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add("open");
+}
+
+function switchDetailMedia(url, isVideo, thumbEl) {
+    const stage = document.getElementById("detail-main-Stage");
+    if (!stage) return;
+    document.querySelectorAll(".detail-thumb").forEach(t => t.classList.remove("active"));
+    if (thumbEl) thumbEl.classList.add("active");
+
+    if (isVideo) {
+        stage.innerHTML = `<video src="${url}" controls autoplay muted loop playsinline></video>`;
+    } else {
+        stage.innerHTML = `<img src="${url}" alt="Vista detallada">`;
+    }
+}
+
+function closeDetailModal() {
+    const modal = document.getElementById("product-detail-modal");
+    if (modal) modal.classList.remove("open");
+}
+
+// Actualizar UI del Carrito Lateral + Tramos de Envío
+function updateCartUI() {
+    const cart = getCart();
+    const badge = document.getElementById("cart-badge");
+    const itemsContainer = document.getElementById("cart-items");
+    const tierSelect = document.getElementById("cart-shipping-tier-select");
+    const currentTierId = getSelectedShippingTierId();
+
+    if (tierSelect && tierSelect.value !== currentTierId) {
+        tierSelect.value = currentTierId;
+    }
+
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    if (badge) {
+        badge.textContent = totalQty;
+    }
+
+    if (!itemsContainer) return;
+
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const shipping = calculateShippingCost(subtotal, currentTierId);
+    const total = subtotal + shipping;
+
+    // Actualizar barra de envío gratis (>45€)
+    const freeBannerText = document.getElementById("free-shipping-text");
+    const freeBannerFill = document.getElementById("free-shipping-fill");
+    if (freeBannerText && freeBannerFill) {
+        if (currentTierId === "madrid") {
+            freeBannerText.innerHTML = `📍 <strong>Recogida en Madrid seleccionada:</strong> ¡Envío <strong>0,00 €</strong>!`;
+            freeBannerFill.style.width = "100%";
+        } else if (currentTierId === "eu") {
+            freeBannerText.innerHTML = `🌍 <strong>Envío Internacional UE Certificado:</strong> Tarifa plana 9,90 €`;
+            freeBannerFill.style.width = "100%";
+        } else if (subtotal >= STORE_CONFIG.freeShippingThreshold) {
+            freeBannerText.innerHTML = `🎉 ¡Enhorabuena! Tienes <strong>ENVÍO GRATIS</strong> en tu pedido (> 45,00 €)`;
+            freeBannerFill.style.width = "100%";
+        } else {
+            const missing = Math.max(0, STORE_CONFIG.freeShippingThreshold - subtotal);
+            const pct = Math.min(100, Math.round((subtotal / STORE_CONFIG.freeShippingThreshold) * 100));
+            freeBannerText.innerHTML = `🎁 Te faltan <strong>${formatPrice(missing)}</strong> para conseguir <strong>ENVÍO GRATIS</strong> (pedidos > 45€)`;
+            freeBannerFill.style.width = `${pct}%`;
+        }
+    }
+
+    if (cart.length === 0) {
+        itemsContainer.innerHTML = `
+            <div class="cart-empty-state">
+                <div style="font-size:2.2rem;">🛒</div>
+                <p>Tu cesta está vacía.<br><span style="font-size:0.8rem;">Añade expositores o piezas personalizadas del catálogo.</span></p>
+            </div>
+        `;
+        document.getElementById("cart-subtotal").textContent = "0,00 €";
+        document.getElementById("cart-shipping").textContent = "0,00 €";
+        document.getElementById("cart-total").textContent = "0,00 €";
+        return;
+    }
+
+    itemsContainer.innerHTML = "";
+    cart.forEach(item => {
+        const lineTotal = item.price * item.qty;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+            <div class="cart-item-img">
+                <img src="${item.image}" alt="${item.name}">
+            </div>
+            <div class="cart-item-details">
+                <div>
+                    <div class="cart-item-title">${item.name}</div>
+                    ${item.meta ? `<div class="cart-item-meta">${item.meta}</div>` : ""}
+                    <div class="cart-item-price">${formatPrice(lineTotal)}</div>
+                </div>
+                <div class="cart-item-actions">
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="changeCartQty('${item.cartId.replace(/'/g, "\\'")}', -1)">-</button>
+                        <span class="qty-val">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeCartQty('${item.cartId.replace(/'/g, "\\'")}', 1)">+</button>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeCartItem('${item.cartId.replace(/'/g, "\\'")}')">Eliminar</button>
+                </div>
+            </div>
+        `;
+        itemsContainer.appendChild(div);
+    });
+
+    document.getElementById("cart-subtotal").textContent = formatPrice(subtotal);
+    document.getElementById("cart-shipping").textContent = shipping === 0 ? "GRATIS (0,00 €)" : formatPrice(shipping);
+    document.getElementById("cart-total").textContent = formatPrice(total);
+}
+
+function changeCartQty(cartId, delta) {
+    let cart = getCart();
+    const target = cart.find(i => i.cartId === cartId);
+    if (target) {
+        target.qty += delta;
+        if (target.qty <= 0) {
+            cart = cart.filter(i => i.cartId !== cartId);
+        }
+        saveCart(cart);
+    }
+}
+
+function removeCartItem(cartId) {
+    let cart = getCart().filter(i => i.cartId !== cartId);
+    saveCart(cart);
+}
+
+function toggleCartDrawer(forceState) {
+    const overlay = document.getElementById("cart-drawer-overlay");
+    if (!overlay) return;
+    if (typeof forceState === "boolean") {
+        overlay.classList.toggle("open", forceState);
+    } else {
+        overlay.classList.toggle("open");
+    }
+    if (overlay.classList.contains("open")) {
+        updateCartUI();
+    }
+}
+
+// ============================================================================
+// PERSONALIZADOR 3D DE ROMBO DE METRO (PICHI STUDIO)
+// ============================================================================
+let currentRomboScheme = "clasico";
+const ROMBO_COLORS = {
+    clasico: { border: "#db2777", bar: "#0d9488", name: "Clásico Sivise" },
+    chulapo: { border: "#1A1F26", bar: "#db2777", name: "Chulapo" },
+    gato:    { border: "#0d9488", bar: "#db2777", name: "Gato Madrileño" }
+};
+
+function openRomboModal() {
+    const modal = document.getElementById("modal-rombo");
+    if (!modal) return;
+    updateRomboPreview();
+    modal.classList.add("open");
+}
+
+function closeRomboModal() {
+    const modal = document.getElementById("modal-rombo");
+    if (modal) modal.classList.remove("open");
+}
+
+function setRomboScheme(scheme) {
+    currentRomboScheme = scheme;
+    document.querySelectorAll("#modal-rombo .option-btn").forEach(btn => btn.classList.remove("active"));
+    const targetBtn = document.getElementById(`color-scheme-${scheme}`);
+    if (targetBtn) targetBtn.classList.add("active");
+    updateRomboPreview();
+}
+
+function updateRomboPreview() {
+    const inputEl = document.getElementById("rombo-input-text");
+    if (!inputEl) return;
+    const cleanText = (inputEl.value || "SOL").toUpperCase();
+    document.getElementById("svg-text").textContent = cleanText;
+
+    const colors = ROMBO_COLORS[currentRomboScheme] || ROMBO_COLORS.clasico;
+    document.getElementById("svg-border").setAttribute("stroke", colors.border);
+    document.getElementById("svg-bar").setAttribute("fill", colors.bar);
+
+    const select = document.getElementById("rombo-hardware");
+    const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
+    document.getElementById("rombo-price").textContent = formatPrice(6.00 + extra);
+}
+
+function addRomboToCart() {
+    const rawText = (document.getElementById("rombo-input-text").value || "SOL").toUpperCase();
+    const select = document.getElementById("rombo-hardware");
+    const hardwareLabel = select.options[select.selectedIndex].text.replace(/\s*\([^)]*\)/g, "");
+    const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
+    const finalPrice = 6.00 + extra;
+    const schemeName = ROMBO_COLORS[currentRomboScheme].name;
+
+    const meta = `Texto: "${rawText}" • Color: ${schemeName} • ${hardwareLabel}`;
+    const cartId = `pichi_rombo__${meta}`;
+
+    let cart = getCart();
+    const existing = cart.find(i => i.cartId === cartId);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({
+            id: "pichi_rombo",
+            cartId: cartId,
+            name: "Rombo de Metro Personalizable",
+            price: finalPrice,
+            image: "img/pichi_pack_real.jpg",
+            qty: 1,
+            meta: meta
+        });
+    }
+    saveCart(cart);
+    closeRomboModal();
+    toggleCartDrawer(true);
+}
+
+// ============================================================================
+// CHECKOUT DIRECTO (BIZUM 0% COMISIÓN + STRIPE TARJETA + DIRECCIÓN + WHATSAPP)
+// ============================================================================
+let activePaymentMethod = "bizum"; // 'bizum' (recomendado 0% comisión) o 'stripe'
+
+function openDirectCheckout() {
+    const cart = getCart();
+    if (cart.length === 0) {
+        showToast("Añade primero algún producto al carrito");
+        return;
+    }
+    toggleCartDrawer(false);
+    const overlay = document.getElementById("stripe-overlay");
+    if (!overlay) return;
+    overlay.classList.add("open");
+    renderCheckoutSummary();
+    selectPaymentMethod(activePaymentMethod);
+}
+
+function closeDirectCheckout(e) {
+    if (e) e.preventDefault();
+    const overlay = document.getElementById("stripe-overlay");
+    if (overlay) overlay.classList.remove("open");
+}
+
+function selectPaymentMethod(method) {
+    activePaymentMethod = method;
+    const tabBizum = document.getElementById("pay-tab-bizum");
+    const tabStripe = document.getElementById("pay-tab-stripe");
+    const boxBizum = document.getElementById("pay-box-bizum");
+    const boxStripe = document.getElementById("pay-box-stripe");
+    const submitBtn = document.getElementById("checkout-submit-btn");
+
+    const cart = getCart();
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const shipping = calculateShippingCost(subtotal, getSelectedShippingTierId());
+    const total = subtotal + shipping;
+
+    if (method === "bizum") {
+        tabBizum?.classList.add("active");
+        tabStripe?.classList.remove("active");
+        if (boxBizum) boxBizum.style.display = "block";
+        if (boxStripe) boxStripe.style.display = "none";
+        if (submitBtn) submitBtn.textContent = `Confirmar Pedido con Bizum • ${formatPrice(total)}`;
+    } else {
+        tabStripe?.classList.add("active");
+        tabBizum?.classList.remove("active");
+        if (boxStripe) boxStripe.style.display = "block";
+        if (boxBizum) boxBizum.style.display = "none";
+        if (submitBtn) submitBtn.textContent = `Pagar con Tarjeta (Stripe) • ${formatPrice(total)}`;
+    }
+}
+
+function renderCheckoutSummary() {
+    const cart = getCart();
+    const tierId = getSelectedShippingTierId();
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const shipping = calculateShippingCost(subtotal, tierId);
+    const total = subtotal + shipping;
+
+    const checkoutShippingSelect = document.getElementById("checkout-shipping-tier");
+    if (checkoutShippingSelect && checkoutShippingSelect.value !== tierId) {
+        checkoutShippingSelect.value = tierId;
+    }
+
+    const etaHint = document.getElementById("checkout-shipping-eta");
+    if (etaHint) etaHint.textContent = tier.eta;
+
+    const addrGroup = document.getElementById("checkout-address-group");
+    const addrInput = document.getElementById("chk-address");
+    if (addrGroup && addrInput) {
+        addrInput.placeholder = tier.addressHint;
+        if (!tier.needsAddress) {
+            addrInput.required = false;
+            addrInput.value = "Recogida en mano en Madrid (0,00 €)";
+        } else {
+            addrInput.required = true;
+            if (addrInput.value === "Recogida en mano en Madrid (0,00 €)") {
+                addrInput.value = "";
+            }
+        }
+    }
+
+    document.getElementById("stripe-total-amount").textContent = formatPrice(total);
+    document.getElementById("stripe-subtotal-cost").textContent = formatPrice(subtotal);
+    document.getElementById("stripe-shipping-cost").textContent = shipping === 0 ? "GRATIS (0,00 €)" : formatPrice(shipping);
+
+    const listContainer = document.getElementById("stripe-items-list");
+    if (listContainer) {
+        listContainer.innerHTML = "";
+        cart.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "stripe-list-item";
+            div.innerHTML = `
+                <div class="stripe-list-item-img">
+                    <img src="${item.image}" alt="${item.name}">
+                </div>
+                <div>
+                    <div class="stripe-list-item-title">${item.name}</div>
+                    <div class="stripe-list-item-qty">Cant: ${item.qty} ${item.meta ? `• ${item.meta}` : ""}</div>
+                </div>
+                <div class="stripe-list-item-price">${formatPrice(item.price * item.qty)}</div>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    selectPaymentMethod(activePaymentMethod);
+}
+
+let lastCompletedOrder = null;
+
+function submitDirectOrder(e) {
+    e.preventDefault();
+    const cart = getCart();
+    if (cart.length === 0) return;
+
+    const name = document.getElementById("chk-name").value.trim();
+    const email = document.getElementById("chk-email").value.trim();
+    const phone = document.getElementById("chk-phone").value.trim();
+    const address = document.getElementById("chk-address").value.trim();
+    const zip = document.getElementById("chk-zip").value.trim();
+    const city = document.getElementById("chk-city").value.trim();
+    const notes = document.getElementById("chk-notes").value.trim();
+
+    const tierId = getSelectedShippingTierId();
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const shipping = calculateShippingCost(subtotal, tierId);
+    const total = subtotal + shipping;
+    const orderId = "SC-" + Math.floor(10000 + Math.random() * 90000);
+
+    lastCompletedOrder = {
+        orderId,
+        date: new Date().toLocaleDateString("es-ES"),
+        method: activePaymentMethod === "bizum" ? "Bizum (0% comisión)" : "Tarjeta / Stripe Checkout",
+        name,
+        email,
+        phone,
+        address: `${address}, ${zip} ${city}`,
+        shippingLabel: tier.label,
+        subtotal,
+        shipping,
+        total,
+        notes,
+        items: [...cart]
+    };
+
+    const proc = document.getElementById("stripe-processing");
+    proc.classList.add("active");
+
+    setTimeout(() => {
+        proc.classList.remove("active");
+        const succ = document.getElementById("stripe-success");
+        document.getElementById("receipt-order-id").textContent = lastCompletedOrder.orderId;
+        document.getElementById("receipt-name").textContent = `${lastCompletedOrder.name} (${lastCompletedOrder.phone})`;
+        document.getElementById("receipt-shipping").textContent = `${tier.label}`;
+        document.getElementById("receipt-address").textContent = lastCompletedOrder.address;
+        document.getElementById("receipt-method").textContent = lastCompletedOrder.method;
+        document.getElementById("receipt-amount").textContent = formatPrice(lastCompletedOrder.total);
+        succ.classList.add("active");
+    }, 1400);
+}
+
+function sendOrderViaWhatsApp() {
+    if (!lastCompletedOrder) return;
+    const o = lastCompletedOrder;
+    const itemsLines = o.items.map(i => `• ${i.qty}x ${i.name} ${i.meta ? `(${i.meta})` : ""} — ${formatPrice(i.price * i.qty)}`).join("\n");
+    const text = `¡Hola Víctor! 👋 Acabo de hacer un pedido en www.sivisecraft.es:\n\n` +
+        `🧾 *Pedido:* ${o.orderId}\n` +
+        `💳 *Pago:* ${o.method}\n` +
+        `🚚 *Envío:* ${o.shippingLabel} (${o.shipping === 0 ? "GRATIS" : formatPrice(o.shipping)})\n` +
+        `💰 *Total:* ${formatPrice(o.total)}\n\n` +
+        `📦 *Productos:*\n${itemsLines}\n\n` +
+        `📍 *Datos de entrega:*\n${o.name}\n${o.address}\nTel: ${o.phone} | Email: ${o.email}` +
+        (o.notes ? `\n📝 *Notas:* ${o.notes}` : "");
+
+    const waUrl = `https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, "_blank");
+}
+
+function exitCheckoutSuccess() {
+    saveCart([]);
+    document.getElementById("stripe-success")?.classList.remove("active");
+    document.getElementById("stripe-overlay")?.classList.remove("open");
+}
+
+// ============================================================================
+// INYECTAR COMPONENTES COMPARTIDOS (DRAWER CARRITO, MODALES Y CHECKOUT)
+// ============================================================================
+function injectSharedStoreModals() {
+    const wrapper = document.getElementById("shared-modals-mount");
+    if (!wrapper) return;
+
+    const shippingOptionsHTML = Object.values(SHIPPING_TIERS).map(t => {
+        const priceTag = t.baseCost === 0 ? "0,00 €" : `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeOverThreshold ? " • Gratis >45€" : ""}`;
+        return `<option value="${t.id}">${t.label.replace(/\s*\([^)]*€[^)]*\)/g, "")} (${priceTag})</option>`;
+    }).join("");
+
+    wrapper.innerHTML = `
+        <!-- Modal Vista Detallada de Producto -->
+        <div id="product-detail-modal" class="modal-overlay" onclick="closeDetailModal()">
+            <div class="modal-container" onclick="event.stopPropagation()" id="product-detail-body"></div>
+        </div>
+
+        <!-- Modal Personalizador 3D Rombo de Metro -->
+        <div id="modal-rombo" class="modal-overlay" onclick="closeRomboModal()">
+            <div class="modal-container" onclick="event.stopPropagation()" style="max-width:620px;">
+                <div class="modal-header">
+                    <h2>Personalizar Rombo de Metro 3D</h2>
+                    <button class="close-btn" onclick="closeRomboModal()">&times;</button>
+                </div>
+                <div class="config-grid">
+                    <div class="config-preview-box">
+                        <svg id="rombo-svg-preview" viewBox="0 0 400 350" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-height: 190px;">
+                            <polygon points="200,35 365,175 200,315 35,175" fill="#ffffff" />
+                            <polygon id="svg-border" points="200,35 365,175 200,315 35,175" stroke="#db2777" stroke-width="22" stroke-linejoin="round" fill="none" />
+                            <rect id="svg-bar" x="25" y="142" width="350" height="66" fill="#0d9488" rx="4" />
+                            <text id="svg-text" x="200" y="188" font-family="'Outfit', sans-serif" font-weight="700" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="1">SOL</text>
+                            <text x="200" y="265" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#8e8e9c" text-anchor="middle" letter-spacing="4">MADRID</text>
+                            <circle cx="200" cy="22" r="8" fill="#FAF8F5" stroke="rgba(0,0,0,0.1)" stroke-width="2" />
+                            <circle cx="200" cy="22" r="3" fill="#1A1F26" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="rombo-input-text">Texto Central (Máx. 11 Letras)</label>
+                            <input type="text" id="rombo-input-text" class="text-input" value="SOL" maxlength="11" oninput="updateRomboPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Esquema de Color PLA</label>
+                            <div class="options-selector-row">
+                                <button type="button" id="color-scheme-clasico" class="option-btn active" onclick="setRomboScheme('clasico')">Clásico</button>
+                                <button type="button" id="color-scheme-chulapo" class="option-btn" onclick="setRomboScheme('chulapo')">Chulapo</button>
+                                <button type="button" id="color-scheme-gato" class="option-btn" onclick="setRomboScheme('gato')">Gato</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rombo-hardware">Herraje</label>
+                            <select id="rombo-hardware" onchange="updateRomboPreview()">
+                                <option value="llavero" data-extra="0.00">Llavero de Acero (+0,00 €)</option>
+                                <option value="cordon" data-extra="0.50">Cordón para Móvil (+0,50 €)</option>
+                                <option value="broche" data-extra="0.20">Pin / Broche de Solapa (+0,20 €)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="config-buy-box">
+                    <div>
+                        <span class="config-price-label">Precio Final:</span>
+                        <div id="rombo-price" class="config-price">6,00 €</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addRomboToCart()" style="width: auto;">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carrito Lateral Interactivo (Cart Drawer) -->
+        <div id="cart-drawer-overlay" class="cart-drawer-overlay" onclick="toggleCartDrawer(false)">
+            <div class="cart-drawer" onclick="event.stopPropagation()">
+                <div class="cart-header">
+                    <h2>Tu Cesta de Pedidos</h2>
+                    <button class="close-btn" onclick="toggleCartDrawer(false)">&times;</button>
+                </div>
+                <div class="free-shipping-banner">
+                    <div id="free-shipping-text">🎁 Envío GRATIS en pedidos de +45,00 € (Península)</div>
+                    <div class="free-shipping-progress-bg">
+                        <div id="free-shipping-fill" class="free-shipping-progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div id="cart-items" class="cart-items"></div>
+                <div class="cart-footer">
+                    <div class="shipping-tier-box">
+                        <label for="cart-shipping-tier-select">Método de Entrega / Tramo de Envío</label>
+                        <select id="cart-shipping-tier-select" class="shipping-tier-select" onchange="setSelectedShippingTierId(this.value)">
+                            ${shippingOptionsHTML}
+                        </select>
+                    </div>
+                    <div class="cart-totals-row">
+                        <span>Subtotal productos</span>
+                        <span id="cart-subtotal" style="font-weight: 700;">0,00 €</span>
+                    </div>
+                    <div class="cart-totals-row">
+                        <span>Gastos de envío</span>
+                        <span id="cart-shipping" style="font-weight: 700; color: var(--accent-pichi);">0,00 €</span>
+                    </div>
+                    <div class="cart-totals-row total">
+                        <span>Total a Pagar</span>
+                        <span id="cart-total">0,00 €</span>
+                    </div>
+                    <button onclick="openDirectCheckout()" class="btn btn-primary" style="margin-top: 12px; font-size:0.95rem; padding:14px;">
+                        Tramitar Pedido (Bizum / Tarjeta) &rarr;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Checkout Directo (Bizum 0% Comisión + Stripe Checkout) -->
+        <div id="stripe-overlay" class="stripe-overlay">
+            <div class="stripe-container">
+                <div class="stripe-summary-panel">
+                    <a href="#" class="stripe-back-btn" onclick="closeDirectCheckout(event)">
+                        &larr; Volver a la tienda SiviseCraft
+                    </a>
+                    <div class="stripe-merchant">
+                        <img src="img/logo.svg" alt="SiviseCraft" style="height:28px; width:auto;">
+                        <span>SiviseCraft Oficial</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 16px;">Importe total del pedido</div>
+                    <div id="stripe-total-amount" class="stripe-total-amount">0,00 €</div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="checkout-shipping-tier">Tramo de Envío Seleccionado</label>
+                        <select id="checkout-shipping-tier" class="shipping-tier-select" onchange="setSelectedShippingTierId(this.value)">
+                            ${shippingOptionsHTML}
+                        </select>
+                        <div id="checkout-shipping-eta" style="font-size:0.75rem; color:var(--accent-pichi); margin-top:4px; font-weight:600;"></div>
+                    </div>
+
+                    <div id="stripe-items-list" style="margin-top: 16px; max-height: 260px; overflow-y:auto;"></div>
+
+                    <div class="stripe-fee-row" style="margin-top: 16px;">
+                        <span>Subtotal</span>
+                        <span id="stripe-subtotal-cost" style="font-weight:600;">0,00 €</span>
+                    </div>
+                    <div class="stripe-fee-row">
+                        <span>Gastos de Envío</span>
+                        <span id="stripe-shipping-cost" style="font-weight:700; color:var(--accent-pichi);">0,00 €</span>
+                    </div>
+                    <div style="margin-top:20px; padding:12px; background:#fff; border:1px solid var(--border); border-radius:var(--radius-md); font-size:0.78rem; color:var(--text-secondary);">
+                        🎁 <strong>Promesa Taller SiviseCraft:</strong> Todos los pedidos se embalan a mano en Madrid e incluyen un llavero impreso en 3D de regalo.
+                    </div>
+                </div>
+
+                <div class="stripe-payment-panel" style="position: relative;">
+                    <!-- Procesando -->
+                    <div id="stripe-processing" class="processing-overlay">
+                        <div class="processing-spinner"></div>
+                        <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Registrando tu Pedido en el Taller...</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Generando orden de fabricación y recibo oficial</p>
+                    </div>
+
+                    <!-- Confirmación de Pedido -->
+                    <div id="stripe-success" class="success-overlay">
+                        <div class="success-icon-wrapper">&check;</div>
+                        <h2 style="font-family: var(--font-title); font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">¡Pedido Registrado!</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Hemos generado tu orden de taller. Puedes enviarnos la confirmación en 1 clic por WhatsApp para agilizar el envío.</p>
+
+                        <div class="order-receipt">
+                            <div class="receipt-row">
+                                <span>Nº de Pedido</span>
+                                <span id="receipt-order-id">SC-00000</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Cliente</span>
+                                <span id="receipt-name">-</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Modalidad de Entrega</span>
+                                <span id="receipt-shipping">-</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Dirección / Destino</span>
+                                <span id="receipt-address">-</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Método de Pago</span>
+                                <span id="receipt-method">-</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Total del Pedido</span>
+                                <span id="receipt-amount" style="color: var(--accent-pichi); font-weight: 800;">0,00 €</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+                            <button type="button" class="btn btn-teal" onclick="sendOrderViaWhatsApp()">
+                                💬 Enviar Confirmación por WhatsApp a Víctor
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="exitCheckoutSuccess()">
+                                Volver a la Tienda
+                            </button>
+                        </div>
+                    </div>
+
+                    <h3 style="font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 6px;">1. Elige tu Método de Pago</h3>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">Sin comisiones ocultas de intermediarios.</p>
+
+                    <div class="stripe-tabs">
+                        <button type="button" id="pay-tab-bizum" class="payment-tab-btn active" onclick="selectPaymentMethod('bizum')">
+                            <span>📱 Pagar con Bizum</span>
+                            <span class="sub">★ Recomendado • 0% Comisiones</span>
+                        </button>
+                        <button type="button" id="pay-tab-stripe" class="payment-tab-btn" onclick="selectPaymentMethod('stripe')">
+                            <span>💳 Tarjeta / Apple Pay</span>
+                            <span class="sub">Pasarela Segura Stripe</span>
+                        </button>
+                    </div>
+
+                    <form id="checkout-form" onsubmit="submitDirectOrder(event)">
+                        <h3 style="font-family: var(--font-heading); font-size: 1.05rem; margin-bottom: 10px;">2. Datos de Envío y Contacto</h3>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                            <input type="text" id="chk-name" required class="stripe-input" placeholder="Nombre y Apellidos *">
+                            <input type="tel" id="chk-phone" required class="stripe-input" placeholder="Teléfono móvil (Bizum / Avisos) *">
+                        </div>
+                        <input type="email" id="chk-email" required class="stripe-input" placeholder="Correo electrónico para seguimiento *">
+
+                        <div id="checkout-address-group">
+                            <input type="text" id="chk-address" required class="stripe-input" placeholder="Dirección completa o Punto Pack InPost *">
+                            <div style="display:grid; grid-template-columns: 0.4fr 0.6fr; gap:10px;">
+                                <input type="text" id="chk-zip" required class="stripe-input" placeholder="C. Postal *">
+                                <input type="text" id="chk-city" required class="stripe-input" placeholder="Ciudad / Provincia *">
+                            </div>
+                        </div>
+
+                        <input type="text" id="chk-notes" class="stripe-input" placeholder="Notas opcionales (ej. nombre para botella, colores pack, horario...)">
+
+                        <!-- Caja Bizum -->
+                        <div id="pay-box-bizum" class="bizum-instructions-card">
+                            <h4>📱 Pago Directo por Bizum (Instantáneo y 0% Comisiones)</h4>
+                            <p style="color:var(--text-secondary); line-height:1.45;">
+                                Al pulsar en confirmar se generará tu código de pedido <strong>#SC</strong> para que envíes el Bizum con ese concepto y nos avises en 1 clic por WhatsApp. ¡Empezamos a imprimir tu pieza en el acto!
+                            </p>
+                        </div>
+
+                        <!-- Caja Stripe Tarjeta -->
+                        <div id="pay-box-stripe" style="display:none; margin-bottom:12px;">
+                            <label style="font-size:0.74rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); display:block; margin-bottom:6px;">Datos de Tarjeta (Stripe 256-bit SSL)</label>
+                            <div style="border:1px solid var(--border); background:var(--bg-primary); border-radius:var(--radius-md); padding:6px 10px;">
+                                <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 2px; background:transparent;" placeholder="Número de tarjeta (4242 •••• •••• ••••)">
+                                <div style="display:flex; border-top:1px dashed var(--border); padding-top:4px;">
+                                    <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 2px; background:transparent; width:50%;" placeholder="MM / AA">
+                                    <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 8px; background:transparent; width:50%; border-left:1px dashed var(--border);" placeholder="CVC">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="checkout-submit-btn" class="stripe-payment-btn">
+                            Confirmar Pedido
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Renderizar tarjetas de reseñas verificadas
+function renderVerifiedReviews(containerId, limit = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const list = limit ? VERIFIED_REVIEWS.slice(0, limit) : VERIFIED_REVIEWS;
+
+    container.innerHTML = list.map(r => `
+        <div class="review-card">
+            <div>
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">${r.reviewer.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <div class="reviewer-name">${r.reviewer}</div>
+                            <div class="review-date">${r.date} • ${r.country}</div>
+                        </div>
+                    </div>
+                    <div class="reviews-stars">${"★".repeat(r.rating)}</div>
+                </div>
+                <p class="review-message">"${r.message}"</p>
+            </div>
+            <div class="review-verified">
+                <span>✓ Compra verificada (#${r.order_id})</span>
+                <span style="margin-left:auto; color:var(--text-secondary); font-weight:600;">${r.product}</span>
+            </div>
+        </div>
+    `).join("");
+}
