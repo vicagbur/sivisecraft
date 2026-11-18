@@ -34,6 +34,9 @@
                 </ul>
             </nav>
             <div class="nav-actions">
+                <button class="cart-icon-btn" onclick="openTrackingModal()" style="background:var(--bg-primary);" title="Ver estado de mi pedido">
+                    <span>📦 Seguimiento</span>
+                </button>
                 <button class="cart-icon-btn" onclick="toggleCartDrawer()" aria-label="Abrir Carrito">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
@@ -309,6 +312,7 @@
             filterHomeProducts("all");
             renderVerifiedReviews("home-reviews-grid", 12);
             updateCartUI();
+            checkStripeReturnUrl();
             window.addEventListener("storage", updateCartUI);
         });
     </script>

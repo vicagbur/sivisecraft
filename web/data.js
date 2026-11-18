@@ -716,6 +716,22 @@ const VERIFIED_REVIEWS = [
 // ============================================================================
 const CART_STORAGE_KEY = "sivisecraft_official_cart_v1";
 const SHIPPING_STORAGE_KEY = "sivisecraft_shipping_tier_v1";
+const ORDERS_STORAGE_KEY = "sivisecraft_my_orders_v1";
+
+function getSavedOrders() {
+    try {
+        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCompletedOrder(orderObj) {
+    const list = getSavedOrders().filter(o => o.orderId !== orderObj.orderId);
+    list.unshift(orderObj);
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(list.slice(0, 20)));
+}
 
 function getCart() {
     try {
@@ -1322,7 +1338,7 @@ function renderCheckoutSummary() {
 
 let lastCompletedOrder = null;
 
-function submitDirectOrder(e) {
+async function submitDirectOrder(e) {
     e.preventDefault();
     const cart = getCart();
     if (cart.length === 0) return;
@@ -1345,33 +1361,175 @@ function submitDirectOrder(e) {
     lastCompletedOrder = {
         orderId,
         date: new Date().toLocaleDateString("es-ES"),
-        method: activePaymentMethod === "bizum" ? "Bizum (0% comisión)" : "Tarjeta / Stripe Checkout",
+        method: activePaymentMethod === "bizum" ? "Bizum (0% comisión)" : "Tarjeta / Apple Pay (Stripe Checkout)",
         name,
         email,
         phone,
         address: `${address}, ${zip} ${city}`,
+        shippingId: tierId,
         shippingLabel: tier.label,
         subtotal,
         shipping,
         total,
         notes,
+        status: "En preparación en el Taller 3D (Madrid)",
         items: [...cart]
     };
 
+    // Guardamos siempre el pedido en "Mis Pedidos / Seguimiento" del cliente
+    saveCompletedOrder(lastCompletedOrder);
+
     const proc = document.getElementById("stripe-processing");
+    const procTitle = document.getElementById("stripe-processing-title");
+    const procSub = document.getElementById("stripe-processing-sub");
     proc.classList.add("active");
+
+    // Si eligió Stripe (Opción B), intentamos crear sesión real en /api/checkout (Cloudflare Pages Function)
+    if (activePaymentMethod === "stripe" && window.location.protocol.startsWith("http")) {
+        if (procTitle) procTitle.textContent = "Conectando con la Pasarela Oficial de Stripe...";
+        if (procSub) procSub.textContent = "Enviando tu cesta y dirección cifradas (256-bit SSL)";
+
+        try {
+            const resp = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderId,
+                    customer: { name, email, phone, address, zip, city, notes },
+                    shippingTierLabel: tier.label,
+                    shippingCost: shipping,
+                    items: cart,
+                    originUrl: window.location.origin
+                })
+            });
+
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data && data.url) {
+                    saveCart([]);
+                    window.location.href = data.url;
+                    return;
+                }
+            }
+        } catch (err) {
+            // En entorno local sin Worker activo continúa al simulador local
+        }
+    }
+
+    if (procTitle) procTitle.textContent = "Registrando tu Pedido en el Taller...";
+    if (procSub) procSub.textContent = "Generando ficha de seguimiento #" + orderId;
 
     setTimeout(() => {
         proc.classList.remove("active");
-        const succ = document.getElementById("stripe-success");
-        document.getElementById("receipt-order-id").textContent = lastCompletedOrder.orderId;
-        document.getElementById("receipt-name").textContent = `${lastCompletedOrder.name} (${lastCompletedOrder.phone})`;
-        document.getElementById("receipt-shipping").textContent = `${tier.label}`;
-        document.getElementById("receipt-address").textContent = lastCompletedOrder.address;
-        document.getElementById("receipt-method").textContent = lastCompletedOrder.method;
-        document.getElementById("receipt-amount").textContent = formatPrice(lastCompletedOrder.total);
-        succ.classList.add("active");
-    }, 1400);
+        showOrderSuccessModal(lastCompletedOrder);
+    }, 1200);
+}
+
+function showOrderSuccessModal(orderObj) {
+    lastCompletedOrder = orderObj;
+    const overlay = document.getElementById("stripe-overlay");
+    if (overlay) overlay.classList.add("open");
+    const succ = document.getElementById("stripe-success");
+    if (!succ) return;
+    document.getElementById("receipt-order-id").textContent = orderObj.orderId;
+    document.getElementById("receipt-name").textContent = `${orderObj.name} (${orderObj.phone})`;
+    document.getElementById("receipt-shipping").textContent = `${orderObj.shippingLabel}`;
+    document.getElementById("receipt-address").textContent = orderObj.address;
+    document.getElementById("receipt-method").textContent = orderObj.method;
+    document.getElementById("receipt-amount").textContent = formatPrice(orderObj.total);
+    succ.classList.add("active");
+}
+
+function openTrackingModal() {
+    const modal = document.getElementById("tracking-modal");
+    if (!modal) return;
+    renderTrackingOrders();
+    modal.classList.add("open");
+}
+
+function closeTrackingModal() {
+    const modal = document.getElementById("tracking-modal");
+    if (modal) modal.classList.remove("open");
+}
+
+function renderTrackingOrders(searchCode = "") {
+    const container = document.getElementById("tracking-orders-list");
+    if (!container) return;
+
+    const orders = getSavedOrders();
+    const cleanSearch = searchCode.trim().toUpperCase();
+    const filtered = cleanSearch
+        ? orders.filter(o => o.orderId.toUpperCase().includes(cleanSearch))
+        : orders;
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px; text-align:center; color:var(--text-secondary); font-size:0.88rem;">
+                ${cleanSearch
+                    ? `No hemos encontrado el pedido <strong>${cleanSearch}</strong> en este navegador. Pulsa debajo para consultarlo directamente con Víctor por WhatsApp indicando tu código o nombre.`
+                    : `Aún no tienes pedidos guardados en este dispositivo. Cuando realices un pedido, aquí verás tu recibo, dirección y estado de fabricación/envío.`
+                }
+                <div style="margin-top:14px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                    <a href="https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encodeURIComponent('¡Hola Víctor! Quería consultar el estado de mi pedido ' + (cleanSearch || 'en SiviseCraft'))}" target="_blank" class="btn btn-teal" style="width:auto; padding:9px 16px; font-size:0.8rem;">
+                        💬 Consultar por WhatsApp
+                    </a>
+                    <a href="https://www.inpost.es/seguimiento-de-envio/" target="_blank" rel="noopener" class="btn btn-secondary" style="width:auto; padding:9px 16px; font-size:0.8rem;">
+                        📦 Localizador InPost
+                    </a>
+                    <a href="https://www.correos.es/es/es/herramientas/localizador/envios" target="_blank" rel="noopener" class="btn btn-secondary" style="width:auto; padding:9px 16px; font-size:0.8rem;">
+                        🚚 Localizador Correos
+                    </a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map(o => `
+        <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px dashed var(--border); padding-bottom:10px; margin-bottom:12px;">
+                <div>
+                    <span style="font-family:var(--font-mono); font-weight:800; font-size:1rem; color:var(--accent-stripe);">${o.orderId}</span>
+                    <span style="font-size:0.78rem; color:var(--text-secondary); margin-left:8px;">📅 ${o.date}</span>
+                </div>
+                <span style="background:rgba(13,148,136,0.1); color:var(--accent-pichi); font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:20px;">
+                    🖨️ ${o.status || "Recibido en Taller 3D"}
+                </span>
+            </div>
+
+            <!-- Barra de progreso de 3 etapas del pedido -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; font-size:0.74rem; text-align:center;">
+                <div style="background:#fff; border:1px solid var(--accent-pichi); color:var(--accent-pichi); padding:6px; border-radius:var(--radius-sm); font-weight:700;">
+                    1. ✓ Orden Recibida
+                </div>
+                <div style="background:#fff; border:1px solid var(--accent-pichi); color:var(--text-primary); padding:6px; border-radius:var(--radius-sm); font-weight:700;">
+                    2. 🖨️ Impresión 3D y Calidad
+                </div>
+                <div style="background:#fff; border:1px solid var(--border); color:var(--text-secondary); padding:6px; border-radius:var(--radius-sm);">
+                    3. 📦 Envío + Localizador
+                </div>
+            </div>
+
+            <div style="font-size:0.82rem; color:var(--text-primary); margin-bottom:8px;">
+                <strong>Artículos:</strong> ${o.items.map(i => `${i.qty}x ${i.name}`).join(", ")}
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
+                📍 <strong>Entrega:</strong> ${o.shippingLabel} — ${o.address} • <strong>Total:</strong> ${formatPrice(o.total)} (${o.method})
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a href="https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encodeURIComponent('¡Hola Víctor! Te escribo por mi pedido ' + o.orderId + ' (' + o.name + ')')}" target="_blank" class="btn btn-teal" style="width:auto; padding:7px 14px; font-size:0.76rem;">
+                    💬 Preguntar estado por WhatsApp
+                </a>
+                <a href="https://www.inpost.es/seguimiento-de-envio/" target="_blank" rel="noopener" class="btn btn-secondary" style="width:auto; padding:7px 14px; font-size:0.76rem;">
+                    📦 Web InPost
+                </a>
+                <a href="https://www.correos.es/es/es/herramientas/localizador/envios" target="_blank" rel="noopener" class="btn btn-secondary" style="width:auto; padding:7px 14px; font-size:0.76rem;">
+                    🚚 Web Correos
+                </a>
+            </div>
+        </div>
+    `).join("");
 }
 
 function sendOrderViaWhatsApp() {
@@ -1397,6 +1555,22 @@ function exitCheckoutSuccess() {
     document.getElementById("stripe-overlay")?.classList.remove("open");
 }
 
+function checkStripeReturnUrl() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pago") === "ok") {
+        const orderId = params.get("order");
+        const orders = getSavedOrders();
+        const found = orderId ? orders.find(o => o.orderId === orderId) : orders[0];
+        saveCart([]);
+        if (found) {
+            found.status = "Pagado por Stripe • En cola de impresión 3D";
+            saveCompletedOrder(found);
+            showOrderSuccessModal(found);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
 // ============================================================================
 // INYECTAR COMPONENTES COMPARTIDOS (DRAWER CARRITO, MODALES Y CHECKOUT)
 // ============================================================================
@@ -1410,6 +1584,23 @@ function injectSharedStoreModals() {
     }).join("");
 
     wrapper.innerHTML = `
+        <!-- Modal Seguimiento de Pedidos (Mis Pedidos) -->
+        <div id="tracking-modal" class="modal-overlay" onclick="closeTrackingModal()">
+            <div class="modal-container" onclick="event.stopPropagation()" style="max-width:680px;">
+                <div class="modal-header">
+                    <h2>📦 Seguimiento de Pedidos y Envíos</h2>
+                    <button class="close-btn" onclick="closeTrackingModal()">&times;</button>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:14px;">
+                    Consulta el estado de fabricación 3D de tus pedidos o busca por tu código <strong>#SC-XXXXX</strong>. En cuanto depositamos tu paquete en InPost o Correos, recibirás además un SMS/Email oficial con el número de seguimiento.
+                </p>
+                <div style="display:flex; gap:10px; margin-bottom:18px;">
+                    <input type="text" id="tracking-search-input" class="text-input" placeholder="Buscar por código de pedido (ej. SC-48291)..." oninput="renderTrackingOrders(this.value)">
+                </div>
+                <div id="tracking-orders-list" style="max-height:380px; overflow-y:auto;"></div>
+            </div>
+        </div>
+
         <!-- Modal Vista Detallada de Producto -->
         <div id="product-detail-modal" class="modal-overlay" onclick="closeDetailModal()">
             <div class="modal-container" onclick="event.stopPropagation()" id="product-detail-body"></div>
@@ -1548,8 +1739,8 @@ function injectSharedStoreModals() {
                     <!-- Procesando -->
                     <div id="stripe-processing" class="processing-overlay">
                         <div class="processing-spinner"></div>
-                        <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Registrando tu Pedido en el Taller...</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Generando orden de fabricación y recibo oficial</p>
+                        <h3 id="stripe-processing-title" style="font-family: var(--font-heading); margin-bottom: 8px;">Registrando tu Pedido en el Taller...</h3>
+                        <p id="stripe-processing-sub" style="color: var(--text-secondary); font-size: 0.85rem;">Generando orden de fabricación y recibo oficial</p>
                     </div>
 
                     <!-- Confirmación de Pedido -->
@@ -1636,16 +1827,12 @@ function injectSharedStoreModals() {
                             </p>
                         </div>
 
-                        <!-- Caja Stripe Tarjeta -->
-                        <div id="pay-box-stripe" style="display:none; margin-bottom:12px;">
-                            <label style="font-size:0.74rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); display:block; margin-bottom:6px;">Datos de Tarjeta (Stripe 256-bit SSL)</label>
-                            <div style="border:1px solid var(--border); background:var(--bg-primary); border-radius:var(--radius-md); padding:6px 10px;">
-                                <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 2px; background:transparent;" placeholder="Número de tarjeta (4242 •••• •••• ••••)">
-                                <div style="display:flex; border-top:1px dashed var(--border); padding-top:4px;">
-                                    <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 2px; background:transparent; width:50%;" placeholder="MM / AA">
-                                    <input type="text" class="stripe-input" style="border:none; margin:0; padding:6px 8px; background:transparent; width:50%; border-left:1px dashed var(--border);" placeholder="CVC">
-                                </div>
-                            </div>
+                        <!-- Caja Stripe Tarjeta (Opción B: Pasarela Oficial Stripe Checkout con dirección ya vinculada) -->
+                        <div id="pay-box-stripe" class="bizum-instructions-card" style="display:none; background:rgba(219,39,119,0.05); border-color:rgba(219,39,119,0.22);">
+                            <h4 style="color:var(--accent-stripe);">💳 Pasarela Oficial Stripe Checkout (Tarjeta / Apple Pay / Google Pay)</h4>
+                            <p style="color:var(--text-secondary); line-height:1.45;">
+                                <strong>No tienes que volver a escribir tu dirección:</strong> los datos de envío que acabas de rellenar arriba quedan vinculados automáticamente a tu pedido <strong>#SC</strong>. Al pulsar el botón te llevaremos a la pantalla segura de Stripe con tu importe exacto bloqueado.
+                            </p>
                         </div>
 
                         <button type="submit" id="checkout-submit-btn" class="stripe-payment-btn">
