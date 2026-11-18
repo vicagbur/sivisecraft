@@ -27,6 +27,17 @@
             <nav>
                 <ul>
                     <li><a href="index.html" class="active">Inicio</a></li>
+                    <li class="nav-dropdown">
+                        <a href="catalogo.html" class="nav-dropdown-toggle">
+                            Colecciones <span class="dropdown-chevron">▾</span>
+                        </a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="catalogo.html?collection=expositores"><span>Expositores</span> <span class="menu-badge">10</span></a></li>
+                            <li><a href="catalogo.html?collection=navidad"><span>Navidad</span> <span class="menu-badge">1</span></a></li>
+                            <li><a href="catalogo.html?collection=relojes"><span>Relojes</span> <span class="menu-badge">1</span></a></li>
+                            <li><a href="catalogo.html?collection=lamparas"><span>Lámparas</span> <span class="menu-badge">1</span></a></li>
+                        </ul>
+                    </li>
                     <li><a href="catalogo.html">Catálogo Completo (13)</a></li>
                     <li><a href="#superventas">Superventas</a></li>
                     <li><a href="#resenas">Reseñas Reales</a></li>
@@ -168,9 +179,10 @@
             <!-- Pestañas rápidas en portada -->
             <div class="filter-tabs" style="justify-content: center; margin-bottom: 32px;">
                 <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (13)</button>
-                <button class="filter-btn" onclick="filterHomeProducts('expositores', this)">Expositores McDonald's & BK</button>
-                <button class="filter-btn" onclick="filterHomeProducts('kpop', this)">K-Pop (Tiny Tan & Derpy)</button>
-                <button class="filter-btn" onclick="filterHomeProducts('arte', this)">Arte, Litofanías & Relojes</button>
+                <button class="filter-btn" onclick="filterHomeProducts('expositores', this)">Expositores (10)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('navidad', this)">Navidad (1)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('relojes', this)">Relojes (1)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('lamparas', this)">Lámparas (1)</button>
             </div>
 
             <div id="home-product-grid" class="product-grid">
@@ -302,7 +314,7 @@
             const grid = document.getElementById("home-product-grid");
             const filtered = category === "all"
                 ? PRODUCTS
-                : PRODUCTS.filter(p => p.category === category);
+                : PRODUCTS.filter(p => p.collection === category || p.category === category);
             grid.innerHTML = filtered.map(p => buildProductCardHTML(p)).join("");
         }
 

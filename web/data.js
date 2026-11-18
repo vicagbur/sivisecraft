@@ -58,6 +58,7 @@ const PRODUCTS = [
         price: 18.00,
         oldPrice: 25.00,
         category: "kpop",
+        collection: "expositores",
         featured: true,
         badge: "Top Ventas Internacional",
         badgeType: "pink",
@@ -107,6 +108,7 @@ const PRODUCTS = [
         price: 14.00,
         oldPrice: 19.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Superventas Wallapop",
         badgeType: "gold",
@@ -134,6 +136,7 @@ const PRODUCTS = [
         price: 20.00,
         oldPrice: 25.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Nuevo Lanzamiento",
         badgeType: "teal",
@@ -166,6 +169,7 @@ const PRODUCTS = [
         price: 22.50,
         oldPrice: 28.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Gran Formato 4 Gradas",
         badgeType: "pink",
@@ -195,6 +199,7 @@ const PRODUCTS = [
         price: 15.00,
         oldPrice: 19.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Top Wallapop & Vinted",
         badgeType: "teal",
@@ -223,6 +228,7 @@ const PRODUCTS = [
         price: 40.00,
         oldPrice: 45.00,
         category: "kpop",
+        collection: "navidad",
         featured: true,
         badge: "Joya 24 Cajones",
         badgeType: "gold",
@@ -258,6 +264,7 @@ const PRODUCTS = [
         price: 16.00,
         oldPrice: 28.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Desde 16,00 €",
         badgeType: "pink",
@@ -290,6 +297,7 @@ const PRODUCTS = [
         price: 20.00,
         oldPrice: 25.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Clásico 5★ Etsy",
         badgeType: "teal",
@@ -321,6 +329,7 @@ const PRODUCTS = [
         price: 15.00,
         oldPrice: 20.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Precio Directo 15€",
         badgeType: "pink",
@@ -351,6 +360,7 @@ const PRODUCTS = [
         price: 18.00,
         oldPrice: 22.00,
         category: "expositores",
+        collection: "expositores",
         featured: true,
         badge: "Diseño Gótico 3D",
         badgeType: "teal",
@@ -377,6 +387,7 @@ const PRODUCTS = [
         price: 6.00,
         oldPrice: 8.00,
         category: "kpop",
+        collection: "expositores",
         featured: false,
         badge: "Personalizable 6€",
         badgeType: "pink",
@@ -422,6 +433,7 @@ const PRODUCTS = [
         price: 40.00,
         oldPrice: 45.00,
         category: "arte",
+        collection: "lamparas",
         featured: false,
         badge: "Arte & Luz 3D",
         badgeType: "gold",
@@ -452,6 +464,7 @@ const PRODUCTS = [
         price: 18.00,
         oldPrice: 20.00,
         category: "arte",
+        collection: "relojes",
         featured: false,
         badge: "Firma de Andy trasera",
         badgeType: "teal",
@@ -1608,3 +1621,17 @@ function renderVerifiedReviews(containerId, limit = null) {
         </div>
     `).join("");
 }
+
+// Manejador de clic/toque para el submenú de Colecciones en la barra superior
+document.addEventListener("click", (e) => {
+    const toggle = e.target.closest(".nav-dropdown-toggle");
+    const dropdown = e.target.closest(".nav-dropdown");
+    if (toggle && dropdown) {
+        if (!window.matchMedia("(hover: hover)").matches || e.pointerType === "touch") {
+            e.preventDefault();
+            dropdown.classList.toggle("open");
+        }
+    } else if (!e.target.closest(".nav-dropdown-menu")) {
+        document.querySelectorAll(".nav-dropdown.open").forEach(d => d.classList.remove("open"));
+    }
+});
