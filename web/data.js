@@ -49,7 +49,7 @@ const SHIPPING_TIERS = {
     }
 };
 
-// Catálogo Unificado Real (17 Productos: 11 Protagonistas Roadmap + Joyas Etsy + Pichi Studio)
+// Catálogo Unificado Real (13 Productos: Expositores BK & McDonald's, K-Pop y Coleccionismo)
 const PRODUCTS = [
     // 1. EXPOSITOR TINY TAN 7 FIGURAS + PACKS AHORRO
     {
@@ -415,46 +415,7 @@ const PRODUCTS = [
         ]
     },
 
-    // 12. EXPOSITOR SONNY ANGELS (HIPPERS Y CLÁSICOS)
-    {
-        id: "exp_sonny_angels",
-        name: "Expositor Sonny Angels (Modelos Hippers y Clásicos)",
-        price: 18.00,
-        oldPrice: 22.00,
-        category: "expositores",
-        featured: false,
-        badge: "Hippers & Normal",
-        badgeType: "teal",
-        channelInfo: "Dos arquitecturas según el tipo de Sonny Angel",
-        image: "https://i.etsystatic.com/48356593/r/il/efad7f/6562637742/il_fullxfull.6562637742_hheg.jpg",
-        gallery: [
-            "https://i.etsystatic.com/48356593/r/il/efad7f/6562637742/il_fullxfull.6562637742_hheg.jpg",
-            "https://i.etsystatic.com/48356593/r/il/31e312/6610756921/il_fullxfull.6610756921_onou.jpg",
-            "https://i.etsystatic.com/48356593/r/il/1a93b0/6610756925/il_fullxfull.6610756925_1g41.jpg",
-            "https://i.etsystatic.com/48356593/r/il/bd814b/6562637736/il_fullxfull.6562637736_l0oa.jpg",
-            "https://i.etsystatic.com/48356593/r/il/171ce9/6610756923/il_fullxfull.6610756923_4dyp.jpg"
-        ],
-        desc: "Expositor diseñado a medida para coleccionistas de Sonny Angels. Elige entre la versión especial con repisa para Sonny Angels Hippers o el soporte escalonado para Sonny Angels de pie, en tu color pastel favorito.",
-        variants: [
-            {
-                name: "Tipo de Sonny Angel",
-                options: [
-                    { label: "Modelo Hippers (para colgar/apoyar)" },
-                    { label: "Modelo Clásico (de pie)" }
-                ]
-            },
-            {
-                name: "Color Principal",
-                options: [
-                    { label: "Rosa Pastel" },
-                    { label: "Verde Menta" },
-                    { label: "Blanco Nube" }
-                ]
-            }
-        ]
-    },
-
-    // 13. LÁMPARA LITOFANÍA LAS MENINAS DE VELÁZQUEZ
+    // 12. LÁMPARA LITOFANÍA LAS MENINAS DE VELÁZQUEZ
     {
         id: "lampara_meninas",
         name: "Lámpara Litofanía 'Las Meninas' de Velázquez (25x25 cm LED)",
@@ -484,7 +445,7 @@ const PRODUCTS = [
         ]
     },
 
-    // 14. RELOJ DE PARED TOY STORY (HABITACIÓN DE ANDY)
+    // 13. RELOJ DE PARED TOY STORY (HABITACIÓN DE ANDY)
     {
         id: "reloj_toystory",
         name: "Reloj de Pared Inspirado en Toy Story (Habitación de Andy)",
@@ -512,81 +473,6 @@ const PRODUCTS = [
                 ]
             }
         ]
-    },
-
-    // 15. MENINA PIXEL ART 3D
-    {
-        id: "menina_pixel",
-        name: "Cuadro Menina Pixelada 3D sobre Placa Gris",
-        price: 12.00,
-        oldPrice: 15.00,
-        category: "arte",
-        featured: false,
-        badge: "Pixel Art 3D",
-        badgeType: "pink",
-        channelInfo: "Reinterpretación retro-moderna de Velázquez",
-        image: "https://i.etsystatic.com/48356593/r/il/ff93d2/5851680165/il_fullxfull.5851680165_8zjz.jpg",
-        gallery: [
-            "https://i.etsystatic.com/48356593/r/il/ff93d2/5851680165/il_fullxfull.5851680165_8zjz.jpg",
-            "https://i.etsystatic.com/48356593/r/il/21ee3d/5851443547/il_fullxfull.5851443547_tf1d.jpg",
-            "https://i.etsystatic.com/48356593/r/il/ee2c5d/5851442735/il_fullxfull.5851442735_ii7w.jpg",
-            "https://i.etsystatic.com/48356593/r/il/347911/5851442737/il_fullxfull.5851442737_jtvq.jpg"
-        ],
-        desc: "Menina de Velázquez reinterpretada en Pixel Art tridimensional pieza a pieza sobre placa base gris arquitectónica. Ideal para escritorio o estantería.",
-        variants: []
-    },
-
-    // 16. BOTELLA PERSONALIZADA CORAZÓN DE MAESTRA / PROFESOR
-    {
-        id: "botella_maestra",
-        name: "Botella Cristal y Bambú Personalizada 'Corazón de Maestra/o'",
-        price: 14.00,
-        oldPrice: 15.00,
-        category: "personalizables",
-        featured: false,
-        badge: "Regalo Profes",
-        badgeType: "teal",
-        channelInfo: "500 ml de capacidad con tapón de bambú natural",
-        image: "https://i.etsystatic.com/48356593/r/il/911fcb/6078270937/il_fullxfull.6078270937_npea.jpg",
-        gallery: [
-            "https://i.etsystatic.com/48356593/r/il/911fcb/6078270937/il_fullxfull.6078270937_npea.jpg",
-            "https://i.etsystatic.com/48356593/r/il/15b39a/6030206114/il_fullxfull.6030206114_3ciw.jpg"
-        ],
-        desc: "Botella reutilizable de cristal de 500 ml con tapa de bambú y cordón. Personalizada con el nombre de la maestra, maestro, profesora o profesor. El detalle perfecto de fin de curso o agradecimiento.",
-        variants: [
-            {
-                name: "Dedicatoria",
-                options: [
-                    { label: "Maestra (Indica el nombre en notas de pedido)" },
-                    { label: "Maestro / Profesor (Indica el nombre en notas)" },
-                    { label: "Profesora (Indica el nombre en notas)" }
-                ]
-            }
-        ]
-    },
-
-    // 17. ROMBO DE METRO PERSONALIZABLE + COLECCIÓN PICHI STUDIO
-    {
-        id: "pichi_rombo",
-        name: "Rombo de Metro de Madrid Personalizable (Llavero / Pin)",
-        price: 6.00,
-        oldPrice: 7.50,
-        category: "personalizables",
-        featured: false,
-        badge: "Personalizador 3D",
-        badgeType: "pink",
-        channelInfo: "Escribe tu parada, barrio o nombre en vivo",
-        image: "img/pichi_pack_real.jpg",
-        gallery: [
-            "img/pichi_pack_real.jpg",
-            "img/pichi_gatos_real.jpg",
-            "img/pichi_clavel_real.jpg",
-            "img/pichi_studio.png"
-        ],
-        desc: "Diseña en tiempo real tu propio rombo del Metro de Madrid con hasta 11 letras (tu estación favorita, tu nombre o tu calle) y elige esquema de color (Clásico, Chulapo o Gato) y herraje.",
-        custom: true,
-        customizerType: "rombo",
-        variants: []
     }
 ];
 
@@ -788,11 +674,6 @@ function addProductToCartFromDOM(productId, containerPrefix = "card") {
     const product = PRODUCTS.find(p => p.id === productId);
     if (!product) return;
 
-    if (product.custom && product.customizerType === "rombo" && containerPrefix === "card") {
-        openRomboModal();
-        return;
-    }
-
     let finalPrice = product.price;
     const selectedOptions = [];
 
@@ -911,10 +792,7 @@ function buildProductCardHTML(p) {
                     <button class="btn-icon-only" onclick="openProductDetail('${p.id}')" title="Ver todas las fotos y descripción">
                         🔍
                     </button>
-                    ${p.custom
-                        ? `<button class="btn btn-teal" onclick="openRomboModal()">🎨 Personalizar 3D</button>`
-                        : `<button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'card')">Añadir al Carrito</button>`
-                    }
+                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'card')">Añadir al Carrito</button>
                 </div>
             </div>
         </article>
@@ -990,10 +868,7 @@ function openProductDetail(productId) {
                     <div>🎁 <strong>Detalle sorpresa 3D incluido</strong> en cada paquete</div>
                 </div>
                 <div style="margin-top:auto;">
-                    ${p.custom
-                        ? `<button class="btn btn-teal" onclick="closeDetailModal(); openRomboModal();">🎨 Abrir Personalizador 3D</button>`
-                        : `<button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'detail')">🛒 Añadir al Carrito y Ver Cesta</button>`
-                    }
+                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'detail')">🛒 Añadir al Carrito y Ver Cesta</button>
                 </div>
             </div>
         </div>
@@ -1135,82 +1010,6 @@ function toggleCartDrawer(forceState) {
     if (overlay.classList.contains("open")) {
         updateCartUI();
     }
-}
-
-// ============================================================================
-// PERSONALIZADOR 3D DE ROMBO DE METRO (PICHI STUDIO)
-// ============================================================================
-let currentRomboScheme = "clasico";
-const ROMBO_COLORS = {
-    clasico: { border: "#db2777", bar: "#0d9488", name: "Clásico Sivise" },
-    chulapo: { border: "#1A1F26", bar: "#db2777", name: "Chulapo" },
-    gato:    { border: "#0d9488", bar: "#db2777", name: "Gato Madrileño" }
-};
-
-function openRomboModal() {
-    const modal = document.getElementById("modal-rombo");
-    if (!modal) return;
-    updateRomboPreview();
-    modal.classList.add("open");
-}
-
-function closeRomboModal() {
-    const modal = document.getElementById("modal-rombo");
-    if (modal) modal.classList.remove("open");
-}
-
-function setRomboScheme(scheme) {
-    currentRomboScheme = scheme;
-    document.querySelectorAll("#modal-rombo .option-btn").forEach(btn => btn.classList.remove("active"));
-    const targetBtn = document.getElementById(`color-scheme-${scheme}`);
-    if (targetBtn) targetBtn.classList.add("active");
-    updateRomboPreview();
-}
-
-function updateRomboPreview() {
-    const inputEl = document.getElementById("rombo-input-text");
-    if (!inputEl) return;
-    const cleanText = (inputEl.value || "SOL").toUpperCase();
-    document.getElementById("svg-text").textContent = cleanText;
-
-    const colors = ROMBO_COLORS[currentRomboScheme] || ROMBO_COLORS.clasico;
-    document.getElementById("svg-border").setAttribute("stroke", colors.border);
-    document.getElementById("svg-bar").setAttribute("fill", colors.bar);
-
-    const select = document.getElementById("rombo-hardware");
-    const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
-    document.getElementById("rombo-price").textContent = formatPrice(6.00 + extra);
-}
-
-function addRomboToCart() {
-    const rawText = (document.getElementById("rombo-input-text").value || "SOL").toUpperCase();
-    const select = document.getElementById("rombo-hardware");
-    const hardwareLabel = select.options[select.selectedIndex].text.replace(/\s*\([^)]*\)/g, "");
-    const extra = parseFloat(select.options[select.selectedIndex].dataset.extra || "0");
-    const finalPrice = 6.00 + extra;
-    const schemeName = ROMBO_COLORS[currentRomboScheme].name;
-
-    const meta = `Texto: "${rawText}" • Color: ${schemeName} • ${hardwareLabel}`;
-    const cartId = `pichi_rombo__${meta}`;
-
-    let cart = getCart();
-    const existing = cart.find(i => i.cartId === cartId);
-    if (existing) {
-        existing.qty += 1;
-    } else {
-        cart.push({
-            id: "pichi_rombo",
-            cartId: cartId,
-            name: "Rombo de Metro Personalizable",
-            price: finalPrice,
-            image: "img/pichi_pack_real.jpg",
-            qty: 1,
-            meta: meta
-        });
-    }
-    saveCart(cart);
-    closeRomboModal();
-    toggleCartDrawer(true);
 }
 
 // ============================================================================
@@ -1592,58 +1391,6 @@ function injectSharedStoreModals() {
         <!-- Modal Vista Detallada de Producto -->
         <div id="product-detail-modal" class="modal-overlay" onclick="closeDetailModal()">
             <div class="modal-container" onclick="event.stopPropagation()" id="product-detail-body"></div>
-        </div>
-
-        <!-- Modal Personalizador 3D Rombo de Metro -->
-        <div id="modal-rombo" class="modal-overlay" onclick="closeRomboModal()">
-            <div class="modal-container" onclick="event.stopPropagation()" style="max-width:620px;">
-                <div class="modal-header">
-                    <h2>Personalizar Rombo de Metro 3D</h2>
-                    <button class="close-btn" onclick="closeRomboModal()">&times;</button>
-                </div>
-                <div class="config-grid">
-                    <div class="config-preview-box">
-                        <svg id="rombo-svg-preview" viewBox="0 0 400 350" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-height: 190px;">
-                            <polygon points="200,35 365,175 200,315 35,175" fill="#ffffff" />
-                            <polygon id="svg-border" points="200,35 365,175 200,315 35,175" stroke="#db2777" stroke-width="22" stroke-linejoin="round" fill="none" />
-                            <rect id="svg-bar" x="25" y="142" width="350" height="66" fill="#0d9488" rx="4" />
-                            <text id="svg-text" x="200" y="188" font-family="'Outfit', sans-serif" font-weight="700" font-size="34" fill="#ffffff" text-anchor="middle" letter-spacing="1">SOL</text>
-                            <text x="200" y="265" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#8e8e9c" text-anchor="middle" letter-spacing="4">MADRID</text>
-                            <circle cx="200" cy="22" r="8" fill="#FAF8F5" stroke="rgba(0,0,0,0.1)" stroke-width="2" />
-                            <circle cx="200" cy="22" r="3" fill="#1A1F26" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="rombo-input-text">Texto Central (Máx. 11 Letras)</label>
-                            <input type="text" id="rombo-input-text" class="text-input" value="SOL" maxlength="11" oninput="updateRomboPreview()">
-                        </div>
-                        <div class="form-group">
-                            <label>Esquema de Color PLA</label>
-                            <div class="options-selector-row">
-                                <button type="button" id="color-scheme-clasico" class="option-btn active" onclick="setRomboScheme('clasico')">Clásico</button>
-                                <button type="button" id="color-scheme-chulapo" class="option-btn" onclick="setRomboScheme('chulapo')">Chulapo</button>
-                                <button type="button" id="color-scheme-gato" class="option-btn" onclick="setRomboScheme('gato')">Gato</button>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="rombo-hardware">Herraje</label>
-                            <select id="rombo-hardware" onchange="updateRomboPreview()">
-                                <option value="llavero" data-extra="0.00">Llavero de Acero (+0,00 €)</option>
-                                <option value="cordon" data-extra="0.50">Cordón para Móvil (+0,50 €)</option>
-                                <option value="broche" data-extra="0.20">Pin / Broche de Solapa (+0,20 €)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="config-buy-box">
-                    <div>
-                        <span class="config-price-label">Precio Final:</span>
-                        <div id="rombo-price" class="config-price">6,00 €</div>
-                    </div>
-                    <button class="btn btn-primary" onclick="addRomboToCart()" style="width: auto;">Añadir al Carrito</button>
-                </div>
-            </div>
         </div>
 
         <!-- Carrito Lateral Interactivo (Cart Drawer) -->
