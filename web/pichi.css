@@ -1,26 +1,51 @@
 /* ============================================================================
    PICHI STUDIO — Landing de Colección Cápsula Neo-Castiza (Drop #1 Madrid)
+   Tipografía Chulapa • Patrón Pata de Gallo Blanco y Negro • Estética Luminosa
    Diseño e Impresión 3D por Víctor Aguado • Ecosistema SiviseCraft Oficial
    ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* Tipografía Oficial Chulapa de Madrid (Diseño de Silvia Fernández Palomar) */
+@font-face {
+    font-family: 'Chulapa';
+    src: url('fonts/Chulapa-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chulapa';
+    src: url('fonts/Chulapa-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Chulapa';
+    src: url('fonts/Chulapa-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
 
 :root {
-    --pichi-bg: #07070a;
-    --pichi-bg-surface: #0e0e14;
-    --pichi-bg-card: #14141c;
-    --pichi-text: #ffffff;
-    --pichi-muted: #9494a8;
-    --pichi-clavel: #ff0055;
-    --pichi-clavel-glow: rgba(255, 0, 85, 0.35);
-    --pichi-metro-blue: #0066d6;
+    /* Paleta Luminosa Neo-Castiza */
+    --pichi-bg: #f7f6f2;
+    --pichi-bg-surface: #ffffff;
+    --pichi-bg-card: #ffffff;
+    --pichi-text: #111116;
+    --pichi-muted: #5e6072;
+    --pichi-clavel: #e11d48; /* Rojo Clavel de San Isidro */
+    --pichi-clavel-glow: rgba(225, 29, 72, 0.2);
+    --pichi-metro-blue: #005bc5;
     --pichi-chulapo-black: #111116;
-    --pichi-teal: #0d9488;
-    --pichi-gold: #f59e0b;
-    --pichi-border: rgba(255, 255, 255, 0.08);
-    --pichi-border-hover: rgba(255, 0, 85, 0.4);
+    --pichi-border: #e6e3dd;
+    --pichi-border-hover: #e11d48;
 
-    --font-pichi-title: 'Syne', sans-serif;
+    --font-pichi-title: 'Chulapa', sans-serif;
     --font-pichi-head: 'Space Grotesk', sans-serif;
     --font-pichi-body: 'Plus Jakarta Sans', sans-serif;
 
@@ -28,9 +53,12 @@
     --radius-pichi-md: 12px;
     --radius-pichi-sm: 8px;
     --pichi-transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --pichi-shadow-sm: 0 2px 8px rgba(17, 17, 22, 0.05);
+    --pichi-shadow-md: 0 10px 25px -4px rgba(17, 17, 22, 0.08), 0 4px 10px -2px rgba(17, 17, 22, 0.03);
+    --pichi-shadow-lg: 0 20px 40px -8px rgba(17, 17, 22, 0.12);
 }
 
-/* Reset y base scoped */
+/* Reset y base */
 body.pichi-body {
     background-color: var(--pichi-bg);
     color: var(--pichi-text);
@@ -41,24 +69,38 @@ body.pichi-body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Textura sutil Pata de Gallo (Chulapo Verbena) */
+/* Patrón Pata de Gallo (Houndstooth) en Blanco y Negro Luminoso */
 .pata-gallo-canvas {
-    background:
-        linear-gradient(-45deg, #07070a 25%, transparent 25%, transparent 75%, #07070a 75%),
-        linear-gradient(45deg, #07070a 25%, transparent 25%, transparent 75%, #07070a 75%),
-        linear-gradient(45deg, #0e0e14 25%, transparent 25%, transparent 75%, #0e0e14 75%),
-        linear-gradient(-45deg, #0e0e14 25%, transparent 25%, transparent 75%, #0e0e14 75%);
-    background-size: 28px 28px;
-    background-position: 0 0, 14px 14px, 14px 0, 0 14px;
+    background-color: #f7f6f2;
+    background-image:
+        linear-gradient(-45deg, rgba(17, 17, 22, 0.065) 25%, transparent 25%, transparent 75%, rgba(17, 17, 22, 0.065) 75%),
+        linear-gradient(45deg, rgba(17, 17, 22, 0.065) 25%, transparent 25%, transparent 75%, rgba(17, 17, 22, 0.065) 75%),
+        linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%),
+        linear-gradient(-45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px, 12px 0, 0 12px;
+}
+
+/* Franja acento auténtica Pata de Gallo Chulapo B&W */
+.pata-gallo-ribbon {
+    background-image:
+        linear-gradient(-45deg, #111116 25%, transparent 25%, transparent 75%, #111116 75%),
+        linear-gradient(45deg, #111116 25%, transparent 25%, transparent 75%, #111116 75%),
+        linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%),
+        linear-gradient(-45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px, 8px 0, 0 8px;
+    height: 10px;
+    width: 100%;
 }
 
 /* Barra superior de conexión con SiviseCraft */
 .pichi-bridge-bar {
-    background: #000000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #111116;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px 24px;
-    font-size: 0.84rem;
-    color: var(--pichi-muted);
+    font-size: 0.85rem;
+    color: #c4c4d2;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -79,18 +121,19 @@ body.pichi-body {
 }
 
 .pichi-bridge-bar a:hover {
-    color: var(--pichi-clavel);
+    color: #ff3370;
 }
 
 /* Header Navbar de Pichi Studio */
 header.pichi-header {
     border-bottom: 1px solid var(--pichi-border);
-    padding: 16px 0;
-    background: rgba(7, 7, 10, 0.85);
+    padding: 18px 0;
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(16px);
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .pichi-navbar {
@@ -103,38 +146,37 @@ header.pichi-header {
 .pichi-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     text-decoration: none;
 }
 
 .pichi-logo-badge {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     background: var(--pichi-clavel);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 16px var(--pichi-clavel-glow);
-    font-weight: 800;
+    box-shadow: 0 2px 10px var(--pichi-clavel-glow);
+    font-weight: 700;
     font-family: var(--font-pichi-title);
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.15rem;
 }
 
 .pichi-logo-text {
-    font-family: var(--font-pichi-head);
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #fff;
+    font-family: var(--font-pichi-title);
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--pichi-chulapo-black);
+    line-height: 1;
 }
 
 .pichi-logo-text span {
     color: var(--pichi-clavel);
-    font-weight: 600;
-    margin-left: 3px;
-    font-size: 1.15rem;
+    margin-left: 2px;
 }
 
 .pichi-nav-links {
@@ -155,7 +197,7 @@ header.pichi-header {
 }
 
 .pichi-nav-links a:hover {
-    color: #fff;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-nav-actions {
@@ -183,13 +225,13 @@ header.pichi-header {
 
 .btn-pichi-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5);
-    background: #ff1a6b;
+    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
+    background: #c0133a;
 }
 
 .btn-pichi-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background: #ffffff;
+    color: var(--pichi-chulapo-black);
     font-weight: 600;
     font-size: 0.92rem;
     padding: 10px 20px;
@@ -201,16 +243,17 @@ header.pichi-header {
     border: 1px solid var(--pichi-border);
     cursor: pointer;
     transition: var(--pichi-transition);
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 .btn-pichi-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: #faf9f6;
+    border-color: #111116;
 }
 
 /* Hero Section Pichi */
 .pichi-hero {
-    padding: 72px 0 60px 0;
+    padding: 64px 0 54px 0;
     position: relative;
     overflow: hidden;
 }
@@ -232,25 +275,25 @@ header.pichi-header {
     font-size: 0.82rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    background: rgba(255, 0, 85, 0.1);
-    border: 1px solid rgba(255, 0, 85, 0.25);
+    background: rgba(225, 29, 72, 0.08);
+    border: 1px solid rgba(225, 29, 72, 0.2);
     padding: 6px 14px;
     border-radius: 999px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .pichi-hero h1 {
     font-family: var(--font-pichi-title);
-    font-size: 3.4rem;
-    font-weight: 800;
+    font-size: 3.8rem;
+    font-weight: 700;
     line-height: 1.08;
     margin-bottom: 20px;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.01em;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-hero h1 span.clavel-highlight {
     color: var(--pichi-clavel);
-    text-shadow: 0 0 30px var(--pichi-clavel-glow);
 }
 
 .pichi-hero p {
@@ -265,7 +308,7 @@ header.pichi-header {
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
 }
 
 .pichi-hero-visual {
@@ -278,12 +321,12 @@ header.pichi-header {
     border-radius: var(--radius-pichi-lg);
     overflow: hidden;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--pichi-shadow-lg);
     transition: var(--pichi-transition);
 }
 
 .pichi-hero-card:hover {
-    border-color: var(--pichi-border-hover);
+    border-color: var(--pichi-clavel);
     transform: translateY(-4px);
 }
 
@@ -299,28 +342,30 @@ header.pichi-header {
     bottom: 16px;
     left: 16px;
     right: 16px;
-    background: rgba(14, 14, 20, 0.9);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(10px);
     border: 1px solid var(--pichi-border);
     border-radius: var(--radius-pichi-md);
-    padding: 12px 16px;
+    padding: 12px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: var(--pichi-shadow-md);
 }
 
 /* Trust Bar */
 .pichi-trust-strip {
-    background: var(--pichi-bg-surface);
+    background: #ffffff;
     border-top: 1px solid var(--pichi-border);
     border-bottom: 1px solid var(--pichi-border);
-    padding: 24px 0;
+    padding: 26px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .pichi-trust-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 28px;
 }
 
 .pichi-trust-item {
@@ -330,19 +375,20 @@ header.pichi-header {
 }
 
 .pichi-trust-icon {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     line-height: 1;
 }
 
 .pichi-trust-item h4 {
     font-family: var(--font-pichi-head);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     font-weight: 700;
     margin: 0 0 3px 0;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-trust-item p {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--pichi-muted);
     margin: 0;
     line-height: 1.4;
@@ -350,21 +396,21 @@ header.pichi-header {
 
 /* Sección Personalizador Interactivo de Rombo */
 .pichi-customizer-section {
-    padding: 80px 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(255, 0, 85, 0.08) 0%, transparent 70%);
+    padding: 76px 0;
 }
 
 .pichi-section-header {
     text-align: center;
     max-width: 680px;
-    margin: 0 auto 48px auto;
+    margin: 0 auto 44px auto;
 }
 
 .pichi-section-header h2 {
     font-family: var(--font-pichi-title);
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2.8rem;
+    font-weight: 700;
     margin-bottom: 12px;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-section-header p {
@@ -373,18 +419,18 @@ header.pichi-header {
 }
 
 .pichi-customizer-box {
-    background: var(--pichi-bg-surface);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
     border-radius: var(--radius-pichi-lg);
     display: grid;
     grid-template-columns: 1fr 1.1fr;
     overflow: hidden;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--pichi-shadow-lg);
 }
 
 .pichi-svg-stage {
     padding: 40px;
-    background: #0a0a0f;
+    background: #faf9f6;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -397,7 +443,7 @@ header.pichi-header {
     position: absolute;
     top: 20px;
     left: 20px;
-    background: rgba(255, 255, 255, 0.06);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
     border-radius: 999px;
     padding: 4px 12px;
@@ -407,6 +453,7 @@ header.pichi-header {
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.08em;
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 .pichi-controls {
@@ -414,6 +461,7 @@ header.pichi-header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background: #ffffff;
 }
 
 .pichi-form-group {
@@ -427,19 +475,19 @@ header.pichi-header {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--pichi-muted);
+    color: var(--pichi-chulapo-black);
     margin-bottom: 8px;
 }
 
 .pichi-input-text {
     width: 100%;
-    background: var(--pichi-bg-card);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
-    color: #fff;
+    color: var(--pichi-chulapo-black);
     padding: 14px 18px;
     border-radius: var(--radius-pichi-sm);
     font-family: var(--font-pichi-head);
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -450,7 +498,7 @@ header.pichi-header {
 .pichi-input-text:focus {
     outline: none;
     border-color: var(--pichi-clavel);
-    box-shadow: 0 0 16px var(--pichi-clavel-glow);
+    box-shadow: 0 0 14px var(--pichi-clavel-glow);
 }
 
 .pichi-pill-selector {
@@ -460,12 +508,12 @@ header.pichi-header {
 }
 
 .pichi-pill-btn {
-    background: var(--pichi-bg-card);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
     color: var(--pichi-muted);
     padding: 10px 12px;
     border-radius: var(--radius-pichi-sm);
-    font-size: 0.85rem;
+    font-size: 0.86rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--pichi-transition);
@@ -473,22 +521,23 @@ header.pichi-header {
 }
 
 .pichi-pill-btn:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    color: #fff;
+    border-color: #111116;
+    color: #111116;
 }
 
 .pichi-pill-btn.active {
-    background: rgba(255, 0, 85, 0.12);
+    background: rgba(225, 29, 72, 0.06);
     border-color: var(--pichi-clavel);
-    color: #ffffff;
-    box-shadow: 0 0 12px rgba(255, 0, 85, 0.25);
+    color: var(--pichi-clavel);
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(225, 29, 72, 0.15);
 }
 
 .pichi-select-hardware {
     width: 100%;
-    background: var(--pichi-bg-card);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
-    color: #fff;
+    color: var(--pichi-chulapo-black);
     padding: 12px 16px;
     border-radius: var(--radius-pichi-sm);
     font-size: 0.92rem;
@@ -509,12 +558,12 @@ header.pichi-header {
     font-family: var(--font-pichi-head);
     font-size: 2rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-price-total span {
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--pichi-muted);
     display: block;
     margin-bottom: 2px;
@@ -522,7 +571,7 @@ header.pichi-header {
 
 /* Grid de Catálogo de Productos Pichi */
 .pichi-catalog-section {
-    padding: 80px 0;
+    padding: 70px 0;
 }
 
 .pichi-products-grid {
@@ -532,7 +581,7 @@ header.pichi-header {
 }
 
 .pichi-product-card {
-    background: var(--pichi-bg-surface);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
     border-radius: var(--radius-pichi-md);
     overflow: hidden;
@@ -540,24 +589,25 @@ header.pichi-header {
     flex-direction: column;
     transition: var(--pichi-transition);
     position: relative;
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 .pichi-product-card:hover {
-    border-color: var(--pichi-border-hover);
+    border-color: var(--pichi-clavel);
     transform: translateY(-4px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--pichi-shadow-md);
 }
 
 .pichi-product-card.featured-bundle {
     border-color: var(--pichi-clavel);
-    box-shadow: 0 0 24px var(--pichi-clavel-glow);
+    box-shadow: 0 10px 30px rgba(225, 29, 72, 0.15);
 }
 
 .pichi-product-media {
     position: relative;
     height: 250px;
     overflow: hidden;
-    background: #000;
+    background: #f0eee9;
 }
 
 .pichi-product-media img {
@@ -568,23 +618,24 @@ header.pichi-header {
 }
 
 .pichi-product-card:hover .pichi-product-media img {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 .pichi-card-badge {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: rgba(14, 14, 20, 0.85);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(8px);
     border: 1px solid var(--pichi-border);
-    color: #fff;
-    font-size: 0.72rem;
+    color: var(--pichi-chulapo-black);
+    font-size: 0.74rem;
     font-family: var(--font-pichi-head);
     font-weight: 700;
     padding: 4px 10px;
     border-radius: 999px;
     text-transform: uppercase;
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 .pichi-card-badge.badge-clavel {
@@ -609,10 +660,12 @@ header.pichi-header {
 }
 
 .pichi-product-title-row h3 {
-    font-family: var(--font-pichi-head);
-    font-size: 1.15rem;
+    font-family: var(--font-pichi-title);
+    font-size: 1.45rem;
     font-weight: 700;
     margin: 0;
+    line-height: 1.15;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-card-price {
@@ -646,25 +699,26 @@ header.pichi-header {
 
 /* Manifiesto Neo-Castizo */
 .pichi-manifesto {
-    padding: 70px 0;
-    background: var(--pichi-bg-surface);
+    padding: 68px 0;
+    background: #ffffff;
     border-top: 1px solid var(--pichi-border);
     border-bottom: 1px solid var(--pichi-border);
 }
 
 .pichi-manifesto-grid {
     display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: center;
 }
 
 .pichi-manifesto-content h2 {
     font-family: var(--font-pichi-title);
-    font-size: 2.3rem;
-    font-weight: 800;
+    font-size: 2.6rem;
+    font-weight: 700;
     margin-bottom: 18px;
     line-height: 1.15;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-manifesto-content p {
@@ -675,16 +729,17 @@ header.pichi-header {
 }
 
 .pichi-manifesto-box {
-    background: var(--pichi-bg-card);
+    background: #faf9f6;
     border: 1px solid var(--pichi-border);
     border-radius: var(--radius-pichi-md);
-    padding: 24px;
+    padding: 26px;
     border-left: 4px solid var(--pichi-clavel);
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 /* FAQ Accordion */
 .pichi-faq-section {
-    padding: 80px 0;
+    padding: 76px 0;
 }
 
 .pichi-accordion {
@@ -696,22 +751,23 @@ header.pichi-header {
 }
 
 .pichi-accordion-item {
-    background: var(--pichi-bg-surface);
+    background: #ffffff;
     border: 1px solid var(--pichi-border);
     border-radius: var(--radius-pichi-sm);
     overflow: hidden;
     transition: var(--pichi-transition);
+    box-shadow: var(--pichi-shadow-sm);
 }
 
 .pichi-accordion-item:hover {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--pichi-chulapo-black);
 }
 
 .pichi-accordion-btn {
     width: 100%;
     background: transparent;
     border: none;
-    color: #fff;
+    color: var(--pichi-chulapo-black);
     padding: 20px 24px;
     font-family: var(--font-pichi-head);
     font-size: 1.02rem;
@@ -739,7 +795,7 @@ header.pichi-header {
     transition: max-height 0.3s ease, padding 0.3s ease;
     padding: 0 24px;
     color: var(--pichi-muted);
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     line-height: 1.6;
 }
 
@@ -750,20 +806,23 @@ header.pichi-header {
 
 /* Call to Action Final / WhatsApp Eventos */
 .pichi-b2b-cta {
-    background: linear-gradient(135deg, rgba(255, 0, 85, 0.15) 0%, rgba(0, 102, 214, 0.12) 100%);
-    border: 1px solid var(--pichi-border-hover);
+    background: #ffffff;
+    border: 2px dashed #111116;
     border-radius: var(--radius-pichi-lg);
     padding: 48px;
     text-align: center;
-    margin: 40px auto 80px auto;
+    margin: 40px auto 70px auto;
     max-width: 900px;
+    box-shadow: var(--pichi-shadow-md);
+    position: relative;
 }
 
 .pichi-b2b-cta h3 {
     font-family: var(--font-pichi-title);
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: 2.3rem;
+    font-weight: 700;
     margin-bottom: 12px;
+    color: var(--pichi-chulapo-black);
 }
 
 .pichi-b2b-cta p {
@@ -777,9 +836,9 @@ header.pichi-header {
 footer.pichi-footer {
     border-top: 1px solid var(--pichi-border);
     padding: 40px 0;
-    background: #040406;
+    background: #ffffff;
     color: var(--pichi-muted);
-    font-size: 0.85rem;
+    font-size: 0.88rem;
 }
 
 /* Adaptación Responsive */
@@ -800,7 +859,7 @@ footer.pichi-footer {
         grid-template-columns: repeat(2, 1fr);
     }
     .pichi-hero h1 {
-        font-size: 2.8rem;
+        font-size: 3rem;
     }
 }
 
@@ -813,7 +872,7 @@ footer.pichi-footer {
         grid-template-columns: 1fr;
     }
     .pichi-hero h1 {
-        font-size: 2.2rem;
+        font-size: 2.4rem;
     }
     .pichi-controls {
         padding: 24px 20px;
