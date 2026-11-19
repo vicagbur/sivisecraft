@@ -33,6 +33,7 @@
                         </a>
                         <ul class="nav-dropdown-menu">
                             <li><a href="catalogo.html?collection=expositores"><span>Expositores</span> <span class="menu-badge">10</span></a></li>
+                            <li><a href="catalogo.html?collection=makers" style="color: #0d9488; font-weight:700;"><span>🤝 Makers Invitados</span> <span class="menu-badge" style="background: rgba(13,148,136,0.12); color: #0d9488;">2</span></a></li>
                             <li><a href="pichi.html" style="color: #db2777; font-weight:700;"><span>✨ Pichi Studio (Madrid)</span> <span class="menu-badge" style="background: rgba(219,39,119,0.12); color: #db2777;">Landing</span></a></li>
                             <li><a href="catalogo.html?collection=navidad"><span>Navidad</span> <span class="menu-badge">1</span></a></li>
                             <li><a href="catalogo.html?collection=relojes"><span>Relojes</span> <span class="menu-badge">1</span></a></li>
@@ -73,10 +74,10 @@
                     <a href="catalogo.html" class="btn btn-secondary" style="width: auto;">Catálogo Completo (13 modelos)</a>
                 </div>
                 <div class="hero-stats">
-                    <div class="stat-item">
-                        <h3>+70</h3>
-                        <p>Pedidos en Etsy (+12 países)</p>
-                    </div>
+                    <a href="pasaporte.html" style="text-decoration:none; color:inherit;" class="stat-item" title="Ver Pasaporte de Envíos SiviseCraft">
+                        <h3>14</h3>
+                        <p>Países Desbloqueados 🌍</p>
+                    </a>
                     <div class="stat-item">
                         <h3>5.0★</h3>
                         <p>Wallapop (35 val.) y Vinted (13 val.)</p>
@@ -176,8 +177,9 @@
 
             <!-- Pestañas rápidas en portada -->
             <div class="filter-tabs" style="justify-content: center; margin-bottom: 32px;">
-                <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (13)</button>
+                <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (15)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('expositores', this)">Expositores (10)</button>
+                <button class="filter-btn" onclick="filterHomeProducts('makers', this)">🤝 Makers Invitados (2)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('navidad', this)">Navidad (1)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('relojes', this)">Relojes (1)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('lamparas', this)">Lámparas (1)</button>
@@ -293,6 +295,8 @@
             </div>
             <div style="display: flex; gap: 18px; align-items:center; flex-wrap: wrap;">
                 <a href="catalogo.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Catálogo</a>
+                <a href="catalogo.html?collection=makers" style="color: var(--accent-pichi); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🤝 Makers Invitados</a>
+                <a href="pasaporte.html" style="color: var(--accent-stripe); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🌍 Pasaporte</a>
                 <a href="#superventas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Superventas</a>
                 <a href="#resenas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Reseñas Reales (4.9★)</a>
                 <a href="#envios" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Envíos y Taller</a>

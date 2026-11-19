@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Completo (13 Modelos) — SiviseCraft Tienda Oficial</title>
-    <meta name="description" content="Explora los 13 productos reales de SiviseCraft: Expositores Tiny Tan BTS, Dragon Ball con luz LED, Mandalorian y Grogu, Stranger Things, Stitch, Mario Kart, Friends, Minecraft, Miércoles, Calendario Adviento Derpy, Reloj Toy Story y Lámpara Las Meninas.">
+    <title>Catálogo Oficial — SiviseCraft Tienda Oficial</title>
+    <meta name="description" content="Explora el catálogo completo de SiviseCraft: Expositores de coleccionista, Cápsula Makers Invitados, Pichi Studio Madrid, Relojes y Lámparas de autor impresas en 3D con precisión Bambu Lab.">
     <link rel="icon" type="image/svg+xml" href="img/logo.svg">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -33,6 +33,7 @@
                         </a>
                         <ul class="nav-dropdown-menu">
                             <li><a href="catalogo.html?collection=expositores"><span>Expositores</span> <span class="menu-badge">10</span></a></li>
+                            <li><a href="catalogo.html?collection=makers" style="color: #0d9488; font-weight:700;"><span>🤝 Makers Invitados</span> <span class="menu-badge" style="background: rgba(13,148,136,0.12); color: #0d9488;">2</span></a></li>
                             <li><a href="pichi.html" style="color: #db2777; font-weight:700;"><span>✨ Pichi Studio (Madrid)</span> <span class="menu-badge" style="background: rgba(219,39,119,0.12); color: #db2777;">Landing</span></a></li>
                             <li><a href="catalogo.html?collection=navidad"><span>Navidad</span> <span class="menu-badge">1</span></a></li>
                             <li><a href="catalogo.html?collection=relojes"><span>Relojes</span> <span class="menu-badge">1</span></a></li>
@@ -63,7 +64,7 @@
     <main class="container" style="padding: 40px 24px 80px 24px;">
         <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom: 12px;">
             <div>
-                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-pichi); font-weight:700; text-transform:uppercase;">// PLANO COMPLETO DE TALLER • 13 REFERENCIAS ACTIVAS</span>
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-pichi); font-weight:700; text-transform:uppercase;">// PLANO COMPLETO DE TALLER • 15 REFERENCIAS ACTIVAS</span>
                 <h1 style="font-family: var(--font-title); font-size: 2.4rem; font-weight: 800; margin-top:4px;">Catálogo Oficial SiviseCraft</h1>
             </div>
         </div>
@@ -92,8 +93,9 @@
 
         <!-- Pestañas de Colecciones -->
         <div class="filter-tabs">
-            <button class="filter-btn active" data-cat="all" onclick="selectCatalogCategory('all', this)">Todas las Colecciones (13)</button>
+            <button class="filter-btn active" data-cat="all" onclick="selectCatalogCategory('all', this)">Todas las Colecciones (15)</button>
             <button class="filter-btn" data-cat="expositores" onclick="selectCatalogCategory('expositores', this)">Expositores (10)</button>
+            <button class="filter-btn" data-cat="makers" onclick="selectCatalogCategory('makers', this)">🤝 Makers Invitados (2)</button>
             <button class="filter-btn" data-cat="navidad" onclick="selectCatalogCategory('navidad', this)">Navidad (1)</button>
             <button class="filter-btn" data-cat="relojes" onclick="selectCatalogCategory('relojes', this)">Relojes (1)</button>
             <button class="filter-btn" data-cat="lamparas" onclick="selectCatalogCategory('lamparas', this)">Lámparas (1)</button>
@@ -116,6 +118,8 @@
             <div style="display: flex; gap: 18px; align-items:center; flex-wrap: wrap;">
                 <a href="index.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Inicio</a>
                 <a href="catalogo.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Catálogo</a>
+                <a href="catalogo.html?collection=makers" style="color: var(--accent-pichi); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🤝 Makers Invitados</a>
+                <a href="pasaporte.html" style="color: var(--accent-stripe); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🌍 Pasaporte</a>
                 <a href="index.html#superventas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Superventas</a>
                 <a href="index.html#resenas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Reseñas Reales (4.9★)</a>
                 <a href="index.html#envios" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Envíos y Taller</a>

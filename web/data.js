@@ -486,6 +486,74 @@ const PRODUCTS = [
                 ]
             }
         ]
+    },
+
+    // 14. MAKERS INVITADOS: SOPORTE MANDO PS5 / XBOX "CYBERHEX"
+    {
+        id: "maker_stand_mando",
+        name: "Soporte para Mando PS5 / Xbox 'CyberHex'",
+        price: 14.00,
+        oldPrice: 18.00,
+        category: "makers",
+        collection: "makers",
+        featured: false,
+        badge: "Maker Invitado",
+        badgeType: "teal",
+        channelInfo: "Cápsula Makers Invitados • Royalty directo al creador",
+        image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80",
+        gallery: [
+            "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80"
+        ],
+        desc: "Soporte ergonómico con silueta hexagonal para mandos de PlayStation 5, Xbox Series o Nintendo Switch Pro. Impreso en una sola pieza de alta rigidez con base ensanchada antideslizante para tu setup gaming.",
+        designer: {
+            name: "Carlos R. (@carlos3d_maker)",
+            handle: "@carlos3d_maker",
+            bio: "Diseñador de props y accesorios gaming en Madrid"
+        },
+        variants: [
+            {
+                name: "Color",
+                options: [
+                    { label: "Negro Mate Stealth" },
+                    { label: "Gris Espacial" },
+                    { label: "Blanco Glaciar" }
+                ]
+            }
+        ]
+    },
+
+    // 15. MAKERS INVITADOS: ORGANIZADOR MODULAR "LOW-POLY"
+    {
+        id: "maker_portalapices_voxel",
+        name: "Organizador Modular de Escritorio 'Low-Poly'",
+        price: 12.00,
+        oldPrice: 15.00,
+        category: "makers",
+        collection: "makers",
+        featured: false,
+        badge: "Maker Invitado",
+        badgeType: "teal",
+        channelInfo: "Cápsula Makers Invitados • Royalty directo al creador",
+        image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80",
+        gallery: [
+            "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80"
+        ],
+        desc: "Portalápices y organizador de mesa con facetas poliédricas geométricas. Diseño de autor para dar un toque contemporáneo a tu espacio de trabajo o estudio.",
+        designer: {
+            name: "Elena V. (@elena_shapes)",
+            handle: "@elena_shapes",
+            bio: "Arquitectura y diseño paramétrico en Madrid"
+        },
+        variants: [
+            {
+                name: "Acabado",
+                options: [
+                    { label: "Blanco Mármol" },
+                    { label: "Terracota Mate" },
+                    { label: "Verde Salvia" }
+                ]
+            }
+        ]
     }
 ];
 
@@ -600,6 +668,198 @@ const VERIFIED_REVIEWS = [
         order_id: 3953260236
     }
 ];
+
+// ============================================================================
+// DATOS DEL PASAPORTE SIVISECRAFT (PAÍSES, CIUDADES Y LOGROS DESBLOQUEADOS)
+// ============================================================================
+const PASSPORT_DATA = {
+    stats: {
+        totalOrders: 168,
+        totalCountries: 14,
+        totalCities: 54,
+        averageRating: "4.9★",
+        kmTraveled: "+38.400 km",
+        bambuHours: "+1.920 h"
+    },
+    unlockedCountries: [
+        {
+            code: "ES",
+            flag: "🇪🇸",
+            name: "España",
+            status: "Taller Base (Madrid)",
+            orders: 86,
+            percentage: 51,
+            cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Bilbao", "Alicante", "Valladolid", "Vigo", "Gijón", "Palma de Mallorca", "Murcia", "Granada", "Córdoba", "Toledo", "Santander", "Oviedo", "Salamanca", "Santiago", "Badajoz", "Pamplona", "Albacete", "Castellón"]
+        },
+        {
+            code: "DE",
+            flag: "🇩🇪",
+            name: "Alemania",
+            status: "Top 1 Internacional",
+            orders: 26,
+            percentage: 15,
+            cities: ["Berlín", "Múnich", "Hamburgo", "Frankfurt", "Colonia", "Stuttgart", "Düsseldorf", "Leipzig", "Dresde"]
+        },
+        {
+            code: "FR",
+            flag: "🇫🇷",
+            name: "Francia",
+            status: "Desbloqueado",
+            orders: 16,
+            percentage: 10,
+            cities: ["París", "Lyon", "Marsella", "Burdeos", "Toulouse", "Estrasburgo", "Nantes", "Lille"]
+        },
+        {
+            code: "IT",
+            flag: "🇮🇹",
+            name: "Italia",
+            status: "Desbloqueado",
+            orders: 12,
+            percentage: 7,
+            cities: ["Roma", "Milán", "Florencia", "Turín", "Bolonia", "Nápoles", "Verona"]
+        },
+        {
+            code: "GB",
+            flag: "🇬🇧",
+            name: "Reino Unido",
+            status: "Desbloqueado",
+            orders: 11,
+            percentage: 7,
+            cities: ["Londres", "Manchester", "Edimburgo", "Birmingham", "Bristol", "Leeds"]
+        },
+        {
+            code: "NL",
+            flag: "🇳🇱",
+            name: "Países Bajos",
+            status: "Desbloqueado",
+            orders: 7,
+            percentage: 4,
+            cities: ["Ámsterdam", "Róterdam", "Utrecht", "Eindhoven", "La Haya"]
+        },
+        {
+            code: "BE",
+            flag: "🇧🇪",
+            name: "Bélgica",
+            status: "Desbloqueado",
+            orders: 5,
+            percentage: 3,
+            cities: ["Bruselas", "Amberes", "Gante", "Brujas", "Lieja"]
+        },
+        {
+            code: "PT",
+            flag: "🇵🇹",
+            name: "Portugal",
+            status: "Desbloqueado",
+            orders: 4,
+            percentage: 2,
+            cities: ["Lisboa", "Oporto", "Coímbra", "Braga", "Faro"]
+        },
+        {
+            code: "US",
+            flag: "🇺🇸",
+            name: "Estados Unidos",
+            status: "Transatlántico",
+            orders: 3,
+            percentage: 2,
+            cities: ["Nueva York", "Austin", "Chicago"]
+        },
+        {
+            code: "CH",
+            flag: "🇨🇭",
+            name: "Suiza",
+            status: "Desbloqueado",
+            orders: 2,
+            percentage: 1,
+            cities: ["Zúrich", "Ginebra", "Basilea"]
+        },
+        {
+            code: "AT",
+            flag: "🇦🇹",
+            name: "Austria",
+            status: "Desbloqueado",
+            orders: 2,
+            percentage: 1,
+            cities: ["Viena", "Salzburgo"]
+        },
+        {
+            code: "PL",
+            flag: "🇵🇱",
+            name: "Polonia",
+            status: "Desbloqueado",
+            orders: 1,
+            percentage: 1,
+            cities: ["Varsovia", "Cracovia"]
+        },
+        {
+            code: "SE",
+            flag: "🇸🇪",
+            name: "Suecia",
+            status: "Nórdico",
+            orders: 1,
+            percentage: 1,
+            cities: ["Estocolmo", "Gotemburgo"]
+        },
+        {
+            code: "DK",
+            flag: "🇩🇰",
+            name: "Dinamarca",
+            status: "Nórdico",
+            orders: 1,
+            percentage: 1,
+            cities: ["Copenhague", "Aarhus"]
+        }
+    ],
+    milestones: [
+        {
+            date: "12 Octubre 2026",
+            badge: "Nuevo País Desbloqueado",
+            badgeType: "accent",
+            title: "🇩🇰 Dinamarca entra en el Pasaporte SiviseCraft",
+            desc: "Nuestro primer expositor 3D emprende viaje directo a Copenhague. ¡El frío nórdico tiene ahora un pedacito de diseño hecho en Madrid!",
+            icon: "🚀"
+        },
+        {
+            date: "15 Septiembre 2026",
+            badge: "Hito Transatlántico",
+            badgeType: "gold",
+            title: "🇺🇸 ¡Cruzamos el charco! Desbloqueado Estados Unidos",
+            desc: "Un coleccionista de Austin (Texas) nos encarga un set personalizado. Las creaciones del taller cruzan oficialmente el océano.",
+            icon: "✈️"
+        },
+        {
+            date: "24 Julio 2026",
+            badge: "Reseña 5★ Internacional",
+            badgeType: "teal",
+            title: "🇬🇧 Reino Unido: 'Honestly made my day!'",
+            desc: "Alexandra en UK recibe 2 expositores con llaveros sorpresa y nos deja una reseña 5 estrellas que nos llena de energía para seguir fabricando.",
+            icon: "⭐"
+        },
+        {
+            date: "10 Marzo 2026",
+            badge: "Superventas Europeo",
+            badgeType: "blue",
+            title: "🇩🇪 Alemania se consolida como 2º mayor destino",
+            desc: "Superamos los 25 pedidos enviados a territorio alemán (Berlín, Múnich, Frankfurt, Colonia...). ¡Vielen Dank!",
+            icon: "📦"
+        },
+        {
+            date: "09 Febrero 2026",
+            badge: "Nuevo País Desbloqueado",
+            badgeType: "accent",
+            title: "🇮🇹 ¡Ciao Italia! Milán estrena expositor Friends",
+            desc: "Paolo recibe su expositor en Milán para su colección de cafetería Central Perk. ¡Grande Paolo!",
+            icon: "🍕"
+        },
+        {
+            date: "15 Octubre 2025",
+            badge: "Génesis del Taller",
+            badgeType: "dark",
+            title: "🇪🇸 Sale el Envío #SC-001 desde nuestro taller en Madrid",
+            desc: "Víctor calibra la Bambu Lab A1, aplica laca sobre placa PEI y empaqueta el primer pedido de la historia de SiviseCraft.",
+            icon: "🌱"
+        }
+    ]
+};
 
 // ============================================================================
 // MOTOR DE CARRITO, ENVÍOS POR TRAMOS Y CHECKOUT DIRECTO (BIZUM + STRIPE)
@@ -814,9 +1074,15 @@ function buildProductCardHTML(p) {
                 ${galleryCount > 1 ? `<span class="product-gallery-count">📷 ${galleryCount} fotos</span>` : ""}
             </div>
             <div class="product-details">
-                <div style="font-size:0.72rem; color:var(--accent-pichi); font-weight:700; margin-bottom:4px;">
-                    ${p.channelInfo || "Fabricado en nuestro taller de Madrid"}
-                </div>
+                ${p.designer ? `
+                    <div style="font-size:0.75rem; color:var(--accent-stripe); font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+                        🤝 Diseñado por <strong>${p.designer.name}</strong>
+                    </div>
+                ` : `
+                    <div style="font-size:0.72rem; color:var(--accent-pichi); font-weight:700; margin-bottom:4px;">
+                        ${p.channelInfo || "Fabricado en nuestro taller de Madrid"}
+                    </div>
+                `}
                 <div class="product-header-row">
                     <h3 onclick="openProductDetail('${p.id}')">${p.name}</h3>
                     <div class="product-price-box">
@@ -888,9 +1154,16 @@ function openProductDetail(productId) {
                 </div>
             </div>
             <div style="display:flex; flex-direction:column;">
-                <div style="font-size:0.78rem; color:var(--accent-pichi); font-weight:700; margin-bottom:6px;">
-                    ${p.channelInfo || "Impresión 3D de alta precisión en PLA biodegradable"}
-                </div>
+                ${p.designer ? `
+                    <div style="background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.25); border-radius:var(--radius-md); padding:10px 14px; margin-bottom:12px; font-size:0.82rem; color:var(--text-primary); line-height:1.5;">
+                        🤝 <strong>Diseño de Autor:</strong> ${p.designer.name} (${p.designer.handle}) • <em>${p.designer.bio}</em>.<br>
+                        Fabricado bajo demanda con precisión Bambu Lab A1 en el taller SiviseCraft de Madrid. Royalty directo al autor con cada venta.
+                    </div>
+                ` : `
+                    <div style="font-size:0.78rem; color:var(--accent-pichi); font-weight:700; margin-bottom:6px;">
+                        ${p.channelInfo || "Impresión 3D de alta precisión en PLA biodegradable"}
+                    </div>
+                `}
                 <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px;">
                     <span class="config-price" id="detail-price-${p.id}">${formatPrice(p.price)}</span>
                     ${p.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-secondary); font-size:0.9rem;">En Etsy: ${formatPrice(p.oldPrice)}</span>` : ""}
@@ -1660,3 +1933,75 @@ document.addEventListener("click", (e) => {
         document.querySelectorAll(".nav-dropdown.open").forEach(d => d.classList.remove("open"));
     }
 });
+
+// Renderizar página completa del Pasaporte SiviseCraft
+function renderPassportPage() {
+    const statsMount = document.getElementById("passport-stats-mount");
+    if (statsMount) {
+        const s = PASSPORT_DATA.stats;
+        statsMount.innerHTML = `
+            <div class="passport-stat-card">
+                <div class="passport-stat-num highlight">${s.totalCountries}</div>
+                <div class="passport-stat-label">Países Desbloqueados</div>
+            </div>
+            <div class="passport-stat-card">
+                <div class="passport-stat-num">${s.totalCities}</div>
+                <div class="passport-stat-label">Ciudades Destino</div>
+            </div>
+            <div class="passport-stat-card">
+                <div class="passport-stat-num">${s.totalOrders}</div>
+                <div class="passport-stat-label">Envíos Entregados</div>
+            </div>
+            <div class="passport-stat-card">
+                <div class="passport-stat-num highlight">${s.averageRating}</div>
+                <div class="passport-stat-label">Valoración Media</div>
+            </div>
+            <div class="passport-stat-card">
+                <div class="passport-stat-num">${s.kmTraveled}</div>
+                <div class="passport-stat-label">Km Recorridos</div>
+            </div>
+        `;
+    }
+
+    const milestonesMount = document.getElementById("passport-milestones-mount");
+    if (milestonesMount) {
+        milestonesMount.innerHTML = PASSPORT_DATA.milestones.map(m => `
+            <div class="milestone-card">
+                <div class="milestone-icon">${m.icon}</div>
+                <div class="milestone-body">
+                    <div class="milestone-header">
+                        <span class="milestone-badge ${m.badgeType || ''}">${m.badge}</span>
+                        <span class="milestone-date">${m.date}</span>
+                    </div>
+                    <h4 class="milestone-title">${m.title}</h4>
+                    <p class="milestone-desc">${m.desc}</p>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    const countriesMount = document.getElementById("passport-countries-mount");
+    if (countriesMount) {
+        countriesMount.innerHTML = PASSPORT_DATA.unlockedCountries.map(c => `
+            <div class="country-card">
+                <div class="country-card-header">
+                    <div class="country-title-box">
+                        <span class="country-flag">${c.flag}</span>
+                        <div>
+                            <div class="country-name">${c.name}</div>
+                            <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">${c.status}</span>
+                        </div>
+                    </div>
+                    <div class="country-orders-badge">${c.orders} ${c.orders === 1 ? 'pedido' : 'pedidos'}</div>
+                </div>
+                <div class="country-progress-bar" title="${c.percentage}% del total de envíos">
+                    <div class="country-progress-fill" style="width: ${c.percentage}%"></div>
+                </div>
+                <div class="country-cities-label">Ciudades alcanzadas (${c.cities.length}):</div>
+                <div class="city-chips-wrap">
+                    ${c.cities.map(city => `<span class="city-chip">${city}</span>`).join("")}
+                </div>
+            </div>
+        `).join("");
+    }
+}
