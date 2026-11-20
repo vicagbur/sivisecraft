@@ -429,11 +429,20 @@ nav ul a.active {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 6px;
+}
+
+.hero-showcase-label span:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .hero-showcase-label span.price {
     color: #5eead4;
     font-family: var(--font-mono);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Trust & Benefits Strip */
