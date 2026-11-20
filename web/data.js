@@ -112,9 +112,12 @@ const PRODUCTS = [
         badge: "Con Luz LED",
         badgeType: "gold",
         channelInfo: "Luz LED integrada • Fabricado en nuestro taller de Madrid",
-        image: "img/expositor_dragonball.jpg",
+        image: "img/dragonball_1.jpg",
         gallery: [
-            "img/expositor_dragonball.jpg"
+            "img/dragonball_1.jpg",
+            "img/dragonball_2.jpg",
+            "img/dragonball_3.jpg",
+            "img/dragonball_4.jpg"
         ],
         desc: "Expositor diseñado específicamente para la colección de figuras Dragon Ball de Burger King. Incluye iluminación LED cálida integrada para destacar la silueta y dar un efecto espectacular a tu estantería o setup. Muñecos no incluidos.",
         variants: []
@@ -181,9 +184,12 @@ const PRODUCTS = [
         badge: "Top Wallapop & Vinted",
         badgeType: "teal",
         channelInfo: "Uno de los favoritos en Wallapop (5★) y Vinted (5★)",
-        image: "img/expositor_stitch.jpg",
+        image: "img/stitch_1.jpg",
         gallery: [
-            "img/expositor_stitch.jpg"
+            "img/stitch_1.jpg",
+            "img/stitch_2.jpg",
+            "img/stitch_3.jpg",
+            "img/stitch_4.jpg"
         ],
         desc: "Expositor temático impreso en 3D para organizar y lucir toda la colección de figuras de Stitch de Burger King. Encajes a medida para evitar caídas y diseño calibrado para cada personaje. Muñecos no incluidos.",
         variants: []

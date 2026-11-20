@@ -1,6 +1,9 @@
 # Ignorar archivos pesados en bruto (>100MB) para que GitHub funcione rápido y sin límites
-fotos/*.zip
-fotos/**/*.mp4
+assets/
+fotos/
+*.zip
+*.mp4
+*.stl
 *.afdesign
 *.afpub
 *.3mf
