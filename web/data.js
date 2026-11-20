@@ -9,8 +9,8 @@ const STORE_CONFIG = {
     owner: "Víctor Aguado",
     city: "Madrid",
     freeShippingThreshold: 45.00, // Envío GRATIS > 45€ (Península)
-    bizumPhone: "600 000 000",    // Editable por Víctor con su móvil de Bizum/WhatsApp
-    whatsappNumber: "34600000000",// Editable para recibir el pedido directo en WhatsApp
+    bizumPhone: "681 01 59 83",    // Teléfono oficial Bizum SiviseCraft
+    whatsappNumber: "34681015983", // Teléfono oficial WhatsApp SiviseCraft
     contactEmail: "hola@sivisecraft.es",
     etsyUrl: "https://www.etsy.com/es/shop/SiviseCraft",
     wallapopText: "5★ (35 val. • +26 ventas)",
@@ -1869,7 +1869,7 @@ function injectSharedStoreModals() {
                         <div id="pay-box-bizum" class="bizum-instructions-card">
                             <h4>📱 Pago Directo por Bizum (Instantáneo y 0% Comisiones)</h4>
                             <p style="color:var(--text-secondary); line-height:1.45;">
-                                Al pulsar en confirmar se generará tu código de pedido <strong>#SC</strong> para que envíes el Bizum con ese concepto y nos avises en 1 clic por WhatsApp. ¡Empezamos a imprimir tu pieza en el acto!
+                                Envía tu Bizum al móvil <strong>${STORE_CONFIG.bizumPhone}</strong> con tu código <strong>#SC</strong> en el concepto. Al confirmar tu pedido podrás avisar a Víctor en 1 clic por WhatsApp para empezar a imprimir tu pieza en el acto.
                             </p>
                         </div>
 
