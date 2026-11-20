@@ -43,8 +43,7 @@ async function handleCheckout(request, env) {
             return new Response(
                 JSON.stringify({
                     error: "STRIPE_NOT_CONFIGURED",
-                    message: "Falta configurar STRIPE_SECRET_KEY en las Variables de Entorno de Cloudflare.",
-                    availableEnvKeys: Object.keys(env || {})
+                    message: "Falta configurar STRIPE_SECRET_KEY en las Variables de Entorno de Cloudflare."
                 }),
                 {
                     status: 501,
