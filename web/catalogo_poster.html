@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SiviseCraft — Catálogo Oficial de Colecciones 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #090d16;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            width: 1400px;
+            min-height: 2200px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background ambient glow */
+        .bg-glow-1 {
+            position: absolute;
+            top: -150px;
+            left: -100px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(94, 234, 212, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .bg-glow-2 {
+            position: absolute;
+            top: 400px;
+            right: -150px;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.10) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .poster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 28px;
+            margin-bottom: 32px;
+        }
+
+        .brand-col {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand-logo-box {
+            width: 74px;
+            height: 74px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(94, 234, 212, 0.3);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(94, 234, 212, 0.2);
+        }
+
+        .brand-logo-box img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .brand-titles h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #5eead4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .brand-titles p {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin-top: 4px;
+        }
+
+        .header-meta {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background: rgba(94, 234, 212, 0.12);
+            color: #5eead4;
+            border: 1px solid rgba(94, 234, 212, 0.35);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .meta-contact {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Banner de confianza */
+        .poster-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 34px;
+            background: rgba(26, 31, 38, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px 24px;
+        }
+
+        .strip-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .strip-icon {
+            font-size: 1.5rem;
+        }
+
+        .strip-text strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #fff;
+        }
+
+        .strip-text span {
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        /* Grid de Productos */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 34px;
+        }
+
+        .product-card {
+            background: rgba(18, 24, 38, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .product-thumb {
+            position: relative;
+            width: 100%;
+            height: 210px;
+            background: #0f172a;
+            overflow: hidden;
+        }
+
+        .product-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-overlay.gold { border-color: rgba(245, 158, 11, 0.6); color: #fbbf24; }
+        .badge-overlay.pink { border-color: rgba(236, 72, 153, 0.6); color: #f472b6; }
+        .badge-overlay.teal { border-color: rgba(94, 234, 212, 0.6); color: #5eead4; }
+
+        .product-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #f8fafc;
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+
+        .product-feature {
+            font-size: 0.76rem;
+            color: #94a3b8;
+            line-height: 1.35;
+            margin-bottom: 14px;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        .price-box {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .current-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #5eead4;
+        }
+
+        .old-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #64748b;
+            text-decoration: line-through;
+        }
+
+        .order-btn-hint {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        /* Banner inferior / footer */
+        .poster-footer {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(94, 234, 212, 0.25);
+            border-radius: 18px;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 40px rgba(94, 234, 212, 0.08);
+        }
+
+        .footer-left h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.35rem;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .footer-left p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .contact-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-align: right;
+        }
+
+        .contact-badge .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .contact-badge .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #5eead4;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- Header -->
+    <header class="poster-header">
+        <div class="brand-col">
+            <div class="brand-logo-box">
+                <img src="img/logo.svg" alt="SiviseCraft">
+            </div>
+            <div class="brand-titles">
+                <h1>SiviseCraft</h1>
+                <p>Donde la tecnología encuentra la artesanía • Taller 3D en Madrid</p>
+            </div>
+        </div>
+        <div class="header-meta">
+            <span class="tag-pill">✨ CATÁLOGO OFICIAL 2026</span>
+            <div class="meta-contact">🌐 sivisecraft.es • 📱 WhatsApp: 681 01 59 83</div>
+        </div>
+    </header>
+
+    <!-- Strip Ventajas -->
+    <div class="poster-strip">
+        <div class="strip-item">
+            <span class="strip-icon">🚀</span>
+            <div class="strip-text">
+                <strong>Envío Gratis desde 45 €</strong>
+                <span>Envíos rápidos InPost y Correos</span>
+            </div>
+        </div>
+        <div class="strip-item">
+            <span class="strip-icon">📱</span>
+            <div class="strip-text">
+                <strong>Pago por Bizum</strong>
+                <span>Directo al 681 01 59 83 (0% comisión)</span>
+            </div>
+        </div>
+        <div class="strip-item">
+            <span class="strip-icon">💳</span>
+            <div class="strip-text">
+                <strong>Tarjeta, Apple & Google Pay</strong>
+                <span>Pasarela segura oficial Stripe</span>
+            </div>
+        </div>
+        <div class="strip-item">
+            <span class="strip-icon">⚙️</span>
+            <div class="strip-text">
+                <strong>Fabricación Propia</strong>
+                <span>Impresoras Bambu Lab de alta precisión</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de 13 Productos -->
+    <main class="products-grid">
+        <!-- 1. Tiny Tan BTS -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/tinytan_nombres.jpg" alt="Tiny Tan BTS">
+                <span class="badge-overlay pink">Top Ventas</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Tiny Tan BTS McDonald's (7 Fig.)</h2>
+                <p class="product-feature">Con nombres de los 7 miembros y logos oficiales. Disponible en Rojo o Morado.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">18,00 €</span>
+                        <span class="old-price">22,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">Pack x2: 32 €</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 2. Dragon Ball Burger King LED -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/dragonball_1.jpg" alt="Dragon Ball LED">
+                <span class="badge-overlay gold">Con Luz LED</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Dragon Ball BK con Luz LED</h2>
+                <p class="product-feature">Pilares con luz LED integrados. Encaje a medida para las figuras de Burger King.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">16,00 €</span>
+                        <span class="old-price">20,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">LED Incluido</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 3. The Mandalorian & Grogu -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/mandalorian_1.jpg" alt="Mandalorian & Grogu">
+                <span class="badge-overlay teal">Nuevo Lanzamiento</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor The Mandalorian & Grogu</h2>
+                <p class="product-feature">Doble altura en negro mate y plata espacial con casco Mandaloriano en relieve 3D.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">20,00 €</span>
+                        <span class="old-price">25,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">7 Peanas</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 4. Stranger Things 4 Gradas -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/stranger_1.jpg" alt="Stranger Things">
+                <span class="badge-overlay pink">Gran Formato</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Stranger Things 'Welcome to Hawkins'</h2>
+                <p class="product-feature">4 gradas para las 12 figuras + sus 12 cofres casitas de McDonald's.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">22,50 €</span>
+                        <span class="old-price">28,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">12 Figuras</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 5. Stitch Burger King -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/stitch_1.jpg" alt="Stitch Burger King">
+                <span class="badge-overlay teal">Top Wallapop 5★</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Stitch Burger King</h2>
+                <p class="product-feature">Silueta de Stitch en relieve y tipografía 3D. Encajes a medida sin caídas.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">15,00 €</span>
+                        <span class="old-price">19,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">Edición 3D</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 6. Calendario Adviento / Joyero Derpy -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/derpy_1.jpg" alt="Joyero Adviento Derpy">
+                <span class="badge-overlay gold">Joya 24 Cajones</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Calendario Adviento / Joyero Derpy</h2>
+                <p class="product-feature">Tigre azul K-Pop Demon Hunters. Números extraíbles: se convierte en joyero permanente.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">40,00 €</span>
+                        <span class="old-price">45,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">24 Cajones</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 7. Mario Kart McDonald's -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/mariokart_1.jpg" alt="Mario Kart">
+                <span class="badge-overlay pink">10 Coches</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Mario Kart (10 Coches)</h2>
+                <p class="product-feature">Capacidad para la colección completa de 10 karts con relieves de armas y copas GP.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">16,00 €</span>
+                        <span class="old-price">28,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">10 Karts</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 8. Friends Puerta de Mónica -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/friends_1.jpg" alt="Friends">
+                <span class="badge-overlay gold">Marco Amarillo</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Friends (Puerta de Mónica)</h2>
+                <p class="product-feature">Mítica puerta morada con marco amarillo. Para los 6 personajes de McDonald's.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">20,00 €</span>
+                        <span class="old-price">24,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">6 Figuras</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 9. Minecraft 6 Figuras -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/minecraft_1.jpg" alt="Minecraft">
+                <span class="badge-overlay teal">Diseño Voxel</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Minecraft McDonald's (6 Fig.)</h2>
+                <p class="product-feature">Texturas cuadradas estilo césped / piedra con logo oficial en relieve.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">15,00 €</span>
+                        <span class="old-price">18,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">6 Figuras</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 10. Miércoles Addams Nevermore -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/miercoles_1.jpg" alt="Miércoles Addams">
+                <span class="badge-overlay pink">Ataúd Nevermore</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Miércoles Addams</h2>
+                <p class="product-feature">Inspirado en el ataúd y la Academia Nevermore en negro mate y detalles góticos.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">18,00 €</span>
+                        <span class="old-price">22,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">Edición Gótica</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 11. Tiny Tan Individual -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/tinytan_indiv.jpg" alt="Tiny Tan Individual">
+                <span class="badge-overlay teal">Individual</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Expositor Individual Tiny Tan BTS</h2>
+                <p class="product-feature">Base compacta para destacar a tu bias favorito (RM, Jimin, V, Jungkook, Suga...).</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">6,00 €</span>
+                        <span class="old-price">8,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">Compacto</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 12. Lámpara Litofanía Las Meninas -->
+        <article class="product-card">
+            <div class="product-thumb">
+                <img src="img/meninas_1.jpg" alt="Lámpara Las Meninas">
+                <span class="badge-overlay gold">Arte & Litofanía</span>
+            </div>
+            <div class="product-body">
+                <h2 class="product-title">Lámpara Litofanía 'Las Meninas'</h2>
+                <p class="product-feature">Obra de Velázquez en 25x25 cm con luz LED cálida integrada y marco de diseño.</p>
+                <div class="product-footer">
+                    <div class="price-box">
+                        <span class="current-price">40,00 €</span>
+                        <span class="old-price">50,00 €</span>
+                    </div>
+                    <span class="order-btn-hint">LED Incluido</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 13. Reloj Toy Story -->
+        <article class="product-card" style="grid-column: span 2;">
+            <div style="display: flex; height: 100%;">
+                <div class="product-thumb" style="width: 50%; height: 100%;">
+                    <img src="img/toystory_1.jpg" alt="Reloj Toy Story">
+                    <span class="badge-overlay teal">Decoración & Hogar</span>
+                </div>
+                <div class="product-body" style="width: 50%;">
+                    <h2 class="product-title" style="font-size: 1.25rem;">Reloj de Pared Inspirado en Toy Story</h2>
+                    <p class="product-feature" style="font-size: 0.85rem;">Inspirado en el reloj de la habitación de Andy. Mecanismo de cuarzo silencioso continuo sin 'tic-tac'. Perfecto para setups, dormitorios infantiles y coleccionistas de Pixar.</p>
+                    <div class="product-footer">
+                        <div class="price-box">
+                            <span class="current-price" style="font-size: 1.5rem;">18,00 €</span>
+                            <span class="old-price">24,00 €</span>
+                        </div>
+                        <span class="order-btn-hint" style="padding: 8px 14px; font-size: 0.8rem;">Mecanismo Silencioso</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Tarjeta Pedidos Personalizados -->
+        <article class="product-card" style="grid-column: span 2; background: linear-gradient(135deg, rgba(94, 234, 212, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%); border-color: rgba(94, 234, 212, 0.3);">
+            <div class="product-body" style="padding: 24px; justify-content: center;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span class="tag-pill" style="background:rgba(94,234,212,0.15);">🛠️ SERVICIO DE ENCARGO</span>
+                    <span style="font-family:'JetBrains Mono'; font-weight:700; color:#5eead4;">Presupuesto en el día</span>
+                </div>
+                <h2 class="product-title" style="font-size: 1.35rem; margin-bottom:8px;">¿Tienes una figura o colección diferente?</h2>
+                <p class="product-feature" style="font-size: 0.9rem; margin-bottom:18px;">Diseñamos y fabricamos soportes, expositores a medida, trofeos y litofanías personalizadas con el texto, nombre o medidas que necesites.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.1); padding-top:14px;">
+                    <span style="color:#cbd5e1; font-size:0.95rem;">Escríbenos por WhatsApp o email</span>
+                    <span style="font-family:'JetBrains Mono'; font-weight:800; color:#fff; background:#db2777; padding:8px 16px; border-radius:8px;">681 01 59 83</span>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="poster-footer">
+        <div class="footer-left">
+            <h3>SiviseCraft • Taller de Fabricación Aditiva</h3>
+            <p>Hecho con pasión en Madrid • Bambu Lab A1 • Pagos por Bizum o Tarjeta • Envíos gratis desde 45 €</p>
+        </div>
+        <div class="footer-right">
+            <div class="contact-badge">
+                <div class="label">Tienda Oficial</div>
+                <div class="value">sivisecraft.es</div>
+            </div>
+            <div class="contact-badge">
+                <div class="label">Bizum & Pedidos</div>
+                <div class="value">681 01 59 83</div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
