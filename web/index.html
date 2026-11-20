@@ -33,8 +33,6 @@
                         </a>
                         <ul class="nav-dropdown-menu">
                             <li><a href="catalogo.html?collection=expositores"><span>Expositores</span> <span class="menu-badge">10</span></a></li>
-                            <li><a href="catalogo.html?collection=makers" style="color: #0d9488; font-weight:700;"><span>🤝 Makers Invitados</span> <span class="menu-badge" style="background: rgba(13,148,136,0.12); color: #0d9488;">2</span></a></li>
-                            <li><a href="pichi.html" style="color: #db2777; font-weight:700;"><span>✨ Pichi Studio (Madrid)</span> <span class="menu-badge" style="background: rgba(219,39,119,0.12); color: #db2777;">Landing</span></a></li>
                             <li><a href="catalogo.html?collection=navidad"><span>Navidad</span> <span class="menu-badge">1</span></a></li>
                             <li><a href="catalogo.html?collection=relojes"><span>Relojes</span> <span class="menu-badge">1</span></a></li>
                             <li><a href="catalogo.html?collection=lamparas"><span>Lámparas</span> <span class="menu-badge">1</span></a></li>
@@ -100,37 +98,37 @@
                     <span style="color:var(--text-secondary); font-size:0.7rem;">4 Disciplinas</span>
                 </div>
                 <div class="hero-showcase-grid">
-                    <a href="javascript:void(0)" onclick="openProductDetail('exp_dragonball_led')" class="hero-showcase-item" title="Ver Expositor Dragon Ball LED">
+                    <a href="javascript:void(0)" onclick="openProductDetail('exp_dragon_ball')" class="hero-showcase-item" title="Ver Expositor Dragon Ball LED">
                         <img src="img/expositor_dragonball.jpg" alt="Expositor Dragon Ball LED">
                         <div class="hero-showcase-label">
-                            <span>Expositores Colección</span>
-                            <span class="price">28,00 €</span>
+                            <span>Dragon Ball LED</span>
+                            <span class="price">16,00 €</span>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openProductDetail('exp_mandalorian')" class="hero-showcase-item" title="Ver Expositor Mandalorian y Grogu">
+                        <img src="img/mandalorian_1.jpg" alt="Expositor The Mandalorian & Grogu">
+                        <div class="hero-showcase-label">
+                            <span>Mandalorian & Grogu</span>
+                            <span class="price">20,00 €</span>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openProductDetail('adviento_derpy')" class="hero-showcase-item" title="Ver Joyero Adviento Derpy">
+                        <img src="img/derpy_1.jpg" alt="Joyero Adviento Derpy K-Pop">
+                        <div class="hero-showcase-label">
+                            <span>Joyero Adviento Derpy</span>
+                            <span class="price">40,00 €</span>
                         </div>
                     </a>
                     <a href="javascript:void(0)" onclick="openProductDetail('lampara_meninas')" class="hero-showcase-item" title="Ver Lámpara Litofanía Las Meninas">
-                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80" alt="Lámpara Litofanía Las Meninas">
+                        <img src="https://i.etsystatic.com/48356593/r/il/6a2743/6516118914/il_fullxfull.6516118914_4929.jpg" alt="Lámpara Litofanía Las Meninas">
                         <div class="hero-showcase-label">
-                            <span>Iluminación Arte</span>
-                            <span class="price">28,00 €</span>
-                        </div>
-                    </a>
-                    <a href="pichi.html" class="hero-showcase-item" title="Ver Colección Cápsula Pichi Studio">
-                        <img src="img/pichi_pack_real.jpg" alt="Pack Verbena Pichi Studio">
-                        <div class="hero-showcase-label">
-                            <span>Pichi Studio</span>
-                            <span class="price">Desde 6€</span>
-                        </div>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openProductDetail('maker_stand_mando')" class="hero-showcase-item" title="Ver Soporte Mando CyberHex">
-                        <img src="https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80" alt="Soporte Mando Gaming CyberHex">
-                        <div class="hero-showcase-label">
-                            <span>Makers Invitados</span>
-                            <span class="price">14,00 €</span>
+                            <span>Lámpara Las Meninas</span>
+                            <span class="price">40,00 €</span>
                         </div>
                     </a>
                 </div>
                 <div style="text-align:center; font-size:0.76rem; color:var(--text-secondary); margin-top:12px;">
-                    ✨ <strong>Expositores, iluminación, cápsula Madrid y accesorios de autor</strong>
+                    ✨ <strong>Expositores de coleccionismo, iluminación artística y piezas de autor</strong>
                 </div>
             </div>
         </div>
@@ -243,9 +241,8 @@
 
             <!-- Pestañas rápidas en portada -->
             <div class="filter-tabs" style="justify-content: center; margin-bottom: 32px;">
-                <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (15)</button>
+                <button class="filter-btn active" onclick="filterHomeProducts('all', this)">Todos los Modelos (13)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('expositores', this)">Expositores (10)</button>
-                <button class="filter-btn" onclick="filterHomeProducts('makers', this)">🤝 Makers Invitados (2)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('navidad', this)">Navidad (1)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('relojes', this)">Relojes (1)</button>
                 <button class="filter-btn" onclick="filterHomeProducts('lamparas', this)">Lámparas (1)</button>
@@ -361,7 +358,6 @@
             </div>
             <div style="display: flex; gap: 18px; align-items:center; flex-wrap: wrap;">
                 <a href="catalogo.html" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 700;">Catálogo</a>
-                <a href="catalogo.html?collection=makers" style="color: var(--accent-pichi); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🤝 Makers Invitados</a>
                 <a href="pasaporte.html" style="color: var(--accent-stripe); text-decoration: none; font-size: 0.85rem; font-weight: 700;">🌍 Pasaporte</a>
                 <a href="#superventas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Superventas</a>
                 <a href="#resenas" style="color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Reseñas Reales (4.9★)</a>

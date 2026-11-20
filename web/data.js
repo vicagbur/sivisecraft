@@ -76,57 +76,48 @@ const PRODUCTS = [
         desc: "Expositor a medida para las 7 figuras de la colección Tiny Tan BTS de McDonald's. Incluye logos oficiales de BTS y Tiny Tan en relieve/hendido y opción con los nombres de los 7 integrantes (RM, JIN, SUGA, J-HOPE, JIMIN, V, JUNG KOOK). Disponible en packs de ahorro para las dos ediciones (Roja y Encore Morada). Figuras no incluidas.",
         variants: [
             {
-                name: "Formato / Pack Ahorro",
+                name: "Pack",
                 options: [
                     { label: "1 Expositor (18,00 €)", price: 18.00 },
-                    { label: "Pack Ahorro 2 Expositores (32,00 € • 16€/ud)", price: 32.00 },
-                    { label: "Pack Coleccionista 4 Expositores (64,00 € • Envío Gratis)", price: 64.00 }
+                    { label: "Pack Ahorro 2 Expositores (32,00 € • 16€/ud)", price: 32.00 }
                 ]
             },
             {
-                name: "Color Principal",
+                name: "Color",
                 options: [
-                    { label: "Morado Army (Blanco en relieve)" },
-                    { label: "Rojo McDonald's (Amarillo en relieve)" },
-                    { label: "Combinado (Rojo + Morado para Packs)" }
+                    { label: "Morado" },
+                    { label: "Rojo" },
+                    { label: "Pack x2: 1 Rojo + 1 Morado" }
                 ]
             },
             {
                 name: "Nombres en las baldas",
                 options: [
-                    { label: "Con nombres de los 7 miembros (RM, JIN, SUGA...)" },
-                    { label: "Sin nombres (solo logos BTS y Tiny Tan)" }
+                    { label: "Con Nombres" },
+                    { label: "Sin Nombres" }
                 ]
             }
         ]
     },
 
-    // 2. EXPOSITOR DRAGON BALL BURGER KING (CON / SIN LUZ LED)
+    // 2. EXPOSITOR DRAGON BALL BURGER KING (CON LUZ LED)
     {
         id: "exp_dragon_ball",
-        name: "Expositor Dragon Ball Burger King (Normal / Con Luz LED)",
-        price: 14.00,
-        oldPrice: 19.00,
+        name: "Expositor Dragon Ball Burger King con Luz LED",
+        price: 16.00,
+        oldPrice: 20.00,
         category: "expositores",
         collection: "expositores",
         featured: true,
-        badge: "Superventas Wallapop",
+        badge: "Con Luz LED",
         badgeType: "gold",
-        channelInfo: "Éxito en Wallapop y Vinted • Opción LED o Normal",
+        channelInfo: "Luz LED integrada • Fabricado en nuestro taller de Madrid",
         image: "img/expositor_dragonball.jpg",
         gallery: [
             "img/expositor_dragonball.jpg"
         ],
-        desc: "Expositor diseñado específicamente para lucir la colección de figuras de Dragon Ball de Burger King. Elige entre la versión con iluminación LED cálida integrada para destacar la silueta y las bolas de dragón (14,00 €) o la estructura Normal de colección completa (16,00 €). Impreso en PLA de alta densidad. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Versión del Expositor",
-                options: [
-                    { label: "Con Luz LED integrada (14,00 €)", price: 14.00 },
-                    { label: "Modelo Normal Colección Completa (16,00 €)", price: 16.00 }
-                ]
-            }
-        ]
+        desc: "Expositor diseñado específicamente para la colección de figuras Dragon Ball de Burger King. Incluye iluminación LED cálida integrada para destacar la silueta y dar un efecto espectacular a tu estantería o setup. Muñecos no incluidos.",
+        variants: []
     },
 
     // 3. EXPOSITOR THE MANDALORIAN & GROGU
@@ -152,14 +143,7 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/a4a104/8107616385/il_fullxfull.8107616385_cuwb.jpg"
         ],
         desc: "Expositor en negro mate y plata espacial para la colección completa de cápsulas y figuras de The Mandalorian and Grogu. Respaldo superior con el icónico casco mandaloriano en relieve multicolor, tipografía frontal en 3D y 7 bases circulares calibradas al milímetro. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Acabado",
-                options: [
-                    { label: "Negro Mate + Casco Plata Beskar (20,00 €)", price: 20.00 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 4. EXPOSITOR STRANGER THINGS "WELCOME TO HAWKINS"
@@ -182,20 +166,13 @@ const PRODUCTS = [
             "img/stranger_4.jpg"
         ],
         desc: "Estantería en 4 niveles estilo grada para exhibir la colección completa de 12 figuras de Stranger Things de McDonald's junto a sus 12 casitas/cofres de colores detrás de cada personaje. Coronada con el cartel clásico 'WELCOME TO HAWKINS' en blanco y negro. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Configuración",
-                options: [
-                    { label: "Completo 4 Gradas + Cartel Welcome to Hawkins (22,50 €)", price: 22.50 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 5. EXPOSITOR STITCH BURGER KING
     {
         id: "exp_stitch",
-        name: "Expositor Stitch & Angel Burger King",
+        name: "Expositor Stitch Burger King",
         price: 15.00,
         oldPrice: 19.00,
         category: "expositores",
@@ -208,17 +185,8 @@ const PRODUCTS = [
         gallery: [
             "img/expositor_stitch.jpg"
         ],
-        desc: "Expositor temático impreso en 3D para organizar y lucir toda la colección de figuras de Stitch de Burger King. Encajes a medida para evitar caídas y colores vivos inspirados en Stitch y Angel. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Combinación de Color",
-                options: [
-                    { label: "Azul Stitch & Rosa Angel (15,00 €)", price: 15.00 },
-                    { label: "Azul Tropical Completo (15,00 €)", price: 15.00 },
-                    { label: "Rosa Angel Completo (15,00 €)", price: 15.00 }
-                ]
-            }
-        ]
+        desc: "Expositor temático impreso en 3D para organizar y lucir toda la colección de figuras de Stitch de Burger King. Encajes a medida para evitar caídas y diseño calibrado para cada personaje. Muñecos no incluidos.",
+        variants: []
     },
 
     // 6. CALENDARIO DE ADVIENTO / JOYERO DERPY K-POP DEMON HUNTERS
@@ -278,16 +246,8 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/cb38c0/6415430382/il_fullxfull.6415430382_3thr.jpg",
             "https://i.etsystatic.com/48356593/r/il/fc4b21/6463528739/il_fullxfull.6463528739_tg0l.jpg"
         ],
-        desc: "Expositor de coches de Mario Kart para la colección completa de 10 karts de McDonald's. Decoraciones hendidas en laterales con los iconos de objetos/armas de Mario Kart y frontal superior con relieve de los GPs. Disponible en el nuevo modelo compacto de 2 baldas (16,00 €) o el modelo clásico de 4 baldas (28,00 €). Coches no incluidos.",
-        variants: [
-            {
-                name: "Modelo de Estantería",
-                options: [
-                    { label: "Modelo Compacto 2 Baldas (10 coches) (16,00 €)", price: 16.00 },
-                    { label: "Modelo Clásico 4 Baldas (Gran Formato) (28,00 €)", price: 28.00 }
-                ]
-            }
-        ]
+        desc: "Expositor de coches de Mario Kart para la colección completa de 10 karts de McDonald's. Decoraciones hendidas en laterales con los iconos de objetos/armas de Mario Kart y frontal superior con relieve de los GPs. Coches no incluidos.",
+        variants: []
     },
 
     // 8. EXPOSITOR MUÑECOS DE FRIENDS MCDONALD'S
@@ -312,14 +272,7 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/7516cc/6424302727/il_fullxfull.6424302727_tosa.jpg"
         ],
         desc: "Expositor para las 6 figuras de Friends de McDonald's. Impreso en el icónico color morado de la puerta del apartamento de Mónica con el marco amarillo en relieve y el logo oficial de Friends hendido en el frente. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Edición",
-                options: [
-                    { label: "Morado Puerta de Mónica + Marco Amarillo (20,00 €)", price: 20.00 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 9. EXPOSITOR MINECRAFT MCDONALD'S
@@ -343,14 +296,7 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/4d11b6/6839758203/il_fullxfull.6839758203_ktvj.jpg"
         ],
         desc: "Expositor rojo con dos baldas amplias para la colección completa de 6 muñecos y cubos de McDonald's versión Minecraft. Incluye el arco de McDonald's en estética vóxel/píxel amarillo en relieve. Muñecos no incluidos.",
-        variants: [
-            {
-                name: "Acabado",
-                options: [
-                    { label: "Rojo McDonald's + Logo Pixel Amarillo (15,00 €)", price: 15.00 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 10. EXPOSITOR MIÉRCOLES (WEDNESDAY NEVERMORE)
@@ -370,14 +316,7 @@ const PRODUCTS = [
             "img/miercoles_1.jpg"
         ],
         desc: "Expositor con silueta de ataúd en negro mate texturizado y detalles en morado Nevermore. Incluye la tipografía 'WEDNESDAY' en el compartimento superior, el escudo 'Unitas Est Invicta 1791' de Nevermore Academy en el inferior y ranuras hexagonales a medida para las peanas de las figuras. Figuras no incluidas.",
-        variants: [
-            {
-                name: "Color",
-                options: [
-                    { label: "Negro Mate + Relieves Morado Nevermore (18,00 €)", price: 18.00 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 11. EXPOSITOR INDIVIDUAL TINY TAN MCDONALD'S
@@ -447,14 +386,7 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/37bd8a/6564244133/il_fullxfull.6564244133_h1np.jpg"
         ],
         desc: "Litofanía de alta resolución del cuadro 'Las Meninas' de Diego Velázquez. Al encender su iluminación LED interna, el grosor milimétrico del PLA proyecta la obra maestra con calidad fotográfica. Marco blanco de 25x25 cm con cable USB e interruptor.",
-        variants: [
-            {
-                name: "Color del Marco",
-                options: [
-                    { label: "Marco Blanco 25x25 cm + LED USB (40,00 €)", price: 40.00 }
-                ]
-            }
-        ]
+        variants: []
     },
 
     // 13. RELOJ DE PARED TOY STORY (HABITACIÓN DE ANDY)
@@ -478,82 +410,7 @@ const PRODUCTS = [
             "https://i.etsystatic.com/48356593/r/il/af693e/8312699021/il_fullxfull.8312699021_3vmt.jpg"
         ],
         desc: "Reloj de pared funcional basado en Toy Story: esfera azul cielo con las nubes blancas de la habitación de Andy, números en relieve con la tipografía original, manecillas inspiradas en Buzz Lightyear y Woody, y el detalle secreto de la firma de 'ANDY' en la parte trasera.",
-        variants: [
-            {
-                name: "Modelo",
-                options: [
-                    { label: "Reloj Completo listo para colgar (18,00 €)", price: 18.00 }
-                ]
-            }
-        ]
-    },
-
-    // 14. MAKERS INVITADOS: SOPORTE MANDO PS5 / XBOX "CYBERHEX"
-    {
-        id: "maker_stand_mando",
-        name: "Soporte para Mando PS5 / Xbox 'CyberHex'",
-        price: 14.00,
-        oldPrice: 18.00,
-        category: "makers",
-        collection: "makers",
-        featured: false,
-        badge: "Maker Invitado",
-        badgeType: "teal",
-        channelInfo: "Cápsula Makers Invitados • Royalty directo al creador",
-        image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80",
-        gallery: [
-            "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80"
-        ],
-        desc: "Soporte ergonómico con silueta hexagonal para mandos de PlayStation 5, Xbox Series o Nintendo Switch Pro. Impreso en una sola pieza de alta rigidez con base ensanchada antideslizante para tu setup gaming.",
-        designer: {
-            name: "Carlos R. (@carlos3d_maker)",
-            handle: "@carlos3d_maker",
-            bio: "Diseñador de props y accesorios gaming en Madrid"
-        },
-        variants: [
-            {
-                name: "Color",
-                options: [
-                    { label: "Negro Mate Stealth" },
-                    { label: "Gris Espacial" },
-                    { label: "Blanco Glaciar" }
-                ]
-            }
-        ]
-    },
-
-    // 15. MAKERS INVITADOS: ORGANIZADOR MODULAR "LOW-POLY"
-    {
-        id: "maker_portalapices_voxel",
-        name: "Organizador Modular de Escritorio 'Low-Poly'",
-        price: 12.00,
-        oldPrice: 15.00,
-        category: "makers",
-        collection: "makers",
-        featured: false,
-        badge: "Maker Invitado",
-        badgeType: "teal",
-        channelInfo: "Cápsula Makers Invitados • Royalty directo al creador",
-        image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80",
-        gallery: [
-            "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80"
-        ],
-        desc: "Portalápices y organizador de mesa con facetas poliédricas geométricas. Diseño de autor para dar un toque contemporáneo a tu espacio de trabajo o estudio.",
-        designer: {
-            name: "Elena V. (@elena_shapes)",
-            handle: "@elena_shapes",
-            bio: "Arquitectura y diseño paramétrico en Madrid"
-        },
-        variants: [
-            {
-                name: "Acabado",
-                options: [
-                    { label: "Blanco Mármol" },
-                    { label: "Terracota Mate" },
-                    { label: "Verde Salvia" }
-                ]
-            }
-        ]
+        variants: []
     }
 ];
 
