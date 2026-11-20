@@ -369,7 +369,7 @@ const PRODUCTS = [
         gallery: [
             "img/miercoles_1.jpg"
         ],
-        desc: "Expositor con silueta de ataúd en negro mate texturizado PEI y detalles en morado Nevermore. Incluye la tipografía 'WEDNESDAY' en el compartimento superior, el escudo 'Unitas Est Invicta 1791' de Nevermore Academy en el inferior y ranuras hexagonales a medida para las peanas de las figuras. Figuras no incluidas.",
+        desc: "Expositor con silueta de ataúd en negro mate texturizado y detalles en morado Nevermore. Incluye la tipografía 'WEDNESDAY' en el compartimento superior, el escudo 'Unitas Est Invicta 1791' de Nevermore Academy en el inferior y ranuras hexagonales a medida para las peanas de las figuras. Figuras no incluidas.",
         variants: [
             {
                 name: "Color",
@@ -855,7 +855,7 @@ const PASSPORT_DATA = {
             badge: "Génesis del Taller",
             badgeType: "dark",
             title: "🇪🇸 Sale el Envío #SC-001 desde nuestro taller en Madrid",
-            desc: "Víctor calibra la Bambu Lab A1, aplica laca sobre placa PEI y empaqueta el primer pedido de la historia de SiviseCraft.",
+            desc: "Víctor calibra la Bambu Lab A1, prepara la superficie de impresión y empaqueta el primer pedido de la historia de SiviseCraft.",
             icon: "🌱"
         }
     ]
