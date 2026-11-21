@@ -537,12 +537,12 @@ const VERIFIED_REVIEWS = [
 // ============================================================================
 const PASSPORT_DATA = {
     stats: {
-        totalOrders: 168,
-        totalCountries: 14,
-        totalCities: 54,
+        totalOrders: 169,
+        totalCountries: 15,
+        totalCities: 55,
         averageRating: "4.9★",
-        kmTraveled: "+38.400 km",
-        bambuHours: "+1.920 h"
+        kmTraveled: "+41.200 km",
+        bambuHours: "+1.930 h"
     },
     unlockedCountries: [
         {
@@ -670,9 +670,26 @@ const PASSPORT_DATA = {
             orders: 1,
             percentage: 1,
             cities: ["Copenhague", "Aarhus"]
+        },
+        {
+            code: "RO",
+            flag: "🇷🇴",
+            name: "Rumanía",
+            status: "Europa del Este",
+            orders: 1,
+            percentage: 1,
+            cities: ["Bucarest"]
         }
     ],
     milestones: [
+        {
+            date: "20 Noviembre 2026",
+            badge: "Nuevo País Desbloqueado",
+            badgeType: "accent",
+            title: "🇷🇴 ¡Rumanía desbloqueada en el Pasaporte!",
+            desc: "Nuestras piezas impresas en 3D llegan a Bucarest. ¡El diseño y la artesanía de nuestro taller en Madrid siguen conquistando Europa!",
+            icon: "🏰"
+        },
         {
             date: "12 Octubre 2026",
             badge: "Nuevo País Desbloqueado",
@@ -1804,9 +1821,9 @@ function replaceFlagEmojisWithImg(text) {
         "🇪🇸": "es", "🇩🇪": "de", "🇫🇷": "fr", "🇮🇹": "it",
         "🇬🇧": "gb", "🇳🇱": "nl", "🇧🇪": "be", "🇵🇹": "pt",
         "🇺🇸": "us", "🇨🇭": "ch", "🇦🇹": "at", "🇵🇱": "pl",
-        "🇸🇪": "se", "🇩🇰": "dk"
+        "🇸🇪": "se", "🇩🇰": "dk", "🇷🇴": "ro"
     };
-    return text.replace(/🇪🇸|🇩🇪|🇫🇷|🇮🇹|🇬🇧|🇳🇱|🇧🇪|🇵🇹|🇺🇸|🇨🇭|🇦🇹|🇵🇱|🇸🇪|🇩🇰/g, (match) => {
+    return text.replace(/🇪🇸|🇩🇪|🇫🇷|🇮🇹|🇬🇧|🇳🇱|🇧🇪|🇵🇹|🇺🇸|🇨🇭|🇦🇹|🇵🇱|🇸🇪|🇩🇰|🇷🇴/g, (match) => {
         const code = emojiMap[match];
         return `<img src="img/flags/${code}.svg" class="inline-flag-img" alt="Bandera ${code.toUpperCase()}" loading="lazy">`;
     });
