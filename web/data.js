@@ -426,7 +426,7 @@ const VERIFIED_REVIEWS = [
         reviewer: "Alexandra",
         date: "24 Jul 2026",
         rating: 5,
-        country: "🇬🇧 Internacional",
+        country: "🇷🇴 Rumanía (Cluj)",
         product: "Pack 2 Expositores Tiny Tan (Morado + Rojo)",
         message: "I ordered two collection displays, one purple and one red. They look great, just as described and really good quality. I was also very pleasantly surprised to find 2 keychains with a handwritten message included in the package, which honestly made my day! Would definitely recommend this seller.",
         order_id: 4114342051
@@ -678,18 +678,10 @@ const PASSPORT_DATA = {
             status: "Europa del Este",
             orders: 1,
             percentage: 1,
-            cities: ["Bucarest"]
+            cities: ["Cluj-Napoca"]
         }
     ],
     milestones: [
-        {
-            date: "20 Noviembre 2026",
-            badge: "Nuevo País Desbloqueado",
-            badgeType: "accent",
-            title: "🇷🇴 ¡Rumanía desbloqueada en el Pasaporte!",
-            desc: "Nuestras piezas impresas en 3D llegan a Bucarest. ¡El diseño y la artesanía de nuestro taller en Madrid siguen conquistando Europa!",
-            icon: "🏰"
-        },
         {
             date: "12 Octubre 2026",
             badge: "Nuevo País Desbloqueado",
@@ -710,8 +702,8 @@ const PASSPORT_DATA = {
             date: "24 Julio 2026",
             badge: "Reseña 5★ Internacional",
             badgeType: "teal",
-            title: "🇬🇧 Reino Unido: 'Honestly made my day!'",
-            desc: "Alexandra en UK recibe 2 expositores con llaveros sorpresa y nos deja una reseña 5 estrellas que nos llena de energía para seguir fabricando.",
+            title: "🇷🇴 Rumanía (Cluj): 'Honestly made my day!'",
+            desc: "Alexandra desde Cluj-Napoca recibe su pack de 2 expositores con llaveros sorpresa y nota manuscrita, y nos deja esta preciosa reseña 5 estrellas.",
             icon: "⭐"
         },
         {
