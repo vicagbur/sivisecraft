@@ -1768,7 +1768,7 @@ function renderVerifiedReviews(containerId, limit = null) {
                         <div class="reviewer-avatar">${r.reviewer.charAt(0).toUpperCase()}</div>
                         <div>
                             <div class="reviewer-name">${r.reviewer}</div>
-                            <div class="review-date">${r.date} • ${r.country}</div>
+                            <div class="review-date">${r.date} • ${replaceFlagEmojisWithImg(r.country)}</div>
                         </div>
                     </div>
                     <div class="reviews-stars">${"★".repeat(r.rating)}</div>
@@ -1796,6 +1796,21 @@ document.addEventListener("click", (e) => {
         document.querySelectorAll(".nav-dropdown.open").forEach(d => d.classList.remove("open"));
     }
 });
+
+// Reemplazar emojis de banderas de países por banderas vectoriales SVG reales (para compatibilidad universal en Windows, Mac, Android e iOS)
+function replaceFlagEmojisWithImg(text) {
+    if (!text) return text;
+    const emojiMap = {
+        "🇪🇸": "es", "🇩🇪": "de", "🇫🇷": "fr", "🇮🇹": "it",
+        "🇬🇧": "gb", "🇳🇱": "nl", "🇧🇪": "be", "🇵🇹": "pt",
+        "🇺🇸": "us", "🇨🇭": "ch", "🇦🇹": "at", "🇵🇱": "pl",
+        "🇸🇪": "se", "🇩🇰": "dk"
+    };
+    return text.replace(/🇪🇸|🇩🇪|🇫🇷|🇮🇹|🇬🇧|🇳🇱|🇧🇪|🇵🇹|🇺🇸|🇨🇭|🇦🇹|🇵🇱|🇸🇪|🇩🇰/g, (match) => {
+        const code = emojiMap[match];
+        return `<img src="img/flags/${code}.svg" class="inline-flag-img" alt="Bandera ${code.toUpperCase()}" loading="lazy">`;
+    });
+}
 
 // Renderizar página completa del Pasaporte SiviseCraft
 function renderPassportPage() {
@@ -1836,8 +1851,8 @@ function renderPassportPage() {
                         <span class="milestone-badge ${m.badgeType || ''}">${m.badge}</span>
                         <span class="milestone-date">${m.date}</span>
                     </div>
-                    <h4 class="milestone-title">${m.title}</h4>
-                    <p class="milestone-desc">${m.desc}</p>
+                    <h4 class="milestone-title">${replaceFlagEmojisWithImg(m.title)}</h4>
+                    <p class="milestone-desc">${replaceFlagEmojisWithImg(m.desc)}</p>
                 </div>
             </div>
         `).join("");
@@ -1849,7 +1864,7 @@ function renderPassportPage() {
             <div class="country-card">
                 <div class="country-card-header">
                     <div class="country-title-box">
-                        <span class="country-flag">${c.flag}</span>
+                        <img src="img/flags/${c.code.toLowerCase()}.svg" class="country-flag-img" alt="Bandera de ${c.name}" loading="lazy">
                         <div>
                             <div class="country-name">${c.name}</div>
                             <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">${c.status}</span>
