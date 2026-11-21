@@ -1,0 +1,12 @@
+{
+  "name": "sivisecraft",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.109.0"
+  }
+}
