@@ -408,7 +408,7 @@ let _tablesEnsured = false;
 async function ensureTables(db) {
     if (_tablesEnsured || !db) return;
     try {
-        await db.exec(`
+        await db.prepare(`
             CREATE TABLE IF NOT EXISTS web_telemetry (
                 session_id TEXT PRIMARY KEY,
                 visitor_hash TEXT NOT NULL,
@@ -418,19 +418,24 @@ async function ensureTables(db) {
                 duration_sec INTEGER DEFAULT 0,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_telemetry_visitor ON web_telemetry(visitor_hash);
-            CREATE INDEX IF NOT EXISTS idx_telemetry_created ON web_telemetry(created_at);
+            )
+        `).run();
 
+        await db.prepare(`CREATE INDEX IF NOT EXISTS idx_telemetry_visitor ON web_telemetry(visitor_hash)`).run();
+        await db.prepare(`CREATE INDEX IF NOT EXISTS idx_telemetry_created ON web_telemetry(created_at)`).run();
+
+        await db.prepare(`
             CREATE TABLE IF NOT EXISTS analytics_events (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 event_name TEXT NOT NULL,
                 event_target TEXT DEFAULT '',
                 created_at TEXT NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_events_name ON analytics_events(event_name);
-            CREATE INDEX IF NOT EXISTS idx_events_created ON analytics_events(created_at);
-        `);
+            )
+        `).run();
+
+        await db.prepare(`CREATE INDEX IF NOT EXISTS idx_events_name ON analytics_events(event_name)`).run();
+        await db.prepare(`CREATE INDEX IF NOT EXISTS idx_events_created ON analytics_events(created_at)`).run();
+
         _tablesEnsured = true;
     } catch (err) {
         console.error("D1 ensureTables error:", err);
