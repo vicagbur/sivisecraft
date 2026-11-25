@@ -84,21 +84,42 @@ function resolveSafeBaseUrl(request) {
     return "https://www.sivisecraft.es";
 }
 
-function resolveShippingCents(shippingTierLabel, subtotalCents) {
+function resolveShippingCents(shippingTierLabel, subtotalCents, shippingTierId) {
+    const id = String(shippingTierId || "").toLowerCase();
     const label = String(shippingTierLabel || "").toLowerCase();
-    if (label.includes("unión europea") || label.includes("europe") || label.includes("eu")) {
-        return { cents: 990, label: "🌍 Unión Europea Certificado (9,90 €)" };
+
+    // Paraguay / LATAM (60,00 €)
+    if (id === "paraguay" || label.includes("paraguay") || label.includes("latam")) {
+        return { cents: 6000, label: "🇵🇾 Paraguay / LATAM Certificado (60,00 €)" };
     }
+    // USA (25,00 €)
+    if (id === "usa" || label.includes("estados unidos") || label.includes("usa") || label.includes("usps")) {
+        return { cents: 2500, label: "🇺🇸 Estados Unidos (USA) Tracked (25,00 €)" };
+    }
+    // México (25,00 €)
+    if (id === "mexico" || label.includes("méxico") || label.includes("mexico")) {
+        return { cents: 2500, label: "🇲🇽 México Internacional Certificado (25,00 €)" };
+    }
+    // Australia (25,00 €)
+    if (id === "australia" || label.includes("australia")) {
+        return { cents: 2500, label: "🇦🇺 Australia Tracked Shipping (25,00 €)" };
+    }
+    // Finlandia (20,00 €)
+    if (id === "finlandia" || label.includes("finlandia") || label.includes("finland")) {
+        return { cents: 2000, label: "🇫🇮 Finlandia Certificado (20,00 €)" };
+    }
+    // Unión Europea (15,00 €, Gratis > 90 €)
+    if (id === "ue" || label.includes("unión europea") || label.includes("europe") || label.includes("ue") || label.includes("eu")) {
+        if (subtotalCents >= 9000) {
+            return { cents: 0, label: "🇪🇺 Unión Europea Certificado (GRATIS >90€)" };
+        }
+        return { cents: 1500, label: "🇪🇺 Unión Europea Certificado (15,00 €)" };
+    }
+    // España a Domicilio con Correos (6,00 €, Gratis > 45 €)
     if (subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS) {
-        const cleanLabel = label.includes("domicilio")
-            ? "🚚 Domicilio 24/48h (Península)"
-            : "📦 Punto Pack / InPost (Península)";
-        return { cents: 0, label: cleanLabel };
+        return { cents: 0, label: "🚚 Envío a Domicilio con Correos (GRATIS >45€)" };
     }
-    if (label.includes("domicilio")) {
-        return { cents: 495, label: "🚚 Domicilio 24/48h (Península)" };
-    }
-    return { cents: 395, label: "📦 Punto Pack / InPost (Península)" };
+    return { cents: 600, label: "🚚 Envío a Domicilio con Correos (España)" };
 }
 
 function lookupCatalogProduct(item) {
@@ -170,6 +191,7 @@ async function handleCheckout(request, env, corsOrigin) {
             orderId,
             customer,
             shippingTierLabel,
+            shippingTierId,
             items
         } = body || {};
 
@@ -214,7 +236,7 @@ async function handleCheckout(request, env, corsOrigin) {
             });
         }
 
-        const verifiedShipping = resolveShippingCents(shippingTierLabel, subtotalCents);
+        const verifiedShipping = resolveShippingCents(shippingTierLabel, subtotalCents, shippingTierId);
         const safeBaseUrl = resolveSafeBaseUrl(request);
         const safeOrderId = String(orderId || "SC-WEB").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32) || "SC-WEB";
 

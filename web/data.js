@@ -1405,6 +1405,7 @@ async function submitDirectOrder(e) {
                 body: JSON.stringify({
                     orderId,
                     customer: { name, email, phone, address, zip, city, notes },
+                    shippingTierId: tier.id,
                     shippingTierLabel: tier.label,
                     shippingCost: shipping,
                     items: cart,
