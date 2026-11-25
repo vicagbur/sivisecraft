@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>SiviseCraft · Holding Analytics Dashboard (/admin)</title>
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #090d16;
+            --surface: #111827;
+            --surface-2: #1e293b;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-pink: #db2777;
+            --accent-teal: #0d9488;
+            --accent-gold: #f59e0b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #090d16 70%);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        header {
+            background: rgba(17, 24, 39, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 14px 20px;
+        }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+        .nav-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+        .brand img { height: 26px; }
+        .brand-text { font-size: 1.15rem; font-weight: 800; }
+        .brand-text span { color: var(--accent-pink); }
+        .badge {
+            background: rgba(13, 148, 136, 0.16);
+            color: #2dd4bf;
+            border: 1px solid rgba(13, 148, 136, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .btn {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #334155; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), #be185d);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+        }
+        .btn-primary:hover { opacity: 0.92; }
+
+        /* Login Card */
+        .login-card {
+            max-width: 400px;
+            margin: 90px auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+        }
+        .login-card h2 { font-size: 1.3rem; margin-bottom: 8px; }
+        .login-card p { font-size: 0.84rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+        .input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .input:focus { outline: none; border-color: var(--accent-pink); }
+
+        /* Dashboard View */
+        #dash-content { display: none; }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            transition: transform 0.2s;
+        }
+        .kpi-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+        .kpi-val { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 800; color: var(--accent-pink); margin: 6px 0 4px; }
+        .kpi-sub { font-size: 0.78rem; color: var(--muted); }
+
+        /* Funnel Card */
+        .funnel-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .funnel-card h3 { font-size: 1.05rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .funnel-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+        .funnel-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .funnel-step {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+        }
+        .funnel-step-num { font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+        .funnel-step-title { font-size: 0.85rem; font-weight: 700; margin: 4px 0 10px; }
+        .funnel-step-val { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; font-weight: 800; color: #38bdf8; }
+        .funnel-step-pct { font-size: 0.75rem; color: #2dd4bf; margin-top: 4px; font-weight: 600; }
+
+        /* Panels Grid */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+        .panel h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .bar-row { margin-bottom: 12px; }
+        .bar-label-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; }
+        .bar-track { height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-pink), #a855f7); border-radius: 4px; transition: width 0.4s; }
+
+        .storage-status-banner {
+            background: rgba(13, 148, 136, 0.12);
+            border: 1px solid rgba(13, 148, 136, 0.3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 0.82rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-row">
+            <a href="index.html" class="brand">
+                <img src="img/logo.svg" alt="SiviseCraft Logo">
+                <div class="brand-text">Sivise<span>Craft</span> <span style="font-size:0.8rem; color:var(--muted); font-weight:500;">/admin</span></div>
+            </a>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="badge">0 €/mes · 100% RGPD</span>
+                <button class="btn" id="btn-refresh" onclick="loadStats()" style="display:none;">🔄 Actualizar</button>
+                <button class="btn" id="btn-logout" onclick="logout()" style="display:none;">Cerrar</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Formulario de Acceso Seguro -->
+        <div class="login-card" id="login-section">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+            <h2>Holding Telemetry Admin</h2>
+            <p>Introduce tu clave de administrador de SiviseCraft para consultar métricas, visitas y embudo en tiempo real.</p>
+            <input type="password" id="admin-key-input" class="input" placeholder="Clave de acceso..." autofocus onkeydown="if(event.key==='Enter') doLogin()">
+            <button class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;" onclick="doLogin()">Entrar al Panel</button>
+            <div id="login-err" style="color:#ef4444; font-size:0.82rem; margin-top:12px; display:none;">Clave incorrecta. Inténtalo de nuevo.</div>
+        </div>
+
+        <!-- Panel de Estadísticas -->
+        <div id="dash-content">
+            <!-- Estado de Almacenamiento -->
+            <div class="storage-status-banner" id="storage-banner">
+                <div>
+                    <strong>Base de datos:</strong> <span id="storage-label">Conectando...</span>
+                </div>
+                <div style="color: var(--muted); font-size: 0.76rem;">
+                    Sin cookies • Huella irreversble SHA-256
+                </div>
+            </div>
+
+            <!-- KPIs Principales -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Visitantes Únicos (Hoy)</div>
+                    <div class="kpi-val" id="kpi-today-visitors">0</div>
+                    <div class="kpi-sub"><span id="kpi-total-visitors">0</span> acumulados</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Páginas Vistas (Hoy)</div>
+                    <div class="kpi-val" id="kpi-today-views" style="color:#38bdf8;">0</div>
+                    <div class="kpi-sub"><span id="kpi-total-views">0</span> acumuladas</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Tiempo Medio Activo</div>
+                    <div class="kpi-val" id="kpi-avg-duration" style="color:var(--accent-teal);">0s</div>
+                    <div class="kpi-sub">Medido con visibilitychange</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Tasa de Retención</div>
+                    <div class="kpi-val" id="kpi-retention" style="color:var(--accent-gold);">0%</div>
+                    <div class="kpi-sub"><span id="kpi-returning-visitors">0</span> usuarios recurrentes</div>
+                </div>
+            </div>
+
+            <!-- Embudo E-commerce Completo -->
+            <div class="funnel-card">
+                <h3>🛒 Embudo de Compra SiviseCraft</h3>
+                <p>Progreso de los usuarios a través del catálogo, carrito y checkout.</p>
+                <div class="funnel-steps">
+                    <div class="funnel-step">
+                        <div class="funnel-step-num">Paso 1</div>
+                        <div class="funnel-step-title">Visita a Tienda</div>
+                        <div class="funnel-step-val" id="funnel-landing">0</div>
+                        <div class="funnel-step-pct">100% inicio</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-num">Paso 2</div>
+                        <div class="funnel-step-title">Ficha Producto</div>
+                        <div class="funnel-step-val" id="funnel-detail">0</div>
+                        <div class="funnel-step-pct" id="pct-detail">0%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-num">Paso 3</div>
+                        <div class="funnel-step-title">Añadido al Carrito</div>
+                        <div class="funnel-step-val" id="funnel-cart">0</div>
+                        <div class="funnel-step-pct" id="pct-cart">0%</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-step-num">Paso 4</div>
+                        <div class="funnel-step-title">Checkout Abierto</div>
+                        <div class="funnel-step-val" id="funnel-checkout">0</div>
+                        <div class="funnel-step-pct" id="pct-checkout">0%</div>
+                    </div>
+                    <div class="funnel-step" style="border-color: rgba(13,148,136,0.5);">
+                        <div class="funnel-step-num">Paso 5</div>
+                        <div class="funnel-step-title">Pedidos Cerrados</div>
+                        <div class="funnel-step-val" id="funnel-orders" style="color:#34d399;">0</div>
+                        <div class="funnel-step-pct" id="pct-orders">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grids de Orígenes, Productos y Dispositivos -->
+            <div class="panels-grid">
+                <!-- Fuentes de Tráfico -->
+                <div class="panel">
+                    <h3>🌐 Orígenes de Tráfico <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(Referrer / UTM)</span></h3>
+                    <div id="sources-mount">
+                        <p style="color:var(--muted); font-size:0.8rem;">Sin datos registrados aún.</p>
+                    </div>
+                </div>
+
+                <!-- Top Productos Más Vistos / Añadidos -->
+                <div class="panel">
+                    <h3>🔥 Piezas Más Demandadas <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(Interés real)</span></h3>
+                    <div id="products-mount">
+                        <p style="color:var(--muted); font-size:0.8rem;">Sin interacciones registradas aún.</p>
+                    </div>
+                </div>
+
+                <!-- Dispositivos -->
+                <div class="panel">
+                    <h3>📱 Dispositivos</h3>
+                    <div id="devices-mount">
+                        <p style="color:var(--muted); font-size:0.8rem;">Sin datos registrados aún.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const KEY_STORAGE = "sivise_admin_key";
+
+        function getSavedKey() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get("key") || localStorage.getItem(KEY_STORAGE) || "";
+        }
+
+        async function doLogin() {
+            const val = document.getElementById("admin-key-input").value.trim();
+            if (!val) return;
+            localStorage.setItem(KEY_STORAGE, val);
+            await loadStats();
+        }
+
+        function logout() {
+            localStorage.removeItem(KEY_STORAGE);
+            window.location.search = "";
+            document.getElementById("login-section").style.display = "block";
+            document.getElementById("dash-content").style.display = "none";
+            document.getElementById("btn-refresh").style.display = "none";
+            document.getElementById("btn-logout").style.display = "none";
+        }
+
+        async function loadStats() {
+            const key = getSavedKey();
+            if (!key) {
+                document.getElementById("login-section").style.display = "block";
+                document.getElementById("dash-content").style.display = "none";
+                return;
+            }
+
+            try {
+                const resp = await fetch(`/api/admin/stats?key=${encodeURIComponent(key)}`);
+                if (!resp.ok) {
+                    document.getElementById("login-err").style.display = "block";
+                    document.getElementById("login-section").style.display = "block";
+                    document.getElementById("dash-content").style.display = "none";
+                    return;
+                }
+
+                const data = await resp.json();
+                renderDashboard(data);
+            } catch (err) {
+                document.getElementById("login-err").textContent = "Error conectando con la API.";
+                document.getElementById("login-err").style.display = "block";
+            }
+        }
+
+        function renderDashboard(data) {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("dash-content").style.display = "block";
+            document.getElementById("btn-refresh").style.display = "inline-flex";
+            document.getElementById("btn-logout").style.display = "inline-flex";
+
+            const t = data.traffic || {};
+            const isD1 = data.storage === "d1";
+            document.getElementById("storage-label").innerHTML = isD1
+                ? `<span style="color:#34d399; font-weight:700;">Cloudflare D1 (Persistente)</span>`
+                : `<span style="color:#f59e0b; font-weight:700;">Buffer de Memoria (Pendiente enlazar D1 en Cloudflare)</span>`;
+
+            // KPIs
+            document.getElementById("kpi-today-visitors").textContent = t.today_unique_visitors || 0;
+            document.getElementById("kpi-total-visitors").textContent = t.unique_visitors || 0;
+            document.getElementById("kpi-today-views").textContent = t.today_pageviews || 0;
+            document.getElementById("kpi-total-views").textContent = t.total_pageviews || 0;
+            document.getElementById("kpi-avg-duration").textContent = (t.avg_duration_sec ? `${t.avg_duration_sec}s` : "0s");
+            document.getElementById("kpi-retention").textContent = `${t.retention_rate_pct || 0}%`;
+            document.getElementById("kpi-returning-visitors").textContent = t.returning_visitors || 0;
+
+            // Funnel
+            const f = t.funnel || {};
+            const landing = f.landing_views || t.total_pageviews || 0;
+            const detail = f.detail_views || 0;
+            const cart = f.cart_adds || 0;
+            const checkout = f.checkout_opens || 0;
+            const orders = f.orders_submitted || 0;
+
+            document.getElementById("funnel-landing").textContent = landing;
+            document.getElementById("funnel-detail").textContent = detail;
+            document.getElementById("funnel-cart").textContent = cart;
+            document.getElementById("funnel-checkout").textContent = checkout;
+            document.getElementById("funnel-orders").textContent = orders;
+
+            const calcPct = (val) => landing > 0 ? `${Math.round((val / landing) * 100)}% de visitas` : "0%";
+            document.getElementById("pct-detail").textContent = calcPct(detail);
+            document.getElementById("pct-cart").textContent = calcPct(cart);
+            document.getElementById("pct-checkout").textContent = calcPct(checkout);
+            document.getElementById("pct-orders").textContent = calcPct(orders);
+
+            // Fuentes de tráfico
+            const sources = t.by_source || {};
+            const sourcesEntries = Object.entries(sources).sort((a,b) => b[1] - a[1]);
+            const maxSource = sourcesEntries.length > 0 ? sourcesEntries[0][1] : 1;
+            const sourcesMount = document.getElementById("sources-mount");
+            if (sourcesEntries.length === 0) {
+                sourcesMount.innerHTML = `<p style="color:var(--muted); font-size:0.8rem;">Sin fuentes registradas aún.</p>`;
+            } else {
+                sourcesMount.innerHTML = sourcesEntries.map(([name, count]) => `
+                    <div class="bar-row">
+                        <div class="bar-label-row">
+                            <span><strong>${name}</strong></span>
+                            <span>${count}</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: ${Math.round((count / maxSource) * 100)}%"></div>
+                        </div>
+                    </div>
+                `).join("");
+            }
+
+            // Top Productos
+            const topProducts = t.top_products || [];
+            const prodMount = document.getElementById("products-mount");
+            if (topProducts.length === 0) {
+                prodMount.innerHTML = `<p style="color:var(--muted); font-size:0.8rem;">Sin interacciones de productos registradas aún.</p>`;
+            } else {
+                const maxProd = topProducts[0].count || 1;
+                prodMount.innerHTML = topProducts.map(p => `
+                    <div class="bar-row">
+                        <div class="bar-label-row">
+                            <span style="max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><strong>${p.name}</strong></span>
+                            <span>${p.count} veces</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="background:linear-gradient(90deg, #0d9488, #38bdf8); width: ${Math.round((p.count / maxProd) * 100)}%"></div>
+                        </div>
+                    </div>
+                `).join("");
+            }
+
+            // Dispositivos
+            const devices = t.by_device || {};
+            const devEntries = Object.entries(devices);
+            const totalDev = devEntries.reduce((acc, curr) => acc + curr[1], 0) || 1;
+            const devMount = document.getElementById("devices-mount");
+            if (devEntries.length === 0) {
+                devMount.innerHTML = `<p style="color:var(--muted); font-size:0.8rem;">Sin dispositivos registrados aún.</p>`;
+            } else {
+                devMount.innerHTML = devEntries.map(([dev, count]) => {
+                    const icon = dev === 'mobile' ? '📱 Móvil' : '💻 Escritorio';
+                    const pct = Math.round((count / totalDev) * 100);
+                    return `
+                        <div class="bar-row">
+                            <div class="bar-label-row">
+                                <span>${icon}</span>
+                                <span>${count} (${pct}%)</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="background:#f59e0b; width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadStats();
+        });
+    </script>
+</body>
+</html>

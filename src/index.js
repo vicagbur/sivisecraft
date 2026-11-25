@@ -139,25 +139,38 @@ export default {
         const url = new URL(request.url);
         const corsOrigin = resolveAllowedOrigin(request);
 
+        // Atajo amigable a /admin -> /admin.html
+        if (url.pathname === "/admin") {
+            const redirectUrl = new URL("/admin.html", request.url);
+            redirectUrl.search = url.search;
+            return Response.redirect(redirectUrl.toString(), 302);
+        }
+
+        // Endpoint de Telemetría sin cookies (Holding Analytics)
+        if (url.pathname === "/api/telemetry") {
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
+            if (request.method !== "POST") return methodNotAllowed(corsOrigin);
+            return handleTelemetry(request, env, corsOrigin);
+        }
+
+        // Endpoint de Eventos y Embudo (Holding Analytics)
+        if (url.pathname === "/api/events") {
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
+            if (request.method !== "POST") return methodNotAllowed(corsOrigin);
+            return handleEvents(request, env, corsOrigin);
+        }
+
+        // Panel de Control / Stats JSON (Protegido por ADMIN_KEY)
+        if (url.pathname === "/api/admin/stats") {
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
+            return handleAdminStats(request, env, url, corsOrigin);
+        }
+
         // API Endpoint para Stripe Checkout
         if (url.pathname === "/api/checkout") {
-            if (request.method === "OPTIONS") {
-                return new Response(null, {
-                    status: 204,
-                    headers: {
-                        ...getSecurityHeaders(corsOrigin),
-                        "Access-Control-Allow-Methods": "POST, OPTIONS",
-                        "Access-Control-Allow-Headers": "Content-Type"
-                    }
-                });
-            }
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
 
-            if (request.method !== "POST") {
-                return new Response(JSON.stringify({ error: "Method not allowed" }), {
-                    status: 405,
-                    headers: { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) }
-                });
-            }
+            if (request.method !== "POST") return methodNotAllowed(corsOrigin);
 
             return handleCheckout(request, env, corsOrigin);
         }
@@ -167,9 +180,34 @@ export default {
         const hardenedResp = new Response(assetResp.body, assetResp);
         const secHeaders = getSecurityHeaders(null);
         Object.entries(secHeaders).forEach(([k, v]) => hardenedResp.headers.set(k, v));
+
+        // Si es la página de admin, asegurar noindex y no-store
+        if (url.pathname.includes("admin")) {
+            hardenedResp.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+            hardenedResp.headers.set("X-Robots-Tag", "noindex, nofollow");
+        }
+
         return hardenedResp;
     }
 };
+
+function handleOptions(corsOrigin) {
+    return new Response(null, {
+        status: 204,
+        headers: {
+            ...getSecurityHeaders(corsOrigin),
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, X-Admin-Key"
+        }
+    });
+}
+
+function methodNotAllowed(corsOrigin) {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) }
+    });
+}
 
 async function handleCheckout(request, env, corsOrigin) {
     const jsonHeaders = { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) };
@@ -325,4 +363,327 @@ async function handleCheckout(request, env, corsOrigin) {
             { status: 500, headers: jsonHeaders }
         );
     }
+}
+
+// ============================================================================
+// HOLDING ANALYTICS & TELEMETRÍA SIN COOKIES (0 €/mes · 100% RGPD)
+// Fórmula Plausible: visitor_hash = SHA256(SALT + IP + UserAgent)[:16]
+// ============================================================================
+
+// Memoria efímera para fallback cuando Cloudflare D1 no está configurado aún
+if (!globalThis.__HOLDING_TELEMETRY__) {
+    globalThis.__HOLDING_TELEMETRY__ = {
+        sessions: new Map(),
+        events: []
+    };
+}
+
+function recordInMemoryTelemetry(record) {
+    const mem = globalThis.__HOLDING_TELEMETRY__;
+    const existing = mem.sessions.get(record.session_id);
+    if (existing) {
+        existing.duration_sec = Math.max(existing.duration_sec, record.duration_sec);
+        existing.updated_at = record.updated_at;
+    } else {
+        if (mem.sessions.size > 2000) {
+            const firstKey = mem.sessions.keys().next().value;
+            mem.sessions.delete(firstKey);
+        }
+        mem.sessions.set(record.session_id, { ...record });
+    }
+}
+
+function recordInMemoryEvent(ev) {
+    const mem = globalThis.__HOLDING_TELEMETRY__;
+    if (mem.events.length > 5000) mem.events.shift();
+    mem.events.push(ev);
+}
+
+let _tablesEnsured = false;
+async function ensureTables(db) {
+    if (_tablesEnsured || !db) return;
+    try {
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS web_telemetry (
+                session_id TEXT PRIMARY KEY,
+                visitor_hash TEXT NOT NULL,
+                path TEXT NOT NULL DEFAULT '/',
+                referrer TEXT DEFAULT 'Directo / WhatsApp',
+                device_type TEXT DEFAULT 'mobile',
+                duration_sec INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_telemetry_visitor ON web_telemetry(visitor_hash);
+            CREATE INDEX IF NOT EXISTS idx_telemetry_created ON web_telemetry(created_at);
+
+            CREATE TABLE IF NOT EXISTS analytics_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_name TEXT NOT NULL,
+                event_target TEXT DEFAULT '',
+                created_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_events_name ON analytics_events(event_name);
+            CREATE INDEX IF NOT EXISTS idx_events_created ON analytics_events(created_at);
+        `);
+        _tablesEnsured = true;
+    } catch (err) {
+        console.error("D1 ensureTables error:", err);
+    }
+}
+
+async function calculateVisitorHash(request, env) {
+    const salt = env.TELEMETRY_SALT || "sivisecraft-holding-telemetry-salt-2026";
+    const ip = request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || "127.0.0.1";
+    const ua = request.headers.get("user-agent") || "unknown";
+    const data = new TextEncoder().encode(salt + ":" + ip + ":" + ua);
+    const hashBuf = await crypto.subtle.digest("SHA-256", data);
+    const hashArr = Array.from(new Uint8Array(hashBuf));
+    const hex = hashArr.map(b => b.toString(16).padStart(2, "0")).join("");
+    return hex.slice(0, 16);
+}
+
+function detectDeviceType(ua) {
+    const s = String(ua || "").toLowerCase();
+    if (/android|iphone|ipad|mobile|ipod|blackberry|iemobile|opera mini/i.test(s)) {
+        return "mobile";
+    }
+    return "desktop";
+}
+
+function cleanReferrer(ref) {
+    if (!ref) return "Directo / WhatsApp";
+    const s = String(ref).toLowerCase();
+    if (s.includes("tarjeta")) return "Tarjeta QR Paquete";
+    if (s.includes("wallapop")) return "Wallapop";
+    if (s.includes("vinted")) return "Vinted";
+    if (s.includes("etsy")) return "Etsy";
+    if (s.includes("instagram")) return "Instagram";
+    if (s.includes("tiktok")) return "TikTok";
+    if (s.includes("google")) return "Google";
+    if (s.includes("facebook") || s.includes("fb")) return "Facebook";
+    if (s.includes("whatsapp") || s.includes("wa.me")) return "Directo / WhatsApp";
+    try {
+        const u = new URL(ref);
+        return u.hostname.replace(/^www\./, "");
+    } catch {
+        return s.slice(0, 50);
+    }
+}
+
+async function handleTelemetry(request, env, corsOrigin) {
+    const jsonHeaders = { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) };
+    try {
+        const body = await request.json().catch(() => ({}));
+        const { session_id, path, referrer, duration_sec } = body || {};
+        if (!session_id || typeof session_id !== "string" || session_id.length > 64) {
+            return new Response(JSON.stringify({ ok: false, error: "INVALID_SESSION" }), { status: 400, headers: jsonHeaders });
+        }
+        const ua = request.headers.get("user-agent") || "";
+        const visitor_hash = await calculateVisitorHash(request, env);
+        const device_type = detectDeviceType(ua);
+        const cleanRef = cleanReferrer(referrer);
+        const cleanPath = String(path || "/").slice(0, 160);
+        const duration = Math.min(3600, Math.max(0, parseInt(duration_sec, 10) || 0));
+        const now = new Date().toISOString();
+
+        if (env.DB) {
+            await ensureTables(env.DB);
+            await env.DB.prepare(`
+                INSERT INTO web_telemetry (session_id, visitor_hash, path, referrer, device_type, duration_sec, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(session_id) DO UPDATE SET
+                    duration_sec = MAX(web_telemetry.duration_sec, excluded.duration_sec),
+                    updated_at = excluded.updated_at
+            `).bind(session_id, visitor_hash, cleanPath, cleanRef, device_type, duration, now, now).run();
+        } else {
+            recordInMemoryTelemetry({ session_id, visitor_hash, path: cleanPath, referrer: cleanRef, device_type, duration_sec: duration, created_at: now, updated_at: now });
+        }
+
+        return new Response(JSON.stringify({ ok: true, stored: Boolean(env.DB) }), { status: 200, headers: jsonHeaders });
+    } catch (e) {
+        return new Response(JSON.stringify({ ok: false, error: e.message }), { status: 500, headers: jsonHeaders });
+    }
+}
+
+async function handleEvents(request, env, corsOrigin) {
+    const jsonHeaders = { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) };
+    try {
+        const body = await request.json().catch(() => ({}));
+        const { event_name, event_target } = body || {};
+        if (!event_name || typeof event_name !== "string" || event_name.length > 64) {
+            return new Response(JSON.stringify({ ok: false, error: "INVALID_EVENT" }), { status: 400, headers: jsonHeaders });
+        }
+        const cleanName = event_name.trim().slice(0, 64);
+        const cleanTarget = String(event_target || "").trim().slice(0, 128);
+        const now = new Date().toISOString();
+
+        if (env.DB) {
+            await ensureTables(env.DB);
+            await env.DB.prepare(`
+                INSERT INTO analytics_events (event_name, event_target, created_at)
+                VALUES (?, ?, ?)
+            `).bind(cleanName, cleanTarget, now).run();
+        } else {
+            recordInMemoryEvent({ event_name: cleanName, event_target: cleanTarget, created_at: now });
+        }
+
+        return new Response(JSON.stringify({ ok: true, stored: Boolean(env.DB) }), { status: 200, headers: jsonHeaders });
+    } catch (e) {
+        return new Response(JSON.stringify({ ok: false, error: e.message }), { status: 500, headers: jsonHeaders });
+    }
+}
+
+async function handleAdminStats(request, env, url, corsOrigin) {
+    const jsonHeaders = {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        ...getSecurityHeaders(corsOrigin)
+    };
+
+    const adminKey = env.ADMIN_KEY || "sivise2026";
+    const providedKey = request.headers.get("X-Admin-Key") || url.searchParams.get("key");
+    if (!providedKey || providedKey !== adminKey) {
+        return new Response(JSON.stringify({ ok: false, error: "UNAUTHORIZED" }), { status: 401, headers: jsonHeaders });
+    }
+
+    if (env.DB) {
+        await ensureTables(env.DB);
+        try {
+            const [
+                totalPvRow,
+                uniqVisRow,
+                todayPvRow,
+                todayUniqRow,
+                returningRow,
+                avgDurRow,
+                byDeviceRows,
+                bySourceRows,
+                landingViewsRow,
+                catalogViewsRow,
+                detailViewsRow,
+                cartAddRow,
+                checkoutOpenRow,
+                ordersRow,
+                topProductsRows
+            ] = await Promise.all([
+                env.DB.prepare("SELECT COUNT(*) as c FROM web_telemetry").first(),
+                env.DB.prepare("SELECT COUNT(DISTINCT visitor_hash) as c FROM web_telemetry").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM web_telemetry WHERE created_at >= date('now')").first(),
+                env.DB.prepare("SELECT COUNT(DISTINCT visitor_hash) as c FROM web_telemetry WHERE created_at >= date('now')").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM (SELECT visitor_hash FROM web_telemetry GROUP BY visitor_hash HAVING COUNT(*) > 1)").first(),
+                env.DB.prepare("SELECT ROUND(AVG(duration_sec)) as c FROM web_telemetry WHERE duration_sec > 0").first(),
+                env.DB.prepare("SELECT device_type, COUNT(*) as count FROM web_telemetry GROUP BY device_type").all(),
+                env.DB.prepare("SELECT referrer, COUNT(*) as count FROM web_telemetry GROUP BY referrer ORDER BY count DESC LIMIT 8").all(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM web_telemetry WHERE path = '/' OR path = '/index.html'").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM web_telemetry WHERE path LIKE '%catalogo%'").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM analytics_events WHERE event_name = 'view_product'").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM analytics_events WHERE event_name = 'add_to_cart'").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM analytics_events WHERE event_name = 'open_checkout'").first(),
+                env.DB.prepare("SELECT COUNT(*) as c FROM analytics_events WHERE event_name = 'order_submitted'").first(),
+                env.DB.prepare("SELECT event_target as name, COUNT(*) as count FROM analytics_events WHERE event_name IN ('view_product', 'add_to_cart') AND event_target != '' GROUP BY event_target ORDER BY count DESC LIMIT 6").all()
+            ]);
+
+            const totalVisitors = uniqVisRow?.c || 0;
+            const returningVisitors = returningRow?.c || 0;
+            const retentionPct = totalVisitors > 0 ? Math.round((returningVisitors / totalVisitors) * 1000) / 10 : 0;
+
+            const byDevice = {};
+            (byDeviceRows?.results || []).forEach(r => { byDevice[r.device_type] = r.count; });
+
+            const bySource = {};
+            (bySourceRows?.results || []).forEach(r => { bySource[r.referrer] = r.count; });
+
+            return new Response(JSON.stringify({
+                ok: true,
+                project: "sivisecraft",
+                storage: "d1",
+                traffic: {
+                    total_pageviews: totalPvRow?.c || 0,
+                    unique_visitors: totalVisitors,
+                    today_pageviews: todayPvRow?.c || 0,
+                    today_unique_visitors: todayUniqRow?.c || 0,
+                    returning_visitors: returningVisitors,
+                    retention_rate_pct: retentionPct,
+                    avg_duration_sec: avgDurRow?.c || 0,
+                    by_device: byDevice,
+                    by_source: bySource,
+                    funnel: {
+                        landing_views: landingViewsRow?.c || 0,
+                        catalog_views: catalogViewsRow?.c || 0,
+                        detail_views: detailViewsRow?.c || 0,
+                        cart_adds: cartAddRow?.c || 0,
+                        checkout_opens: checkoutOpenRow?.c || 0,
+                        orders_submitted: ordersRow?.c || 0
+                    },
+                    top_products: topProductsRows?.results || []
+                }
+            }), { status: 200, headers: jsonHeaders });
+        } catch (err) {
+            console.error("D1 query error, falling back to memory:", err);
+        }
+    }
+
+    // In-memory fallback
+    const mem = globalThis.__HOLDING_TELEMETRY__;
+    const sessions = Array.from(mem.sessions.values());
+    const events = mem.events;
+    const nowIsoDate = new Date().toISOString().slice(0, 10);
+
+    const totalPageviews = sessions.length;
+    const uniqueHashes = new Set(sessions.map(s => s.visitor_hash));
+    const uniqueVisitors = uniqueHashes.size;
+
+    const todaySessions = sessions.filter(s => s.created_at.startsWith(nowIsoDate));
+    const todayPageviews = todaySessions.length;
+    const todayUniqueVisitors = new Set(todaySessions.map(s => s.visitor_hash)).size;
+
+    const hashCounts = {};
+    sessions.forEach(s => { hashCounts[s.visitor_hash] = (hashCounts[s.visitor_hash] || 0) + 1; });
+    const returningVisitors = Object.values(hashCounts).filter(c => c > 1).length;
+    const retentionPct = uniqueVisitors > 0 ? Math.round((returningVisitors / uniqueVisitors) * 1000) / 10 : 0;
+
+    const validDurations = sessions.map(s => s.duration_sec).filter(d => d > 0);
+    const avgDuration = validDurations.length > 0 ? Math.round(validDurations.reduce((a, b) => a + b, 0) / validDurations.length) : 0;
+
+    const byDevice = { mobile: 0, desktop: 0 };
+    sessions.forEach(s => { byDevice[s.device_type] = (byDevice[s.device_type] || 0) + 1; });
+
+    const bySource = {};
+    sessions.forEach(s => { bySource[s.referrer] = (bySource[s.referrer] || 0) + 1; });
+
+    const funnel = {
+        landing_views: sessions.filter(s => s.path === "/" || s.path === "/index.html").length,
+        catalog_views: sessions.filter(s => s.path.includes("catalogo")).length,
+        detail_views: events.filter(e => e.event_name === "view_product").length,
+        cart_adds: events.filter(e => e.event_name === "add_to_cart").length,
+        checkout_opens: events.filter(e => e.event_name === "open_checkout").length,
+        orders_submitted: events.filter(e => e.event_name === "order_submitted").length
+    };
+
+    const prodCounts = {};
+    events.filter(e => (e.event_name === "view_product" || e.event_name === "add_to_cart") && e.event_target).forEach(e => {
+        prodCounts[e.event_target] = (prodCounts[e.event_target] || 0) + 1;
+    });
+    const topProducts = Object.entries(prodCounts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count).slice(0, 6);
+
+    return new Response(JSON.stringify({
+        ok: true,
+        project: "sivisecraft",
+        storage: "in_memory (pendiente enlazar D1)",
+        traffic: {
+            total_pageviews: totalPageviews,
+            unique_visitors: uniqueVisitors,
+            today_pageviews: todayPageviews,
+            today_unique_visitors: todayUniqueVisitors,
+            returning_visitors: returningVisitors,
+            retention_rate_pct: retentionPct,
+            avg_duration_sec: avgDuration,
+            by_device: byDevice,
+            by_source: bySource,
+            funnel,
+            top_products: topProducts
+        }
+    }), { status: 200, headers: jsonHeaders });
 }

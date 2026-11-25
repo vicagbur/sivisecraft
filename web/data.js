@@ -900,6 +900,7 @@ function addProductToCartFromDOM(productId, containerPrefix = "card") {
 
     saveCart(cart);
     showToast(`Añadido: ${product.name}`);
+    trackHoldingEvent("add_to_cart", product.name || productId);
     if (containerPrefix === "detail") {
         closeDetailModal();
         toggleCartDrawer(true);
@@ -1015,6 +1016,8 @@ function buildProductCardHTML(p) {
 function openProductDetail(productId) {
     const p = PRODUCTS.find(item => item.id === productId);
     if (!p) return;
+
+    trackHoldingEvent("view_product", p.name || productId);
 
     const modal = document.getElementById("product-detail-modal");
     const content = document.getElementById("product-detail-body");
@@ -1246,6 +1249,7 @@ function openDirectCheckout() {
         return;
     }
     toggleCartDrawer(false);
+    trackHoldingEvent("open_checkout", `${cart.length} artículos`);
     const overlay = document.getElementById("stripe-overlay");
     if (!overlay) return;
     overlay.classList.add("open");
@@ -1387,6 +1391,7 @@ async function submitDirectOrder(e) {
 
     // Guardamos siempre el pedido en "Mis Pedidos / Seguimiento" del cliente
     saveCompletedOrder(lastCompletedOrder);
+    trackHoldingEvent("order_submitted", activePaymentMethod);
 
     const proc = document.getElementById("stripe-processing");
     const procTitle = document.getElementById("stripe-processing-title");
@@ -1930,5 +1935,76 @@ function renderPassportPage() {
                 </div>
             </div>
         `).join("");
+    }
+}
+
+// ============================================================================
+// HOLDING ANALYTICS & TELEMETRÍA SIN COOKIES (0 €/mes · 100% RGPD)
+// Estándar oficial del Holding (Plausible/AEPD: Cero cookies, cero IPs guardadas)
+// ============================================================================
+let _holdingTelemetryInitialized = false;
+
+function initHoldingTelemetry() {
+    if (_holdingTelemetryInitialized) return;
+    if (window.location.pathname.startsWith("/admin")) return;
+    _holdingTelemetryInitialized = true;
+
+    const sessionId = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : (Math.random().toString(36).slice(2) + Date.now().toString(36));
+    const startTs = Date.now();
+    const params = new URLSearchParams(window.location.search);
+    const utm = params.get("utm_source") || params.get("ref") || "";
+
+    const sendPing = (isUnload = false) => {
+        const elapsedSec = Math.min(3600, Math.max(1, Math.round((Date.now() - startTs) / 1000)));
+        const payload = JSON.stringify({
+            session_id: sessionId,
+            path: window.location.pathname || "/",
+            referrer: utm || document.referrer || "",
+            duration_sec: elapsedSec
+        });
+        if (isUnload && navigator.sendBeacon) {
+            navigator.sendBeacon("/api/telemetry", new Blob([payload], { type: "application/json" }));
+        } else {
+            fetch("/api/telemetry", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                keepalive: true
+            }).catch(() => {});
+        }
+    };
+
+    sendPing(false);
+    setInterval(() => {
+        if (document.visibilityState === "visible") sendPing(false);
+    }, 20000);
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") sendPing(true);
+    });
+}
+
+function trackHoldingEvent(eventName, eventTarget = "") {
+    if (!eventName) return;
+    try {
+        fetch("/api/events", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                event_name: eventName,
+                event_target: String(eventTarget || "").slice(0, 128)
+            }),
+            keepalive: true
+        }).catch(() => {});
+    } catch (_e) {}
+}
+
+// Auto-inicialización al cargar la web
+if (typeof window !== "undefined" && window.document) {
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initHoldingTelemetry);
+    } else {
+        initHoldingTelemetry();
     }
 }
