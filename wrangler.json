@@ -5,5 +5,12 @@
   "assets": {
     "directory": "./web",
     "binding": "ASSETS"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sivisecraft-db",
+      "database_id": "09130607-32a7-4088-920c-5b44eab3e160"
+    }
+  ]
 }
