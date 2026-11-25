@@ -139,11 +139,16 @@ export default {
         const url = new URL(request.url);
         const corsOrigin = resolveAllowedOrigin(request);
 
-        // Atajo amigable a /admin -> /admin.html
-        if (url.pathname === "/admin") {
-            const redirectUrl = new URL("/admin.html", request.url);
-            redirectUrl.search = url.search;
-            return Response.redirect(redirectUrl.toString(), 302);
+        // Atajo directo a /admin -> sirve admin.html con cabeceras de noindex y no-store
+        if (url.pathname === "/admin" || url.pathname === "/admin.html") {
+            const assetReq = new Request(new URL("/admin.html", request.url), request);
+            const assetResp = await env.ASSETS.fetch(assetReq);
+            const hardenedResp = new Response(assetResp.body, assetResp);
+            const secHeaders = getSecurityHeaders(null);
+            Object.entries(secHeaders).forEach(([k, v]) => hardenedResp.headers.set(k, v));
+            hardenedResp.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+            hardenedResp.headers.set("X-Robots-Tag", "noindex, nofollow");
+            return hardenedResp;
         }
 
         // Endpoint de Telemetría sin cookies (Holding Analytics)
