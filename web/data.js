@@ -18,34 +18,70 @@ const STORE_CONFIG = {
     etsyText: "4.9★ (+70 pedidos • +12 países)"
 };
 
-// Tramos Oficiales de Envío (100% Mensajería con Seguimiento — Sin entregas en mano)
+// Tramos Oficiales de Envío (Correos Domicilio Nacional + Destinos Internacionales Etsy)
 const SHIPPING_TIERS = {
-    inpost: {
-        id: "inpost",
-        label: "📦 Punto Pack / InPost (Península)",
-        baseCost: 3.95,
-        freeOverThreshold: true,
-        eta: "Entrega en Punto Pack o Taquilla InPost (3-4 días laborables)",
-        needsAddress: true,
-        addressHint: "Indica tu dirección o el nombre de tu Punto Pack InPost más cercano"
-    },
-    domicilio: {
-        id: "domicilio",
-        label: "🚚 Domicilio 24/48h (Península)",
-        baseCost: 4.95,
-        freeOverThreshold: true,
-        eta: "Entrega urgente en domicilio con seguimiento (24/48h tras fabricación)",
+    espana: {
+        id: "espana",
+        label: "🚚 Envío a Domicilio con Correos (España)",
+        baseCost: 6.00,
+        freeThreshold: 45.00,
+        eta: "Entrega a domicilio con seguimiento Correos 48/72h (Península y Baleares)",
         needsAddress: true,
         addressHint: "Calle, número, piso y puerta para entrega a domicilio"
     },
-    eu: {
-        id: "eu",
-        label: "🌍 Unión Europea Certificado (9,90 €)",
-        baseCost: 9.90,
-        freeOverThreshold: false,
+    ue: {
+        id: "ue",
+        label: "🇪🇺 Unión Europea Certificado (15,00 €)",
+        baseCost: 15.00,
+        freeThreshold: 90.00,
         eta: "International Tracked Shipping EU (5-8 business days)",
         needsAddress: true,
         addressHint: "Full street address, postal code, city and EU country"
+    },
+    finlandia: {
+        id: "finlandia",
+        label: "🇫🇮 Finlandia Certificado (20,00 €)",
+        baseCost: 20.00,
+        freeThreshold: null,
+        eta: "Tracked Shipping Finland (5-9 business days)",
+        needsAddress: true,
+        addressHint: "Osoite, postinumero, kaupunki (Full street address)"
+    },
+    usa: {
+        id: "usa",
+        label: "🇺🇸 Estados Unidos (USA) Tracked (25,00 €)",
+        baseCost: 25.00,
+        freeThreshold: null,
+        eta: "USPS Tracked Shipping USA (7-12 business days)",
+        needsAddress: true,
+        addressHint: "Street address, Apt/Suite, City, State, ZIP code"
+    },
+    mexico: {
+        id: "mexico",
+        label: "🇲🇽 México Internacional Certificado (25,00 €)",
+        baseCost: 25.00,
+        freeThreshold: null,
+        eta: "Envío Internacional Certificado con Seguimiento (8-14 días)",
+        needsAddress: true,
+        addressHint: "Calle, número, colonia, código postal, ciudad y estado"
+    },
+    australia: {
+        id: "australia",
+        label: "🇦🇺 Australia Tracked Shipping (25,00 €)",
+        baseCost: 25.00,
+        freeThreshold: null,
+        eta: "Australia Post Tracked International (10-16 business days)",
+        needsAddress: true,
+        addressHint: "Street address, Suburb/City, State, Postcode"
+    },
+    paraguay: {
+        id: "paraguay",
+        label: "🇵🇾 Paraguay / LATAM Certificado (60,00 €)",
+        baseCost: 60.00,
+        freeThreshold: null,
+        eta: "Envío Internacional Certificado Prioritario (8-15 días)",
+        needsAddress: true,
+        addressHint: "Dirección completa, código postal, ciudad y departamento"
     }
 };
 
@@ -772,7 +808,7 @@ function saveCart(cart) {
 
 function getSelectedShippingTierId() {
     const saved = localStorage.getItem(SHIPPING_STORAGE_KEY);
-    return (saved && SHIPPING_TIERS[saved]) ? saved : "inpost";
+    return (saved && SHIPPING_TIERS[saved]) ? saved : "espana";
 }
 
 function setSelectedShippingTierId(tierId) {
@@ -787,8 +823,8 @@ function setSelectedShippingTierId(tierId) {
 
 function calculateShippingCost(subtotal, tierId) {
     if (subtotal <= 0) return 0.00;
-    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
-    if (tier.freeOverThreshold && subtotal >= STORE_CONFIG.freeShippingThreshold) {
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.espana;
+    if (tier.freeThreshold && subtotal >= tier.freeThreshold) {
         return 0.00;
     }
     return tier.baseCost;
@@ -1045,9 +1081,9 @@ function openProductDetail(productId) {
                 </p>
                 ${variantsHTML}
                 <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;">
-                    <div>📦 <strong>Punto Pack InPost:</strong> 3,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
-                    <div>🚚 <strong>Domicilio 24/48h:</strong> 4,95 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
-                    <div>🌍 <strong>Unión Europea Certificado:</strong> 9,90 €</div>
+                    <div>🚚 <strong>España a Domicilio (Correos):</strong> 6,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
+                    <div>🌍 <strong>Unión Europea Certificado:</strong> 15,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 90€)</span></div>
+                    <div>✈️ <strong>Internacional (USA, México, Australia...):</strong> Con número de seguimiento oficial</div>
                     <div>🎁 <strong>Detalle sorpresa 3D incluido</strong> en cada paquete</div>
                 </div>
                 <div style="margin-top:auto;">
@@ -1101,21 +1137,24 @@ function updateCartUI() {
     const shipping = calculateShippingCost(subtotal, currentTierId);
     const total = subtotal + shipping;
 
-    // Actualizar barra de envío gratis (>45€)
+    // Actualizar barra de envío gratis
     const freeBannerText = document.getElementById("free-shipping-text");
     const freeBannerFill = document.getElementById("free-shipping-fill");
     if (freeBannerText && freeBannerFill) {
-        if (currentTierId === "eu") {
-            freeBannerText.innerHTML = `🌍 <strong>Envío Internacional UE Certificado:</strong> Tarifa plana 9,90 €`;
-            freeBannerFill.style.width = "100%";
-        } else if (subtotal >= STORE_CONFIG.freeShippingThreshold) {
-            freeBannerText.innerHTML = `🎉 ¡Enhorabuena! Tienes <strong>ENVÍO GRATIS</strong> en tu pedido (> 45,00 €)`;
-            freeBannerFill.style.width = "100%";
+        const tier = SHIPPING_TIERS[currentTierId] || SHIPPING_TIERS.espana;
+        if (tier.freeThreshold) {
+            if (subtotal >= tier.freeThreshold) {
+                freeBannerText.innerHTML = `🎉 ¡Enhorabuena! Tienes <strong>ENVÍO GRATIS</strong> en tu pedido (> ${formatPrice(tier.freeThreshold)})`;
+                freeBannerFill.style.width = "100%";
+            } else {
+                const missing = Math.max(0, tier.freeThreshold - subtotal);
+                const pct = Math.min(100, Math.round((subtotal / tier.freeThreshold) * 100));
+                freeBannerText.innerHTML = `🎁 Te faltan <strong>${formatPrice(missing)}</strong> para conseguir <strong>ENVÍO GRATIS</strong> (pedidos > ${formatPrice(tier.freeThreshold)})`;
+                freeBannerFill.style.width = `${pct}%`;
+            }
         } else {
-            const missing = Math.max(0, STORE_CONFIG.freeShippingThreshold - subtotal);
-            const pct = Math.min(100, Math.round((subtotal / STORE_CONFIG.freeShippingThreshold) * 100));
-            freeBannerText.innerHTML = `🎁 Te faltan <strong>${formatPrice(missing)}</strong> para conseguir <strong>ENVÍO GRATIS</strong> (pedidos > 45€)`;
-            freeBannerFill.style.width = `${pct}%`;
+            freeBannerText.innerHTML = `✈️ <strong>Envío Internacional con Seguimiento:</strong> Tarifa fija ${formatPrice(tier.baseCost)}`;
+            freeBannerFill.style.width = "100%";
         }
     }
 
@@ -1251,7 +1290,7 @@ function selectPaymentMethod(method) {
 function renderCheckoutSummary() {
     const cart = getCart();
     const tierId = getSelectedShippingTierId();
-    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.espana;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const shipping = calculateShippingCost(subtotal, tierId);
     const total = subtotal + shipping;
@@ -1322,7 +1361,7 @@ async function submitDirectOrder(e) {
     const notes = document.getElementById("chk-notes").value.trim();
 
     const tierId = getSelectedShippingTierId();
-    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.inpost;
+    const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.espana;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const shipping = calculateShippingCost(subtotal, tierId);
     const total = subtotal + shipping;
@@ -1549,7 +1588,7 @@ function injectSharedStoreModals() {
     if (!wrapper) return;
 
     const shippingOptionsHTML = Object.values(SHIPPING_TIERS).map(t => {
-        const priceTag = t.baseCost === 0 ? "0,00 €" : `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeOverThreshold ? " • Gratis >45€" : ""}`;
+        const priceTag = t.baseCost === 0 ? "0,00 €" : `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeThreshold ? ` • Gratis >${t.freeThreshold}€` : ""}`;
         return `<option value="${t.id}">${t.label.replace(/\s*\([^)]*€[^)]*\)/g, "")} (${priceTag})</option>`;
     }).join("");
 
@@ -1562,7 +1601,7 @@ function injectSharedStoreModals() {
                     <button class="close-btn" onclick="closeTrackingModal()">&times;</button>
                 </div>
                 <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:14px;">
-                    Consulta el estado de fabricación 3D de tus pedidos o busca por tu código <strong>#SC-XXXXX</strong>. En cuanto depositamos tu paquete en InPost o Correos, recibirás además un SMS/Email oficial con el número de seguimiento.
+                    Consulta el estado de fabricación 3D de tus pedidos o busca por tu código <strong>#SC-XXXXX</strong>. En cuanto depositamos tu paquete en Correos, recibirás además un SMS/Email oficial con el número de seguimiento.
                 </p>
                 <div style="display:flex; gap:10px; margin-bottom:18px;">
                     <input type="text" id="tracking-search-input" class="text-input" placeholder="Buscar por código de pedido (ej. SC-48291)..." oninput="renderTrackingOrders(this.value)">
@@ -1728,7 +1767,7 @@ function injectSharedStoreModals() {
                         <input type="email" id="chk-email" required class="stripe-input" placeholder="Correo electrónico para seguimiento *">
 
                         <div id="checkout-address-group">
-                            <input type="text" id="chk-address" required class="stripe-input" placeholder="Dirección completa o Punto Pack InPost *">
+                            <input type="text" id="chk-address" required class="stripe-input" placeholder="Dirección completa de entrega a domicilio *">
                             <div style="display:grid; grid-template-columns: 0.4fr 0.6fr; gap:10px;">
                                 <input type="text" id="chk-zip" required class="stripe-input" placeholder="C. Postal *">
                                 <input type="text" id="chk-city" required class="stripe-input" placeholder="Ciudad / Provincia *">
