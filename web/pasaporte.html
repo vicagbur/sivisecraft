@@ -12,9 +12,7 @@
 
     <!-- Barra Superior de Avisos -->
     <div class="top-promo-bar">
-        🌍 <strong>PASAPORTE SIVISECRAFT:</strong> +15 Países y +55 Ciudades Desbloqueadas <span class="sep">|</span>
-        🚚 España a Domicilio <strong>6,00 €</strong> (Gratis >45€) • 🇪🇺 UE <strong>15,00 €</strong> (Gratis >90€) • ✈️ Envíos Globales <span class="sep">|</span>
-        📱 Bizum directo o Tarjeta Stripe
+        🌍 <strong>PASAPORTE:</strong> +15 Países y +55 Ciudades<span class="promo-desktop-only"> <span class="sep">|</span> 🚚 España <strong>6,00 €</strong> (Gratis >45€) • 🇪🇺 UE <strong>15,00 €</strong> • ✈️ Envíos Globales <span class="sep">|</span> 📱 Bizum o Stripe</span>
     </div>
 
     <!-- Header / Navbar -->
@@ -43,8 +41,8 @@
                 </ul>
             </nav>
             <div class="nav-actions">
-                <button class="cart-icon-btn" onclick="openTrackingModal()" style="background:var(--bg-primary);" title="Ver estado de mi pedido">
-                    <span>📦 Seguimiento</span>
+                <button class="cart-icon-btn" onclick="openTrackingModal()" style="background:var(--bg-primary);" title="Ver estado de mi pedido" aria-label="Seguimiento de pedidos">
+                    <span>📦</span><span class="btn-label-desktop">Seguimiento</span>
                 </button>
                 <button class="cart-icon-btn" onclick="toggleCartDrawer()" aria-label="Abrir Carrito">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +50,7 @@
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
-                    <span>Cesta</span>
+                    <span class="btn-label-desktop">Cesta</span>
                     <span id="cart-badge" class="cart-badge">0</span>
                 </button>
             </div>

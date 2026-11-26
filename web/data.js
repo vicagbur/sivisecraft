@@ -2196,20 +2196,41 @@ function toggleStoreLanguage() {
 }
 
 function injectLanguageToggle() {
-    const navActions = document.querySelector(".nav-actions");
-    if (!navActions || document.getElementById("lang-toggle-btn")) return;
     const lang = getCurrentLang();
-    const btn = document.createElement("button");
-    btn.id = "lang-toggle-btn";
-    btn.type = "button";
-    btn.className = "cart-icon-btn";
-    btn.style.background = "var(--bg-primary)";
-    btn.style.padding = "7px 11px";
-    btn.style.fontSize = "0.78rem";
-    btn.title = lang === "en" ? "Cambiar a Español" : "Switch to English";
-    btn.innerHTML = lang === "en" ? "🇪🇸 ES" : "🇬🇧 EN";
-    btn.onclick = toggleStoreLanguage;
-    navActions.insertBefore(btn, navActions.firstChild);
+    const navActions = document.querySelector(".nav-actions");
+    if (navActions && !document.getElementById("lang-toggle-btn")) {
+        const btn = document.createElement("button");
+        btn.id = "lang-toggle-btn";
+        btn.type = "button";
+        btn.className = "cart-icon-btn";
+        btn.style.background = "var(--bg-primary)";
+        btn.style.padding = "6px 9px";
+        btn.style.fontSize = "0.76rem";
+        btn.title = lang === "en" ? "Cambiar a Español" : "Switch to English";
+        btn.innerHTML = lang === "en" ? "🇪🇸<span class=\"btn-label-desktop\"> ES</span>" : "🇬🇧<span class=\"btn-label-desktop\"> EN</span>";
+        btn.onclick = toggleStoreLanguage;
+        navActions.insertBefore(btn, navActions.firstChild);
+    }
+
+    // Inyectar sub-barra de navegación rápida móvil debajo de la navbar (solo visible <= 640px)
+    const headerEl = document.querySelector("header");
+    if (headerEl && !headerEl.querySelector(".mobile-quick-nav")) {
+        const path = window.location.pathname.toLowerCase();
+        const isCatalog = path.includes("catalogo");
+        const isPassport = path.includes("pasaporte");
+        const isHome = !isCatalog && !isPassport && !path.includes("pichi");
+
+        const bar = document.createElement("div");
+        bar.className = "mobile-quick-nav";
+        bar.innerHTML = lang === "en"
+            ? `<a href="index.html" class="${isHome ? "active" : ""}">Home</a>
+               <a href="catalogo.html" class="${isCatalog ? "active" : ""}">Catalog</a>
+               <a href="pasaporte.html" class="${isPassport ? "active" : ""}">🌍 Passport</a>`
+            : `<a href="index.html" class="${isHome ? "active" : ""}">Inicio</a>
+               <a href="catalogo.html" class="${isCatalog ? "active" : ""}">Catálogo</a>
+               <a href="pasaporte.html" class="${isPassport ? "active" : ""}">🌍 Pasaporte</a>`;
+        headerEl.appendChild(bar);
+    }
 }
 
 function applyEnglishTranslationsIfNeeded() {
@@ -2219,7 +2240,7 @@ function applyEnglishTranslationsIfNeeded() {
     // 1. Top promo bar
     const promoBar = document.querySelector(".top-promo-bar");
     if (promoBar) {
-        promoBar.innerHTML = `🎁 <strong>FREE SHIPPING</strong> Spain >45€ & EU >90€ <span class="sep">|</span> 🚚 Spain Home Delivery <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Secure Stripe Checkout (Card / Apple Pay / Google Pay)`;
+        promoBar.innerHTML = `🎁 <strong>FREE SHIPPING</strong> Spain >45€ • 🇪🇺 EU >90€<span class="promo-desktop-only"> <span class="sep">|</span> 🚚 Spain <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Secure Stripe Checkout</span>`;
     }
 
     // 2. Navigation links & buttons
@@ -2246,7 +2267,7 @@ function applyEnglishTranslationsIfNeeded() {
     });
 
     document.querySelectorAll(".nav-actions .cart-icon-btn span").forEach(sp => {
-        if (sp.textContent.includes("Seguimiento")) sp.textContent = "📦 Track Order";
+        if (sp.textContent.trim() === "Seguimiento") sp.textContent = "Track Order";
         if (sp.textContent.trim() === "Cesta") sp.textContent = "Cart";
     });
 

@@ -42,6 +42,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    max-width: 100%;
 }
 
 body {
@@ -53,7 +55,8 @@ body {
     color: var(--text-primary);
     font-family: var(--font-body);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip;
+    max-width: 100%;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -2191,15 +2194,117 @@ nav ul a.active {
     }
 }
 
+/* Sub-barra de navegación rápida móvil (oculta en escritorio) */
+.mobile-quick-nav {
+    display: none;
+}
+
 @media (max-width: 640px) {
-    .product-grid, .reviews-grid, .trust-grid, .hero-stats {
-        grid-template-columns: 1fr;
+    .container {
+        padding: 0 14px;
     }
-    nav ul {
+
+    /* Barra superior compacta en 1 sola línea */
+    .top-promo-bar {
+        font-size: 0.72rem;
+        padding: 6px 10px;
+        line-height: 1.35;
+    }
+    .promo-desktop-only {
+        display: none !important;
+    }
+
+    /* Cabecera principal equilibrada y sin desbordamiento */
+    header {
+        padding: 10px 0 0;
+    }
+    header .navbar {
+        gap: 8px;
+        padding-bottom: 10px;
+    }
+    .logo-block {
+        gap: 7px;
+        min-width: 0;
+        flex-shrink: 1;
+    }
+    .logo-block img {
+        height: 26px;
+    }
+    .logo-text {
+        font-size: 1.18rem;
+        white-space: nowrap;
+    }
+    nav {
         display: none;
     }
+    .nav-actions {
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .cart-icon-btn {
+        padding: 7px 10px;
+        font-size: 0.8rem;
+        gap: 5px;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+    .btn-label-desktop {
+        display: none !important;
+    }
+
+    /* Mini-barra de navegación móvil (Inicio · Catálogo · Pasaporte) */
+    .mobile-quick-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px 8px;
+        border-top: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.72);
+    }
+    .mobile-quick-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 999px;
+        transition: var(--transition);
+    }
+    .mobile-quick-nav a.active,
+    .mobile-quick-nav a:hover {
+        color: var(--accent-stripe);
+        background: rgba(219, 39, 119, 0.08);
+    }
+
+    /* Hero y rejillas adaptadas al pulgar */
+    .hero {
+        padding: 28px 0 36px;
+    }
+    .tag {
+        white-space: normal;
+        text-align: center;
+        line-height: 1.35;
+        font-size: 0.72rem;
+        padding: 6px 12px;
+        max-width: 100%;
+    }
     .hero-content h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+    .hero-cta-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    .hero-cta-row .btn {
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    .product-grid, .reviews-grid, .trust-grid, .hero-stats {
+        grid-template-columns: 1fr;
     }
     .config-grid {
         grid-template-columns: 1fr;
