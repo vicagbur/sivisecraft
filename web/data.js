@@ -85,6 +85,33 @@ const SHIPPING_TIERS = {
     }
 };
 
+// Países de destino soportados -> asignan automáticamente su tramo de envío oficial
+const SHIPPING_COUNTRIES = [
+    { code: "ES", name: "🇪🇸 España (Península y Baleares)", nameEn: "🇪🇸 Spain", tier: "espana" },
+    { code: "DE", name: "🇩🇪 Alemania", nameEn: "🇩🇪 Germany", tier: "ue" },
+    { code: "AT", name: "🇦🇹 Austria", nameEn: "🇦🇹 Austria", tier: "ue" },
+    { code: "BE", name: "🇧🇪 Bélgica", nameEn: "🇧🇪 Belgium", tier: "ue" },
+    { code: "DK", name: "🇩🇰 Dinamarca", nameEn: "🇩🇰 Denmark", tier: "ue" },
+    { code: "FR", name: "🇫🇷 Francia", nameEn: "🇫🇷 France", tier: "ue" },
+    { code: "GR", name: "🇬🇷 Grecia", nameEn: "🇬🇷 Greece", tier: "ue" },
+    { code: "IE", name: "🇮🇪 Irlanda", nameEn: "🇮🇪 Ireland", tier: "ue" },
+    { code: "IT", name: "🇮🇹 Italia", nameEn: "🇮🇹 Italy", tier: "ue" },
+    { code: "LU", name: "🇱🇺 Luxemburgo", nameEn: "🇱🇺 Luxembourg", tier: "ue" },
+    { code: "NL", name: "🇳🇱 Países Bajos", nameEn: "🇳🇱 Netherlands", tier: "ue" },
+    { code: "PL", name: "🇵🇱 Polonia", nameEn: "🇵🇱 Poland", tier: "ue" },
+    { code: "PT", name: "🇵🇹 Portugal", nameEn: "🇵🇹 Portugal", tier: "ue" },
+    { code: "CZ", name: "🇨🇿 República Checa", nameEn: "🇨🇿 Czech Republic", tier: "ue" },
+    { code: "RO", name: "🇷🇴 Rumanía", nameEn: "🇷🇴 Romania", tier: "ue" },
+    { code: "SE", name: "🇸🇪 Suecia", nameEn: "🇸🇪 Sweden", tier: "ue" },
+    { code: "EU_OTHER", name: "🇪🇺 Otro país de la Unión Europea", nameEn: "🇪🇺 Other EU Country", tier: "ue" },
+    { code: "FI", name: "🇫🇮 Finlandia", nameEn: "🇫🇮 Finland", tier: "finlandia" },
+    { code: "US", name: "🇺🇸 Estados Unidos (USA)", nameEn: "🇺🇸 United States (USA)", tier: "usa" },
+    { code: "MX", name: "🇲🇽 México", nameEn: "🇲🇽 Mexico", tier: "mexico" },
+    { code: "AU", name: "🇦🇺 Australia", nameEn: "🇦🇺 Australia", tier: "australia" },
+    { code: "PY", name: "🇵🇾 Paraguay", nameEn: "🇵🇾 Paraguay", tier: "paraguay" },
+    { code: "LATAM_OTHER", name: "🌎 Otros países LATAM / Resto del mundo", nameEn: "🌎 Other LATAM / Rest of World", tier: "paraguay" }
+];
+
 // Catálogo Unificado Real (13 Productos: Expositores BK & McDonald's, K-Pop y Coleccionismo)
 const PRODUCTS = [
     // 1. EXPOSITOR TINY TAN 7 FIGURAS + PACKS AHORRO
@@ -774,6 +801,7 @@ const PASSPORT_DATA = {
 // ============================================================================
 const CART_STORAGE_KEY = "sivisecraft_official_cart_v1";
 const SHIPPING_STORAGE_KEY = "sivisecraft_shipping_tier_v1";
+const COUNTRY_STORAGE_KEY = "sivisecraft_country_v1";
 const ORDERS_STORAGE_KEY = "sivisecraft_my_orders_v1";
 
 function getSavedOrders() {
@@ -806,14 +834,40 @@ function saveCart(cart) {
     window.dispatchEvent(new Event("storage"));
 }
 
+function getSelectedCountryCode() {
+    const saved = localStorage.getItem(COUNTRY_STORAGE_KEY);
+    if (saved && SHIPPING_COUNTRIES.some(c => c.code === saved)) {
+        return saved;
+    }
+    return "ES";
+}
+
+function getSelectedCountry() {
+    const code = getSelectedCountryCode();
+    return SHIPPING_COUNTRIES.find(c => c.code === code) || SHIPPING_COUNTRIES[0];
+}
+
+function setSelectedCountryCode(code) {
+    const found = SHIPPING_COUNTRIES.find(c => c.code === code);
+    if (!found) return;
+    localStorage.setItem(COUNTRY_STORAGE_KEY, found.code);
+    localStorage.setItem(SHIPPING_STORAGE_KEY, found.tier);
+    trackHoldingEvent("select_country", found.code);
+    updateCartUI();
+    if (document.getElementById("stripe-overlay")?.classList.contains("open")) {
+        renderCheckoutSummary();
+    }
+}
+
 function getSelectedShippingTierId() {
-    const saved = localStorage.getItem(SHIPPING_STORAGE_KEY);
-    return (saved && SHIPPING_TIERS[saved]) ? saved : "espana";
+    return getSelectedCountry().tier;
 }
 
 function setSelectedShippingTierId(tierId) {
     if (SHIPPING_TIERS[tierId]) {
         localStorage.setItem(SHIPPING_STORAGE_KEY, tierId);
+        const matchCountry = SHIPPING_COUNTRIES.find(c => c.tier === tierId);
+        if (matchCountry) localStorage.setItem(COUNTRY_STORAGE_KEY, matchCountry.code);
         updateCartUI();
         if (document.getElementById("stripe-overlay")?.classList.contains("open")) {
             renderCheckoutSummary();
@@ -1117,16 +1171,24 @@ function closeDetailModal() {
     if (modal) modal.classList.remove("open");
 }
 
-// Actualizar UI del Carrito Lateral + Tramos de Envío
+// Actualizar UI del Carrito Lateral + Envío Automático por País
 function updateCartUI() {
     const cart = getCart();
     const badge = document.getElementById("cart-badge");
     const itemsContainer = document.getElementById("cart-items");
-    const tierSelect = document.getElementById("cart-shipping-tier-select");
-    const currentTierId = getSelectedShippingTierId();
+    const countrySelect = document.getElementById("cart-country-select");
+    const currentCountry = getSelectedCountry();
+    const currentTierId = currentCountry.tier;
+    const currentTier = SHIPPING_TIERS[currentTierId] || SHIPPING_TIERS.espana;
 
-    if (tierSelect && tierSelect.value !== currentTierId) {
-        tierSelect.value = currentTierId;
+    if (countrySelect && countrySelect.value !== currentCountry.code) {
+        countrySelect.value = currentCountry.code;
+    }
+
+    const autoHint = document.getElementById("cart-shipping-auto-hint");
+    if (autoHint) {
+        const cleanLabel = currentTier.label.replace(/\s*\([^)]*€[^)]*\)/g, "");
+        autoHint.textContent = `${cleanLabel} • ${currentTier.freeThreshold ? `Gratis >${currentTier.freeThreshold}€` : formatPrice(currentTier.baseCost)}`;
     }
 
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -1252,6 +1314,11 @@ function openDirectCheckout() {
     trackHoldingEvent("open_checkout", `${cart.length} artículos`);
     const overlay = document.getElementById("stripe-overlay");
     if (!overlay) return;
+    document.getElementById("stripe-success")?.classList.remove("active");
+    const statusBadge = document.getElementById("stripe-summary-status-badge");
+    if (statusBadge) statusBadge.style.display = "none";
+    const countryBox = document.getElementById("checkout-country-box");
+    if (countryBox) countryBox.style.display = "block";
     overlay.classList.add("open");
     renderCheckoutSummary();
     selectPaymentMethod(activePaymentMethod);
@@ -1293,33 +1360,29 @@ function selectPaymentMethod(method) {
 
 function renderCheckoutSummary() {
     const cart = getCart();
-    const tierId = getSelectedShippingTierId();
+    const country = getSelectedCountry();
+    const tierId = country.tier;
     const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.espana;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const shipping = calculateShippingCost(subtotal, tierId);
     const total = subtotal + shipping;
 
-    const checkoutShippingSelect = document.getElementById("checkout-shipping-tier");
-    if (checkoutShippingSelect && checkoutShippingSelect.value !== tierId) {
-        checkoutShippingSelect.value = tierId;
+    const checkoutCountrySelect = document.getElementById("checkout-country-select");
+    if (checkoutCountrySelect && checkoutCountrySelect.value !== country.code) {
+        checkoutCountrySelect.value = country.code;
     }
 
     const etaHint = document.getElementById("checkout-shipping-eta");
-    if (etaHint) etaHint.textContent = tier.eta;
+    if (etaHint) {
+        const cleanTier = tier.label.replace(/\s*\([^)]*€[^)]*\)/g, "");
+        etaHint.innerHTML = `<strong>${cleanTier}</strong> · ${tier.eta}`;
+    }
 
     const addrGroup = document.getElementById("checkout-address-group");
     const addrInput = document.getElementById("chk-address");
     if (addrGroup && addrInput) {
         addrInput.placeholder = tier.addressHint;
-        if (!tier.needsAddress) {
-            addrInput.required = false;
-            addrInput.value = "Recogida en mano en Madrid (0,00 €)";
-        } else {
-            addrInput.required = true;
-            if (addrInput.value === "Recogida en mano en Madrid (0,00 €)") {
-                addrInput.value = "";
-            }
-        }
+        addrInput.required = true;
     }
 
     document.getElementById("stripe-total-amount").textContent = formatPrice(total);
@@ -1364,7 +1427,8 @@ async function submitDirectOrder(e) {
     const city = document.getElementById("chk-city").value.trim();
     const notes = document.getElementById("chk-notes").value.trim();
 
-    const tierId = getSelectedShippingTierId();
+    const country = getSelectedCountry();
+    const tierId = country.tier;
     const tier = SHIPPING_TIERS[tierId] || SHIPPING_TIERS.espana;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const shipping = calculateShippingCost(subtotal, tierId);
@@ -1375,17 +1439,22 @@ async function submitDirectOrder(e) {
         orderId,
         date: new Date().toLocaleDateString("es-ES"),
         method: activePaymentMethod === "bizum" ? "Bizum (0% comisión)" : "Tarjeta / Apple Pay (Stripe Checkout)",
+        paymentType: activePaymentMethod,
         name,
         email,
         phone,
-        address: `${address}, ${zip} ${city}`,
+        countryCode: country.code,
+        countryName: country.name,
+        address: `${address}, ${zip} ${city} (${country.name})`,
         shippingId: tierId,
         shippingLabel: tier.label,
         subtotal,
         shipping,
         total,
         notes,
-        status: "En preparación en el Taller 3D (Madrid)",
+        status: activePaymentMethod === "bizum"
+            ? "Pendiente de confirmación de Bizum"
+            : "Iniciando pago en Stripe...",
         items: [...cart]
     };
 
@@ -1398,7 +1467,7 @@ async function submitDirectOrder(e) {
     const procSub = document.getElementById("stripe-processing-sub");
     proc.classList.add("active");
 
-    // Si eligió Stripe (Opción B), intentamos crear sesión real en /api/checkout (Cloudflare Pages Function)
+    // Si eligió Stripe (Opción B), intentamos crear sesión real en /api/checkout
     if (activePaymentMethod === "stripe" && window.location.protocol.startsWith("http")) {
         if (procTitle) procTitle.textContent = "Conectando con la Pasarela Oficial de Stripe...";
         if (procSub) procSub.textContent = "Enviando tu cesta y dirección cifradas (256-bit SSL)";
@@ -1409,7 +1478,8 @@ async function submitDirectOrder(e) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     orderId,
-                    customer: { name, email, phone, address, zip, city, notes },
+                    customer: { name, email, phone, address, zip, city, notes, countryCode: country.code, countryName: country.name },
+                    countryCode: country.code,
                     shippingTierId: tier.id,
                     shippingTierLabel: tier.label,
                     shippingCost: shipping,
@@ -1437,15 +1507,83 @@ async function submitDirectOrder(e) {
     setTimeout(() => {
         proc.classList.remove("active");
         showOrderSuccessModal(lastCompletedOrder);
-    }, 1200);
+    }, 1000);
 }
 
 function showOrderSuccessModal(orderObj) {
     lastCompletedOrder = orderObj;
     const overlay = document.getElementById("stripe-overlay");
     if (overlay) overlay.classList.add("open");
+
+    // Sincronizar el panel izquierdo con los datos REALES del pedido completado (evita mostrar 0,00 € tras vaciar el carrito)
+    const totalEl = document.getElementById("stripe-total-amount");
+    const subEl = document.getElementById("stripe-subtotal-cost");
+    const shipEl = document.getElementById("stripe-shipping-cost");
+    const listContainer = document.getElementById("stripe-items-list");
+    const countryBox = document.getElementById("checkout-country-box");
+    const statusBadge = document.getElementById("stripe-summary-status-badge");
+
+    const isBizum = String(orderObj.method || "").toLowerCase().includes("bizum");
+
+    if (totalEl) totalEl.textContent = formatPrice(orderObj.total || 0);
+    if (subEl) subEl.textContent = formatPrice(orderObj.subtotal || 0);
+    if (shipEl) shipEl.textContent = (orderObj.shipping === 0) ? "GRATIS (0,00 €)" : formatPrice(orderObj.shipping || 0);
+    if (countryBox) countryBox.style.display = "none";
+
+    if (statusBadge) {
+        statusBadge.style.display = "inline-flex";
+        if (isBizum) {
+            statusBadge.style.background = "#fef3c7";
+            statusBadge.style.color = "#92400e";
+            statusBadge.style.borderColor = "#fcd34d";
+            statusBadge.textContent = "⏳ PENDIENTE DE BIZUM";
+        } else {
+            statusBadge.style.background = "#dcfce7";
+            statusBadge.style.color = "#166534";
+            statusBadge.style.borderColor = "#86efac";
+            statusBadge.textContent = "✅ PEDIDO PAGADO";
+        }
+    }
+
+    if (listContainer && Array.isArray(orderObj.items)) {
+        listContainer.innerHTML = orderObj.items.map(item => `
+            <div class="stripe-list-item">
+                <div class="stripe-list-item-img">
+                    <img src="${item.image}" alt="${item.name}">
+                </div>
+                <div>
+                    <div class="stripe-list-item-title">${item.name}</div>
+                    <div class="stripe-list-item-qty">Cant: ${item.qty} ${item.meta ? `• ${item.meta}` : ""}</div>
+                </div>
+                <div class="stripe-list-item-price">${formatPrice(item.price * item.qty)}</div>
+            </div>
+        `).join("");
+    }
+
     const succ = document.getElementById("stripe-success");
     if (!succ) return;
+
+    const titleEl = document.getElementById("receipt-title");
+    const subtitleEl = document.getElementById("receipt-subtitle");
+    const bizumWarnEl = document.getElementById("receipt-bizum-warning");
+
+    if (titleEl) {
+        titleEl.textContent = isBizum ? "¡Pedido Registrado! Falta tu Bizum" : "¡Pago Confirmado con Éxito!";
+    }
+    if (subtitleEl) {
+        subtitleEl.textContent = isBizum
+            ? "Hemos reservado tu orden de taller. Realiza ahora el Bizum y pulsa el botón de WhatsApp para confirmarlo."
+            : "¡Muchas gracias! Hemos recibido tu pago por Stripe y tu pedido ya está en nuestra cola de impresión 3D.";
+    }
+    if (bizumWarnEl) {
+        if (isBizum) {
+            bizumWarnEl.style.display = "block";
+            bizumWarnEl.innerHTML = `⚠️ <strong>AVISO IMPORTANTE:</strong> Este pedido <strong>no se realizará ni se enviará hasta la confirmación del pago por Bizum</strong> de <strong>${formatPrice(orderObj.total)}</strong> al móvil <strong>${STORE_CONFIG.bizumPhone}</strong> indicando el concepto <strong>${orderObj.orderId}</strong>.`;
+        } else {
+            bizumWarnEl.style.display = "none";
+        }
+    }
+
     document.getElementById("receipt-order-id").textContent = orderObj.orderId;
     document.getElementById("receipt-name").textContent = `${orderObj.name} (${orderObj.phone})`;
     document.getElementById("receipt-shipping").textContent = `${orderObj.shippingLabel}`;
@@ -1593,9 +1731,10 @@ function injectSharedStoreModals() {
     const wrapper = document.getElementById("shared-modals-mount");
     if (!wrapper) return;
 
-    const shippingOptionsHTML = Object.values(SHIPPING_TIERS).map(t => {
-        const priceTag = t.baseCost === 0 ? "0,00 €" : `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeThreshold ? ` • Gratis >${t.freeThreshold}€` : ""}`;
-        return `<option value="${t.id}">${t.label.replace(/\s*\([^)]*€[^)]*\)/g, "")} (${priceTag})</option>`;
+    const countryOptionsHTML = SHIPPING_COUNTRIES.map(c => {
+        const t = SHIPPING_TIERS[c.tier] || SHIPPING_TIERS.espana;
+        const priceTag = `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeThreshold ? ` • Gratis >${t.freeThreshold}€` : ""}`;
+        return `<option value="${c.code}">${c.name} (${priceTag})</option>`;
     }).join("");
 
     wrapper.innerHTML = `
@@ -1637,10 +1776,11 @@ function injectSharedStoreModals() {
                 <div id="cart-items" class="cart-items"></div>
                 <div class="cart-footer">
                     <div class="shipping-tier-box">
-                        <label for="cart-shipping-tier-select">Método de Entrega / Tramo de Envío</label>
-                        <select id="cart-shipping-tier-select" class="shipping-tier-select" onchange="setSelectedShippingTierId(this.value)">
-                            ${shippingOptionsHTML}
+                        <label for="cart-country-select">País de Destino (Envío automático)</label>
+                        <select id="cart-country-select" class="shipping-tier-select" onchange="setSelectedCountryCode(this.value)">
+                            ${countryOptionsHTML}
                         </select>
+                        <div id="cart-shipping-auto-hint" style="font-size:0.74rem; color:var(--accent-pichi); margin-top:4px; font-weight:600;"></div>
                     </div>
                     <div class="cart-totals-row">
                         <span>Subtotal productos</span>
@@ -1672,15 +1812,18 @@ function injectSharedStoreModals() {
                         <img src="img/logo.svg" alt="SiviseCraft" style="height:28px; width:auto;">
                         <span>SiviseCraft Oficial</span>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 16px;">Importe total del pedido</div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top: 16px;">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Importe total del pedido</div>
+                        <span id="stripe-summary-status-badge" style="display:none; font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; border:1px solid transparent;"></span>
+                    </div>
                     <div id="stripe-total-amount" class="stripe-total-amount">0,00 €</div>
 
-                    <div class="form-group" style="margin-bottom:16px;">
-                        <label for="checkout-shipping-tier">Tramo de Envío Seleccionado</label>
-                        <select id="checkout-shipping-tier" class="shipping-tier-select" onchange="setSelectedShippingTierId(this.value)">
-                            ${shippingOptionsHTML}
+                    <div id="checkout-country-box" class="form-group" style="margin-bottom:16px;">
+                        <label for="checkout-country-select">País de Destino (tarifa asignada automáticamente)</label>
+                        <select id="checkout-country-select" class="shipping-tier-select" onchange="setSelectedCountryCode(this.value)">
+                            ${countryOptionsHTML}
                         </select>
-                        <div id="checkout-shipping-eta" style="font-size:0.75rem; color:var(--accent-pichi); margin-top:4px; font-weight:600;"></div>
+                        <div id="checkout-shipping-eta" style="font-size:0.75rem; color:var(--accent-pichi); margin-top:5px; font-weight:600;"></div>
                     </div>
 
                     <div id="stripe-items-list" style="margin-top: 16px; max-height: 260px; overflow-y:auto;"></div>
@@ -1709,8 +1852,10 @@ function injectSharedStoreModals() {
                     <!-- Confirmación de Pedido -->
                     <div id="stripe-success" class="success-overlay">
                         <div class="success-icon-wrapper">&check;</div>
-                        <h2 style="font-family: var(--font-title); font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">¡Pedido Registrado!</h2>
-                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Hemos generado tu orden de taller. Puedes enviarnos la confirmación en 1 clic por WhatsApp para agilizar el envío.</p>
+                        <h2 id="receipt-title" style="font-family: var(--font-title); font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">¡Pedido Registrado!</h2>
+                        <p id="receipt-subtitle" style="color: var(--text-secondary); font-size: 0.88rem;">Hemos generado tu orden de taller. Puedes enviarnos la confirmación en 1 clic por WhatsApp para agilizar el envío.</p>
+
+                        <div id="receipt-bizum-warning" style="display:none; width:100%; background:#fef2f2; border:1.5px solid #f87171; color:#991b1b; padding:12px 14px; border-radius:10px; font-size:0.84rem; line-height:1.45; margin:12px 0 6px; text-align:left;"></div>
 
                         <div class="order-receipt">
                             <div class="receipt-row">
@@ -1785,9 +1930,12 @@ function injectSharedStoreModals() {
                         <!-- Caja Bizum -->
                         <div id="pay-box-bizum" class="bizum-instructions-card">
                             <h4>📱 Pago Directo por Bizum (Instantáneo y 0% Comisiones)</h4>
-                            <p style="color:var(--text-secondary); line-height:1.45;">
-                                Envía tu Bizum al móvil <strong>${STORE_CONFIG.bizumPhone}</strong> con tu código <strong>#SC</strong> en el concepto. Al confirmar tu pedido podrás avisar a Víctor en 1 clic por WhatsApp para empezar a imprimir tu pieza en el acto.
+                            <p style="color:var(--text-secondary); line-height:1.45; margin-bottom:10px;">
+                                Envía tu Bizum al móvil <strong>${STORE_CONFIG.bizumPhone}</strong> indicando tu código de pedido <strong>#SC</strong> en el concepto.
                             </p>
+                            <div style="background:#fef2f2; border:1.5px solid #f87171; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.82rem; font-weight:700; line-height:1.45;">
+                                ⚠️ AVISO IMPORTANTE: Este pedido no se realizará ni se enviará hasta la confirmación del pago por Bizum.
+                            </div>
                         </div>
 
                         <!-- Caja Stripe Tarjeta (Opción B: Pasarela Oficial Stripe Checkout con dirección ya vinculada) -->
