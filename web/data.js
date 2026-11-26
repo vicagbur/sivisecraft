@@ -2169,11 +2169,183 @@ function trackHoldingEvent(eventName, eventTarget = "") {
     } catch (_e) {}
 }
 
+// ============================================================================
+// SISTEMA BILINGÜE LIGERO (ES / EN · 0 librerías · Autodetección + Selector)
+// ============================================================================
+const LANG_STORAGE_KEY = "sivisecraft_lang_v1";
+
+function getCurrentLang() {
+    try {
+        const urlLang = new URLSearchParams(window.location.search).get("lang");
+        if (urlLang === "en" || urlLang === "es") {
+            localStorage.setItem(LANG_STORAGE_KEY, urlLang);
+            return urlLang;
+        }
+        const saved = localStorage.getItem(LANG_STORAGE_KEY);
+        if (saved === "en" || saved === "es") return saved;
+        const navLang = (navigator.language || "es").toLowerCase();
+        if (navLang.startsWith("en")) return "en";
+    } catch (_e) {}
+    return "es";
+}
+
+function toggleStoreLanguage() {
+    const next = getCurrentLang() === "en" ? "es" : "en";
+    localStorage.setItem(LANG_STORAGE_KEY, next);
+    window.location.reload();
+}
+
+function injectLanguageToggle() {
+    const navActions = document.querySelector(".nav-actions");
+    if (!navActions || document.getElementById("lang-toggle-btn")) return;
+    const lang = getCurrentLang();
+    const btn = document.createElement("button");
+    btn.id = "lang-toggle-btn";
+    btn.type = "button";
+    btn.className = "cart-icon-btn";
+    btn.style.background = "var(--bg-primary)";
+    btn.style.padding = "7px 11px";
+    btn.style.fontSize = "0.78rem";
+    btn.title = lang === "en" ? "Cambiar a Español" : "Switch to English";
+    btn.innerHTML = lang === "en" ? "🇪🇸 ES" : "🇬🇧 EN";
+    btn.onclick = toggleStoreLanguage;
+    navActions.insertBefore(btn, navActions.firstChild);
+}
+
+function applyEnglishTranslationsIfNeeded() {
+    if (getCurrentLang() !== "en") return;
+    document.documentElement.lang = "en";
+
+    // 1. Top promo bar
+    const promoBar = document.querySelector(".top-promo-bar");
+    if (promoBar) {
+        promoBar.innerHTML = `🎁 <strong>FREE SHIPPING</strong> Spain >45€ & EU >90€ <span class="sep">|</span> 🚚 Spain Home Delivery <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Secure Stripe Checkout (Card / Apple Pay / Google Pay)`;
+    }
+
+    // 2. Navigation links & buttons
+    const navMap = {
+        "Inicio": "Home",
+        "Catálogo": "Catalog",
+        "Expositores": "Display Stands",
+        "Navidad": "Christmas",
+        "Relojes": "Clocks",
+        "Lámparas": "Lamps"
+    };
+    document.querySelectorAll("header nav a").forEach(a => {
+        const txt = a.textContent.trim();
+        if (txt.startsWith("Colecciones")) {
+            a.innerHTML = `Collections <span class="dropdown-chevron">▾</span>`;
+        } else if (navMap[txt]) {
+            a.textContent = navMap[txt];
+        } else {
+            const firstSpan = a.querySelector("span:first-child");
+            if (firstSpan && navMap[firstSpan.textContent.trim()]) {
+                firstSpan.textContent = navMap[firstSpan.textContent.trim()];
+            }
+        }
+    });
+
+    document.querySelectorAll(".nav-actions .cart-icon-btn span").forEach(sp => {
+        if (sp.textContent.includes("Seguimiento")) sp.textContent = "📦 Track Order";
+        if (sp.textContent.trim() === "Cesta") sp.textContent = "Cart";
+    });
+
+    // 3. Home Hero & Key Headings
+    const heroH1 = document.querySelector(".hero h1");
+    if (heroH1 && heroH1.textContent.includes("artesanía")) {
+        heroH1.innerHTML = `Where technology meets <span>craftsmanship</span>`;
+        const heroP = document.querySelector(".hero p");
+        if (heroP) {
+            heroP.textContent = "Collectible display stands, LED lamps, and custom 3D-printed accessories designed in Madrid. Precision-engineered in eco-friendly PLA and shipped worldwide with tracking.";
+        }
+    }
+
+    // 4. Country dropdowns -> English country names
+    ["cart-country-select", "checkout-country-select"].forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        Array.from(sel.options).forEach(opt => {
+            const c = SHIPPING_COUNTRIES.find(item => item.code === opt.value);
+            if (c) {
+                const t = SHIPPING_TIERS[c.tier] || SHIPPING_TIERS.espana;
+                const priceTag = `${t.baseCost.toFixed(2).replace(".", ",")} €${t.freeThreshold ? ` • Free >${t.freeThreshold}€` : ""}`;
+                opt.textContent = `${c.nameEn} (${priceTag})`;
+            }
+        });
+    });
+
+    // 5. Cart Drawer & Checkout Modal texts
+    const setText = (sel, txt) => { const el = document.querySelector(sel); if (el) el.textContent = txt; };
+    setText(".cart-header h2", "Your Shopping Cart");
+    setText("label[for='cart-country-select']", "Destination Country (Auto Shipping)");
+    setText("label[for='checkout-country-select']", "Destination Country (shipping calculated automatically)");
+    setText(".stripe-back-btn", "← Back to SiviseCraft Store");
+    setText("#pay-tab-bizum span:first-child", "📱 Pay with Bizum (Spain)");
+    setText("#pay-tab-bizum .sub", "0% Fees • Spain Mobile Only");
+    setText("#pay-tab-stripe span:first-child", "💳 Card / Apple Pay");
+    setText("#pay-tab-stripe .sub", "★ Recommended • Secure Stripe Checkout");
+
+    const payBoxBizum = document.getElementById("pay-box-bizum");
+    if (payBoxBizum) {
+        payBoxBizum.innerHTML = `
+            <h4>📱 Direct Bizum Payment (Spain Only • 0% Fees)</h4>
+            <p style="color:var(--text-secondary); line-height:1.45; margin-bottom:10px;">
+                Send your Bizum to <strong>${STORE_CONFIG.bizumPhone}</strong> with your <strong>#SC</strong> order code in the reference.
+            </p>
+            <div style="background:#fef2f2; border:1.5px solid #f87171; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.82rem; font-weight:700; line-height:1.45;">
+                ⚠️ IMPORTANT NOTICE: This order will not be produced or shipped until Bizum payment is confirmed.
+            </div>
+        `;
+    }
+    const payBoxStripe = document.getElementById("pay-box-stripe");
+    if (payBoxStripe) {
+        payBoxStripe.innerHTML = `
+            <h4 style="color:var(--accent-stripe);">💳 Official Stripe Checkout (Card / Apple Pay / Google Pay)</h4>
+            <p style="color:var(--text-secondary); line-height:1.45;">
+                Your shipping details above are automatically linked to your order. Click below to complete payment securely on Stripe.
+            </p>
+        `;
+    }
+
+    // Placeholders
+    const phMap = {
+        "chk-name": "Full Name *",
+        "chk-phone": "Mobile Phone *",
+        "chk-email": "Email address for tracking *",
+        "chk-zip": "ZIP / Postal Code *",
+        "chk-city": "City / State *",
+        "chk-notes": "Optional notes (custom colors, names...)"
+    };
+    Object.entries(phMap).forEach(([id, ph]) => {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = ph;
+    });
+
+    // Buttons on product cards
+    document.querySelectorAll(".product-card button.btn-primary").forEach(btn => {
+        if (btn.textContent.includes("Añadir")) btn.textContent = "🛒 Add to Cart";
+    });
+    const cartCheckoutBtn = document.querySelector(".cart-footer .btn-primary");
+    if (cartCheckoutBtn) cartCheckoutBtn.textContent = "Proceed to Checkout →";
+
+    // Default to Stripe for English visitors
+    if (typeof activePaymentMethod !== "undefined" && activePaymentMethod === "bizum") {
+        activePaymentMethod = "stripe";
+    }
+}
+
 // Auto-inicialización al cargar la web
+function _initSiviseCraftRuntime() {
+    initHoldingTelemetry();
+    injectLanguageToggle();
+    // Esperar un micro-tick a que las páginas inyecten los modales y tarjetas
+    setTimeout(applyEnglishTranslationsIfNeeded, 60);
+}
+
 if (typeof window !== "undefined" && window.document) {
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initHoldingTelemetry);
+        document.addEventListener("DOMContentLoaded", _initSiviseCraftRuntime);
     } else {
-        initHoldingTelemetry();
+        _initSiviseCraftRuntime();
     }
 }
