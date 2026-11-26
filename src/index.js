@@ -320,8 +320,11 @@ async function handleCheckout(request, env, ctx, corsOrigin) {
         const safeOrderId = String(orderId || "SC-WEB").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32) || "SC-WEB";
 
         // Construir parámetros form-urlencoded para la API oficial de Stripe Checkout Sessions
+        // Al omitir payment_method_types[], Stripe activa Dynamic Payment Methods (Tarjeta, Apple Pay, Google Pay, Bizum si está habilitado en Dashboard)
         const params = new URLSearchParams();
         params.append("mode", "payment");
+        params.append("locale", "auto");
+        params.append("client_reference_id", safeOrderId);
         params.append("success_url", `${safeBaseUrl}/index.html?pago=ok&order=${encodeURIComponent(safeOrderId)}`);
         params.append("cancel_url", `${safeBaseUrl}/catalogo.html?checkout=true`);
 
@@ -335,7 +338,9 @@ async function handleCheckout(request, env, ctx, corsOrigin) {
             .slice(0, 490);
 
         const metadata = {
+            order_id: safeOrderId,
             pedido_id: safeOrderId,
+            pais_destino: String(countryCode || customer?.countryCode || "ES").toUpperCase(),
             cliente_nombre: String(customer?.name || "").slice(0, 120),
             cliente_telefono: String(customer?.phone || "").slice(0, 30),
             direccion_entrega: `${String(customer?.address || "")}, ${String(customer?.zip || "")} ${String(customer?.city || "")}`.slice(0, 250),
