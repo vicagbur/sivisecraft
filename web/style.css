@@ -2303,7 +2303,23 @@ nav ul a.active {
         justify-content: center;
     }
 
-    .product-grid, .reviews-grid, .trust-grid, .hero-stats {
+    .hero-stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        text-align: center;
+        padding-top: 18px;
+    }
+    .hero-stats .stat-item h3 {
+        font-size: 1.2rem;
+        line-height: 1.15;
+    }
+    .hero-stats .stat-item p {
+        font-size: 0.68rem;
+        line-height: 1.25;
+        margin-top: 3px;
+    }
+
+    .product-grid, .reviews-grid, .trust-grid {
         grid-template-columns: 1fr;
     }
     .config-grid {
