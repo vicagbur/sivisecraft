@@ -310,6 +310,20 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Panel de Pedidos Recibidos (D1) y Estado de Notificaciones -->
+            <div class="funnel-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                    <div>
+                        <h3 style="margin-bottom:2px;">📦 Pedidos Recibidos (Bizum y Stripe)</h3>
+                        <p style="margin-bottom:0;">Todos los pedidos registrados automáticamente en tu base de datos Cloudflare D1.</p>
+                    </div>
+                    <div id="notify-channels-mount" style="display:flex; gap:6px; flex-wrap:wrap; font-size:0.74rem;"></div>
+                </div>
+                <div id="orders-mount">
+                    <p style="color:var(--muted); font-size:0.84rem;">Todavía no hay pedidos registrados en D1.</p>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -468,6 +482,73 @@
                     `;
                 }).join("");
             }
+
+            // Canales de notificación activos
+            const nc = data.notifications_config || {};
+            const chip = (label, active) => `<span style="padding:3px 9px; border-radius:999px; font-weight:700; border:1px solid ${active ? 'rgba(52,211,153,0.4)' : 'rgba(148,163,184,0.25)'}; background:${active ? 'rgba(52,211,153,0.14)' : 'rgba(148,163,184,0.08)'}; color:${active ? '#34d399' : '#94a3b8'};">${active ? '✓' : '○'} ${label}</span>`;
+            const notifyMount = document.getElementById("notify-channels-mount");
+            if (notifyMount) {
+                notifyMount.innerHTML = chip("Resend Email", nc.resend) + chip("ntfy.sh", nc.ntfy) + chip("Telegram", nc.telegram) + chip("Stripe Webhook", nc.stripe_webhook);
+            }
+
+            // Pedidos recientes en D1
+            const ordersList = data.recent_orders || [];
+            const ordersMount = document.getElementById("orders-mount");
+            if (ordersMount) {
+                if (ordersList.length === 0) {
+                    ordersMount.innerHTML = `<p style="color:var(--muted); font-size:0.84rem;">Todavía no hay pedidos registrados en D1.</p>`;
+                } else {
+                    const fmtEur = (c) => (Number(c || 0) / 100).toFixed(2).replace(".", ",") + " €";
+                    const statusColor = (s) => {
+                        if (s === "PAGADO_STRIPE" || s === "PAGADO_BIZUM") return "#34d399";
+                        if (s === "ENVIADO") return "#38bdf8";
+                        if (s === "CANCELADO") return "#f87171";
+                        return "#f59e0b";
+                    };
+                    ordersMount.innerHTML = ordersList.map(o => {
+                        const itemsStr = (o.items || []).map(i => `${i.qty}x ${i.name}${i.meta ? ` (${i.meta})` : ""}`).join(" · ");
+                        const dateStr = (o.created_at || "").slice(0, 16).replace("T", " ");
+                        return `
+                            <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                                    <div>
+                                        <span style="font-family:'JetBrains Mono',monospace; font-weight:800; color:var(--accent-pink);">${o.order_id}</span>
+                                        <span style="font-size:0.76rem; color:var(--muted); margin-left:8px;">${dateStr} UTC · ${o.payment_method.toUpperCase()}</span>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <strong style="font-family:'JetBrains Mono',monospace; color:#34d399;">${fmtEur(o.total_cents)}</strong>
+                                        <select onchange="updateOrderStatus('${o.order_id}', this.value)" style="background:#0f172a; color:${statusColor(o.status)}; border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:0.75rem; font-weight:700;">
+                                            <option value="PENDIENTE_BIZUM" ${o.status === "PENDIENTE_BIZUM" ? "selected" : ""}>⏳ PENDIENTE BIZUM</option>
+                                            <option value="PAGADO_BIZUM" ${o.status === "PAGADO_BIZUM" ? "selected" : ""}>✅ PAGADO BIZUM</option>
+                                            <option value="PENDIENTE_STRIPE" ${o.status === "PENDIENTE_STRIPE" ? "selected" : ""}>⏳ PENDIENTE STRIPE</option>
+                                            <option value="PAGADO_STRIPE" ${o.status === "PAGADO_STRIPE" ? "selected" : ""}>✅ PAGADO STRIPE</option>
+                                            <option value="EN_IMPRESION" ${o.status === "EN_IMPRESION" ? "selected" : ""}>🖨️ EN IMPRESIÓN</option>
+                                            <option value="ENVIADO" ${o.status === "ENVIADO" ? "selected" : ""}>📦 ENVIADO</option>
+                                            <option value="CANCELADO" ${o.status === "CANCELADO" ? "selected" : ""}>❌ CANCELADO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="font-size:0.84rem; margin-bottom:4px;"><strong>${o.customer_name}</strong> · ${o.customer_phone} · ${o.customer_email}</div>
+                                <div style="font-size:0.8rem; color:var(--muted); margin-bottom:6px;">📍 [${o.country_code}] ${o.address}</div>
+                                <div style="font-size:0.8rem; color:#e2e8f0;">🛒 ${itemsStr}</div>
+                                ${o.notes ? `<div style="font-size:0.78rem; color:#fcd34d; margin-top:4px;">📝 ${o.notes}</div>` : ""}
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            const key = getSavedKey();
+            try {
+                await fetch(`/api/admin/order-status?key=${encodeURIComponent(key)}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ order_id: orderId, status: newStatus })
+                });
+                await loadStats();
+            } catch (_e) {}
         }
 
         document.addEventListener("DOMContentLoaded", () => {

@@ -186,13 +186,33 @@ export default {
             return handleAdminStats(request, env, url, corsOrigin);
         }
 
+        // Actualizar estado de un pedido desde /admin (Protegido por ADMIN_KEY)
+        if (url.pathname === "/api/admin/order-status") {
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
+            if (request.method !== "POST") return methodNotAllowed(corsOrigin);
+            return handleAdminOrderStatus(request, env, url, corsOrigin);
+        }
+
+        // Registro de pedidos directos (Bizum) + Notificaciones automáticas
+        if (url.pathname === "/api/orders") {
+            if (request.method === "OPTIONS") return handleOptions(corsOrigin);
+            if (request.method !== "POST") return methodNotAllowed(corsOrigin);
+            return handleCreateOrder(request, env, ctx, corsOrigin);
+        }
+
+        // Webhook oficial de Stripe (confirmación automática de pagos + correos/push)
+        if (url.pathname === "/api/stripe-webhook") {
+            if (request.method !== "POST") return methodNotAllowed(null);
+            return handleStripeWebhook(request, env, ctx);
+        }
+
         // API Endpoint para Stripe Checkout
         if (url.pathname === "/api/checkout") {
             if (request.method === "OPTIONS") return handleOptions(corsOrigin);
 
             if (request.method !== "POST") return methodNotAllowed(corsOrigin);
 
-            return handleCheckout(request, env, corsOrigin);
+            return handleCheckout(request, env, ctx, corsOrigin);
         }
 
         // Servir archivos estáticos desde ./web añadiendo cabeceras de seguridad
@@ -229,7 +249,7 @@ function methodNotAllowed(corsOrigin) {
     });
 }
 
-async function handleCheckout(request, env, corsOrigin) {
+async function handleCheckout(request, env, ctx, corsOrigin) {
     const jsonHeaders = { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) };
 
     try {
@@ -374,6 +394,32 @@ async function handleCheckout(request, env, corsOrigin) {
             );
         }
 
+        // Registrar pedido pendiente de Stripe en D1 para que el webhook lo confirme automáticamente
+        const orderRecord = {
+            order_id: safeOrderId,
+            status: "PENDIENTE_STRIPE",
+            payment_method: "stripe",
+            customer_name: String(customer?.name || "").slice(0, 120),
+            customer_email: String(customer?.email || "").slice(0, 120),
+            customer_phone: String(customer?.phone || "").slice(0, 40),
+            country_code: String(countryCode || customer?.countryCode || "ES").toUpperCase().slice(0, 16),
+            shipping_label: verifiedShipping.label,
+            address: `${customer?.address || ""}, ${customer?.zip || ""} ${customer?.city || ""}`.trim().slice(0, 260),
+            notes: String(customer?.notes || "").slice(0, 300),
+            items_json: JSON.stringify(verifiedItems),
+            subtotal_cents: subtotalCents,
+            shipping_cents: verifiedShipping.cents,
+            total_cents: subtotalCents + verifiedShipping.cents,
+            stripe_session_id: String(sessionData.id || ""),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        };
+        if (ctx && typeof ctx.waitUntil === "function") {
+            ctx.waitUntil(persistOrderRecord(env, orderRecord).catch(console.error));
+        } else {
+            await persistOrderRecord(env, orderRecord).catch(() => {});
+        }
+
         return new Response(
             JSON.stringify({ url: sessionData.url, sessionId: sessionData.id }),
             { status: 200, headers: jsonHeaders }
@@ -451,6 +497,30 @@ async function ensureTables(db) {
 
         await db.prepare(`CREATE INDEX IF NOT EXISTS idx_events_name ON analytics_events(event_name)`).run();
         await db.prepare(`CREATE INDEX IF NOT EXISTS idx_events_created ON analytics_events(created_at)`).run();
+
+        await db.prepare(`
+            CREATE TABLE IF NOT EXISTS orders (
+                order_id TEXT PRIMARY KEY,
+                status TEXT NOT NULL DEFAULT 'PENDIENTE_BIZUM',
+                payment_method TEXT NOT NULL,
+                customer_name TEXT NOT NULL,
+                customer_email TEXT NOT NULL,
+                customer_phone TEXT DEFAULT '',
+                country_code TEXT DEFAULT 'ES',
+                shipping_label TEXT DEFAULT '',
+                address TEXT DEFAULT '',
+                notes TEXT DEFAULT '',
+                items_json TEXT NOT NULL,
+                subtotal_cents INTEGER NOT NULL DEFAULT 0,
+                shipping_cents INTEGER NOT NULL DEFAULT 0,
+                total_cents INTEGER NOT NULL DEFAULT 0,
+                stripe_session_id TEXT DEFAULT '',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        `).run();
+
+        await db.prepare(`CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)`).run();
 
         _tablesEnsured = true;
     } catch (err) {
@@ -611,6 +681,15 @@ async function handleAdminStats(request, env, url, corsOrigin) {
                 env.DB.prepare("SELECT event_target as name, COUNT(*) as count FROM analytics_events WHERE event_name IN ('view_product', 'add_to_cart') AND event_target != '' GROUP BY event_target ORDER BY count DESC LIMIT 6").all()
             ]);
 
+            let recentOrders = [];
+            try {
+                const ordersRes = await env.DB.prepare("SELECT * FROM orders ORDER BY created_at DESC LIMIT 25").all();
+                recentOrders = (ordersRes?.results || []).map(o => ({
+                    ...o,
+                    items: (() => { try { return JSON.parse(o.items_json || "[]"); } catch { return []; } })()
+                }));
+            } catch (_e) {}
+
             const totalVisitors = uniqVisRow?.c || 0;
             const returningVisitors = returningRow?.c || 0;
             const retentionPct = totalVisitors > 0 ? Math.round((returningVisitors / totalVisitors) * 1000) / 10 : 0;
@@ -625,6 +704,14 @@ async function handleAdminStats(request, env, url, corsOrigin) {
                 ok: true,
                 project: "sivisecraft",
                 storage: "d1",
+                notifications_config: {
+                    resend: Boolean(env.RESEND_API_KEY),
+                    owner_email: Boolean(env.OWNER_EMAIL),
+                    ntfy: Boolean(env.NTFY_TOPIC),
+                    telegram: Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID),
+                    stripe_webhook: Boolean(env.STRIPE_WEBHOOK_SECRET)
+                },
+                recent_orders: recentOrders,
                 traffic: {
                     total_pageviews: totalPvRow?.c || 0,
                     unique_visitors: totalVisitors,
@@ -698,6 +785,14 @@ async function handleAdminStats(request, env, url, corsOrigin) {
         ok: true,
         project: "sivisecraft",
         storage: "in_memory (pendiente enlazar D1)",
+        notifications_config: {
+            resend: Boolean(env.RESEND_API_KEY),
+            owner_email: Boolean(env.OWNER_EMAIL),
+            ntfy: Boolean(env.NTFY_TOPIC),
+            telegram: Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID),
+            stripe_webhook: Boolean(env.STRIPE_WEBHOOK_SECRET)
+        },
+        recent_orders: [],
         traffic: {
             total_pageviews: totalPageviews,
             unique_visitors: uniqueVisitors,
@@ -712,4 +807,397 @@ async function handleAdminStats(request, env, url, corsOrigin) {
             top_products: topProducts
         }
     }), { status: 200, headers: jsonHeaders });
+}
+
+// ============================================================================
+// PERSISTENCIA DE PEDIDOS (D1) + WEBHOOK STRIPE + HOLDING NOTIFICATIONS ENGINE
+// Skill: holding-notifications (Resend + ntfy.sh + Telegram · 0 €/mes)
+// ============================================================================
+
+function formatEurFromCents(cents) {
+    return (Number(cents || 0) / 100).toFixed(2).replace(".", ",") + " €";
+}
+
+async function persistOrderRecord(env, order) {
+    if (!env.DB) return false;
+    await ensureTables(env.DB);
+    await env.DB.prepare(`
+        INSERT INTO orders (
+            order_id, status, payment_method, customer_name, customer_email, customer_phone,
+            country_code, shipping_label, address, notes, items_json,
+            subtotal_cents, shipping_cents, total_cents, stripe_session_id, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(order_id) DO UPDATE SET
+            status = excluded.status,
+            stripe_session_id = CASE WHEN excluded.stripe_session_id != '' THEN excluded.stripe_session_id ELSE orders.stripe_session_id END,
+            updated_at = excluded.updated_at
+    `).bind(
+        order.order_id,
+        order.status,
+        order.payment_method,
+        order.customer_name,
+        order.customer_email,
+        order.customer_phone,
+        order.country_code,
+        order.shipping_label,
+        order.address,
+        order.notes,
+        order.items_json,
+        order.subtotal_cents,
+        order.shipping_cents,
+        order.total_cents,
+        order.stripe_session_id || "",
+        order.created_at,
+        order.updated_at
+    ).run();
+    return true;
+}
+
+async function sendResendEmail(env, { to, subject, html, replyTo }) {
+    if (!env.RESEND_API_KEY || !to) return { ok: false, skipped: "no_resend_key" };
+    const from = env.NOTIFY_FROM_EMAIL || "SiviseCraft <pedidos@sivisecraft.es>";
+    const payload = {
+        from,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html
+    };
+    if (replyTo) payload.reply_to = replyTo;
+
+    const resp = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    if (!resp.ok) {
+        const txt = await resp.text().catch(() => "");
+        console.error("Resend API error:", resp.status, txt);
+        return { ok: false, status: resp.status };
+    }
+    return { ok: true };
+}
+
+async function sendNtfyAlert(env, { title, message, priority = "high", tags = "shopping_cart", clickUrl }) {
+    if (!env.NTFY_TOPIC) return { ok: false, skipped: "no_ntfy_topic" };
+    const base = (env.NTFY_BASE_URL || "https://ntfy.sh").replace(/\/+$/, "");
+    const headers = {
+        "Title": title || "Nuevo Pedido SiviseCraft",
+        "Priority": priority,
+        "Tags": tags
+    };
+    if (clickUrl) headers["Click"] = clickUrl;
+
+    const resp = await fetch(`${base}/${encodeURIComponent(env.NTFY_TOPIC)}`, {
+        method: "POST",
+        headers,
+        body: message
+    });
+    return { ok: resp.ok, status: resp.status };
+}
+
+async function sendTelegramAlert(env, htmlText) {
+    if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+        return { ok: false, skipped: "no_telegram_config" };
+    }
+    const resp = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: env.TELEGRAM_CHAT_ID,
+            text: htmlText,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+        })
+    });
+    return { ok: resp.ok, status: resp.status };
+}
+
+function buildOrderEmailsAndPush(order, verifiedItems, isPaidStripe) {
+    const totalStr = formatEurFromCents(order.total_cents);
+    const subStr = formatEurFromCents(order.subtotal_cents);
+    const shipStr = order.shipping_cents === 0 ? "GRATIS (0,00 €)" : formatEurFromCents(order.shipping_cents);
+    const itemsHtml = verifiedItems.map(i => `
+        <tr>
+            <td style="padding:8px 0; border-bottom:1px solid #e2e8f0;">
+                <strong>${i.qty}x ${i.name}</strong>${i.meta ? `<br><span style="font-size:12px; color:#64748b;">${i.meta}</span>` : ""}
+            </td>
+            <td style="padding:8px 0; border-bottom:1px solid #e2e8f0; text-align:right; font-weight:700;">
+                ${formatEurFromCents(i.unitAmountCents * i.qty)}
+            </td>
+        </tr>
+    `).join("");
+
+    const bizumBanner = !isPaidStripe ? `
+        <div style="background:#fef2f2; border:1.5px solid #f87171; color:#991b1b; padding:14px; border-radius:10px; margin:16px 0; font-size:14px;">
+            <strong>⚠️ AVISO IMPORTANTE (PAGO POR BIZUM):</strong><br>
+            Este pedido <strong>no se fabricará ni se enviará hasta la confirmación del pago por Bizum</strong> de <strong>${totalStr}</strong> al móvil <strong>681 01 59 83</strong> indicando en el concepto: <strong>${order.order_id}</strong>.
+        </div>
+    ` : `
+        <div style="background:#ecfdf5; border:1.5px solid #34d399; color:#065f46; padding:14px; border-radius:10px; margin:16px 0; font-size:14px;">
+            <strong>✅ PAGO CONFIRMADO POR STRIPE:</strong><br>
+            Hemos recibido tu pago correctamente. Tu pedido ya está en nuestra cola de impresión 3D en Madrid.
+        </div>
+    `;
+
+    const customerHtml = `
+        <div style="font-family:Inter,Arial,sans-serif; max-width:600px; margin:0 auto; color:#0f172a; background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden;">
+            <div style="background:#0f172a; color:#ffffff; padding:22px 24px;">
+                <h1 style="margin:0; font-size:20px;">Sivise<span style="color:#ec4899;">Craft</span> · Pedido ${order.order_id}</h1>
+                <p style="margin:6px 0 0; font-size:13px; color:#cbd5e1;">Taller Digital de Impresión 3D en Madrid</p>
+            </div>
+            <div style="padding:24px;">
+                <p style="margin-top:0;">¡Hola <strong>${order.customer_name}</strong>!</p>
+                <p>Gracias por confiar en SiviseCraft. Aquí tienes el resumen oficial de tu pedido:</p>
+                ${bizumBanner}
+                <table style="width:100%; border-collapse:collapse; margin:14px 0; font-size:14px;">
+                    ${itemsHtml}
+                    <tr>
+                        <td style="padding:8px 0; color:#64748b;">Subtotal</td>
+                        <td style="padding:8px 0; text-align:right;">${subStr}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0; color:#64748b;">Envío (${order.shipping_label})</td>
+                        <td style="padding:8px 0; text-align:right;">${shipStr}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 0; font-size:16px; font-weight:800;">TOTAL</td>
+                        <td style="padding:10px 0; text-align:right; font-size:16px; font-weight:800; color:#0d9488;">${totalStr}</td>
+                    </tr>
+                </table>
+                <div style="background:#f8fafc; padding:12px 14px; border-radius:10px; font-size:13px; color:#334155;">
+                    <strong>Dirección de entrega:</strong><br>
+                    ${order.address}<br>
+                    Tel: ${order.customer_phone}${order.notes ? `<br><strong>Notas:</strong> ${order.notes}` : ""}
+                </div>
+                <p style="font-size:12px; color:#64748b; margin-top:20px;">
+                    ¿Alguna duda? Responde a este correo o escríbenos por WhatsApp al 681 01 59 83.
+                </p>
+            </div>
+        </div>
+    `;
+
+    const statusBadge = isPaidStripe ? "✅ PAGADO (STRIPE)" : "⏳ PENDIENTE DE BIZUM";
+    const ownerHtml = `
+        <div style="font-family:Inter,Arial,sans-serif; max-width:600px; margin:0 auto; color:#0f172a;">
+            <h2>🛒 Nuevo Pedido ${order.order_id} — ${statusBadge}</h2>
+            <p><strong>Cliente:</strong> ${order.customer_name} (${order.customer_email} · ${order.customer_phone})</p>
+            <p><strong>País / Envío:</strong> ${order.country_code} — ${order.shipping_label} (${shipStr})</p>
+            <p><strong>Dirección:</strong> ${order.address}</p>
+            ${order.notes ? `<p><strong>Notas:</strong> ${order.notes}</p>` : ""}
+            <table style="width:100%; border-collapse:collapse; margin:12px 0;">
+                ${itemsHtml}
+            </table>
+            <h3>Total: ${totalStr}</h3>
+            <p><a href="https://www.sivisecraft.es/admin">Abrir Panel /admin de SiviseCraft &rarr;</a></p>
+        </div>
+    `;
+
+    const itemsText = verifiedItems.map(i => `• ${i.qty}x ${i.name}${i.meta ? ` (${i.meta})` : ""}`).join("\n");
+    const pushTitle = isPaidStripe
+        ? `💰 Pedido PAGADO ${order.order_id} (${totalStr})`
+        : `📱 Nuevo Pedido BIZUM ${order.order_id} (${totalStr})`;
+    const pushBody = `Estado: ${statusBadge}\nCliente: ${order.customer_name} (${order.customer_phone})\nPaís: ${order.country_code} | ${order.address}\n\n${itemsText}`;
+
+    return {
+        customerSubject: isPaidStripe
+            ? `✅ Confirmación de pago y pedido ${order.order_id} — SiviseCraft`
+            : `📱 Pedido ${order.order_id} registrado (Pendiente de Bizum) — SiviseCraft`,
+        customerHtml,
+        ownerSubject: `[SiviseCraft] ${statusBadge} ${order.order_id} — ${totalStr} (${order.customer_name})`,
+        ownerHtml,
+        pushTitle,
+        pushBody,
+        pushTags: isPaidStripe ? "moneybag,white_check_mark" : "iphone,hourglass"
+    };
+}
+
+async function dispatchOrderNotifications(env, order, verifiedItems, isPaidStripe) {
+    const content = buildOrderEmailsAndPush(order, verifiedItems, isPaidStripe);
+    const tasks = [];
+
+    if (order.customer_email) {
+        tasks.push(sendResendEmail(env, {
+            to: order.customer_email,
+            subject: content.customerSubject,
+            html: content.customerHtml,
+            replyTo: env.OWNER_EMAIL || undefined
+        }));
+    }
+    if (env.OWNER_EMAIL) {
+        tasks.push(sendResendEmail(env, {
+            to: env.OWNER_EMAIL,
+            subject: content.ownerSubject,
+            html: content.ownerHtml,
+            replyTo: order.customer_email || undefined
+        }));
+    }
+    if (env.NTFY_TOPIC) {
+        tasks.push(sendNtfyAlert(env, {
+            title: content.pushTitle,
+            message: content.pushBody,
+            tags: content.pushTags,
+            clickUrl: "https://www.sivisecraft.es/admin"
+        }));
+    }
+    if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+        tasks.push(sendTelegramAlert(env, `<b>${content.pushTitle}</b>\n\n${content.pushBody}\n\n🔗 https://www.sivisecraft.es/admin`));
+    }
+    return Promise.allSettled(tasks);
+}
+
+async function handleCreateOrder(request, env, ctx, corsOrigin) {
+    const jsonHeaders = { "Content-Type": "application/json", ...getSecurityHeaders(corsOrigin) };
+    try {
+        const body = await request.json();
+        const { orderId, customer, countryCode, shippingTierLabel, shippingTierId, items } = body || {};
+
+        if (!items || !Array.isArray(items) || items.length === 0 || items.length > 30) {
+            return new Response(JSON.stringify({ ok: false, error: "INVALID_CART" }), { status: 400, headers: jsonHeaders });
+        }
+
+        const verifiedItems = [];
+        let subtotalCents = 0;
+        for (const item of items) {
+            const product = lookupCatalogProduct(item);
+            if (!product) {
+                return new Response(JSON.stringify({ ok: false, error: "UNKNOWN_PRODUCT" }), { status: 400, headers: jsonHeaders });
+            }
+            const qty = Number(item.qty);
+            if (!Number.isInteger(qty) || qty < 1 || qty > 25) {
+                return new Response(JSON.stringify({ ok: false, error: "INVALID_QUANTITY" }), { status: 400, headers: jsonHeaders });
+            }
+            const unitAmountCents = product.resolveVariantCents ? product.resolveVariantCents(item.meta) : product.baseCents;
+            subtotalCents += unitAmountCents * qty;
+            verifiedItems.push({ name: product.name, meta: String(item.meta || "").slice(0, 200), qty, unitAmountCents });
+        }
+
+        const verifiedShipping = resolveShippingCents(shippingTierLabel, subtotalCents, shippingTierId, countryCode || customer?.countryCode);
+        const safeOrderId = String(orderId || ("SC-" + Math.floor(10000 + Math.random() * 90000))).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32);
+        const now = new Date().toISOString();
+
+        const orderRecord = {
+            order_id: safeOrderId,
+            status: "PENDIENTE_BIZUM",
+            payment_method: "bizum",
+            customer_name: String(customer?.name || "").slice(0, 120),
+            customer_email: String(customer?.email || "").slice(0, 120),
+            customer_phone: String(customer?.phone || "").slice(0, 40),
+            country_code: String(countryCode || customer?.countryCode || "ES").toUpperCase().slice(0, 16),
+            shipping_label: verifiedShipping.label,
+            address: `${customer?.address || ""}, ${customer?.zip || ""} ${customer?.city || ""}`.trim().slice(0, 260),
+            notes: String(customer?.notes || "").slice(0, 300),
+            items_json: JSON.stringify(verifiedItems),
+            subtotal_cents: subtotalCents,
+            shipping_cents: verifiedShipping.cents,
+            total_cents: subtotalCents + verifiedShipping.cents,
+            stripe_session_id: "",
+            created_at: now,
+            updated_at: now
+        };
+
+        await persistOrderRecord(env, orderRecord);
+
+        const notifyTask = dispatchOrderNotifications(env, orderRecord, verifiedItems, false).catch(console.error);
+        if (ctx && typeof ctx.waitUntil === "function") {
+            ctx.waitUntil(notifyTask);
+        } else {
+            await notifyTask;
+        }
+
+        return new Response(JSON.stringify({ ok: true, orderId: safeOrderId, stored: Boolean(env.DB) }), { status: 200, headers: jsonHeaders });
+    } catch (err) {
+        return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: jsonHeaders });
+    }
+}
+
+async function verifyStripeWebhookSignature(payloadText, sigHeader, secret) {
+    if (!sigHeader || !secret) return false;
+    const parts = Object.fromEntries(sigHeader.split(",").map(p => p.split("=")));
+    const timestamp = parts.t;
+    const expectedSig = parts.v1;
+    if (!timestamp || !expectedSig) return false;
+
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(secret),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+    );
+    const sigBuf = await crypto.subtle.sign("HMAC", key, encoder.encode(`${timestamp}.${payloadText}`));
+    const computedHex = Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+    return computedHex === expectedSig;
+}
+
+async function handleStripeWebhook(request, env, ctx) {
+    const rawBody = await request.text();
+    const sigHeader = request.headers.get("Stripe-Signature");
+
+    if (env.STRIPE_WEBHOOK_SECRET) {
+        const valid = await verifyStripeWebhookSignature(rawBody, sigHeader, env.STRIPE_WEBHOOK_SECRET);
+        if (!valid) {
+            return new Response(JSON.stringify({ ok: false, error: "INVALID_SIGNATURE" }), { status: 400 });
+        }
+    }
+
+    let event;
+    try {
+        event = JSON.parse(rawBody);
+    } catch {
+        return new Response(JSON.stringify({ ok: false, error: "INVALID_JSON" }), { status: 400 });
+    }
+
+    if (event?.type === "checkout.session.completed") {
+        const session = event.data?.object || {};
+        const orderId = session.metadata?.order_id || "";
+        const now = new Date().toISOString();
+
+        if (env.DB && orderId) {
+            await ensureTables(env.DB);
+            const existing = await env.DB.prepare("SELECT * FROM orders WHERE order_id = ?").bind(orderId).first();
+            if (existing) {
+                await env.DB.prepare("UPDATE orders SET status = 'PAGADO_STRIPE', updated_at = ? WHERE order_id = ?").bind(now, orderId).run();
+                const verifiedItems = (() => { try { return JSON.parse(existing.items_json || "[]"); } catch { return []; } })();
+                const updatedOrder = { ...existing, status: "PAGADO_STRIPE", updated_at: now };
+                const notifyTask = dispatchOrderNotifications(env, updatedOrder, verifiedItems, true).catch(console.error);
+                if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(notifyTask);
+            }
+        }
+    }
+
+    return new Response(JSON.stringify({ received: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+}
+
+async function handleAdminOrderStatus(request, env, url, corsOrigin) {
+    const jsonHeaders = {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        ...getSecurityHeaders(corsOrigin)
+    };
+    const adminKey = env.ADMIN_KEY || "sivise2026";
+    const providedKey = request.headers.get("X-Admin-Key") || url.searchParams.get("key");
+    if (!providedKey || providedKey !== adminKey) {
+        return new Response(JSON.stringify({ ok: false, error: "UNAUTHORIZED" }), { status: 401, headers: jsonHeaders });
+    }
+
+    try {
+        const { order_id, status } = await request.json();
+        const allowedStatuses = new Set(["PENDIENTE_BIZUM", "PAGADO_BIZUM", "PAGADO_STRIPE", "EN_IMPRESION", "ENVIADO", "CANCELADO"]);
+        if (!order_id || !allowedStatuses.has(status)) {
+            return new Response(JSON.stringify({ ok: false, error: "INVALID_PARAMS" }), { status: 400, headers: jsonHeaders });
+        }
+        if (env.DB) {
+            await ensureTables(env.DB);
+            await env.DB.prepare("UPDATE orders SET status = ?, updated_at = ? WHERE order_id = ?")
+                .bind(status, new Date().toISOString(), order_id).run();
+        }
+        return new Response(JSON.stringify({ ok: true, order_id, status }), { status: 200, headers: jsonHeaders });
+    } catch (err) {
+        return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: jsonHeaders });
+    }
 }

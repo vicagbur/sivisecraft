@@ -1504,10 +1504,31 @@ async function submitDirectOrder(e) {
     if (procTitle) procTitle.textContent = "Registrando tu Pedido en el Taller...";
     if (procSub) procSub.textContent = "Generando ficha de seguimiento #" + orderId;
 
+    // Registrar pedido Bizum en Cloudflare D1 + disparar correos y alertas push automáticas
+    if (activePaymentMethod === "bizum" && window.location.protocol.startsWith("http")) {
+        try {
+            await fetch("/api/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderId,
+                    customer: { name, email, phone, address, zip, city, notes, countryCode: country.code, countryName: country.name },
+                    countryCode: country.code,
+                    shippingTierId: tier.id,
+                    shippingTierLabel: tier.label,
+                    items: cart
+                })
+            });
+        } catch (_err) {
+            // Si está en local sin Worker continúa sin bloquear
+        }
+    }
+
     setTimeout(() => {
         proc.classList.remove("active");
+        saveCart([]);
         showOrderSuccessModal(lastCompletedOrder);
-    }, 1000);
+    }, 800);
 }
 
 function showOrderSuccessModal(orderObj) {
