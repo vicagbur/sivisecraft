@@ -1037,11 +1037,12 @@ function buildProductCardHTML(p) {
     if (p.variants && p.variants.length > 0) {
         variantsHTML = `<div class="product-variants-inline">`;
         p.variants.forEach((v, idx) => {
+            const vName = typeof translateVariantLabel === "function" ? translateVariantLabel(v.name) : v.name;
             variantsHTML += `
                 <div>
-                    <div class="variant-row-label">${v.name}</div>
+                    <div class="variant-row-label">${vName}</div>
                     <select id="card-var-${p.id}-${idx}" class="variant-select-sm" onchange="onVariantChange('${p.id}', 'card')">
-                        ${v.options.map(o => `<option value="${o.label}">${o.label}</option>`).join("")}
+                        ${v.options.map(o => `<option value="${o.label}">${typeof translateVariantLabel === "function" ? translateVariantLabel(o.label) : o.label}</option>`).join("")}
                     </select>
                 </div>
             `;
@@ -1098,16 +1099,18 @@ function openProductDetail(productId) {
     if (!modal || !content) return;
 
     const photos = p.gallery && p.gallery.length > 0 ? p.gallery : [p.image];
+    const lp = typeof getLocalizedProduct === "function" ? getLocalizedProduct(p) : p;
 
     let variantsHTML = "";
     if (p.variants && p.variants.length > 0) {
         variantsHTML = `<div style="margin: 16px 0; display:flex; flex-direction:column; gap:12px;">`;
         p.variants.forEach((v, idx) => {
+            const vName = typeof translateVariantLabel === "function" ? translateVariantLabel(v.name) : v.name;
             variantsHTML += `
                 <div>
-                    <label style="display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px;">${v.name}</label>
+                    <label style="display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px;">${vName}</label>
                     <select id="detail-var-${p.id}-${idx}" onchange="onVariantChange('${p.id}', 'detail')">
-                        ${v.options.map(o => `<option value="${o.label}">${o.label}</option>`).join("")}
+                        ${v.options.map(o => `<option value="${o.label}">${typeof translateVariantLabel === "function" ? translateVariantLabel(o.label) : o.label}</option>`).join("")}
                     </select>
                 </div>
             `;
@@ -1117,13 +1120,13 @@ function openProductDetail(productId) {
 
     content.innerHTML = `
         <div class="modal-header">
-            <h2>${p.name}</h2>
+            <h2>${lp.name}</h2>
             <button class="close-btn" onclick="closeDetailModal()">&times;</button>
         </div>
         <div class="detail-modal-grid">
             <div>
                 <div class="detail-main-media" id="detail-main-Stage">
-                    <img src="${photos[0]}" alt="${p.name}" id="detail-main-img">
+                    <img src="${photos[0]}" alt="${lp.name}" id="detail-main-img">
                 </div>
                 <div class="detail-thumbs-row">
                     ${photos.map((url, idx) => `
@@ -2339,6 +2342,32 @@ const PRODUCTS_EN = {
         desc: "3D-printed wall clock featuring Andy's iconic blue sky and white clouds wallpaper with silent quartz movement."
     }
 };
+
+const VARIANT_EN_MAP = {
+    "Pack": "Pack",
+    "Color": "Color",
+    "Nombres en las baldas": "Engraved shelf names",
+    "Contenido del Calendario": "Calendar contents",
+    "Color Principal": "Main color",
+    "Nombre en el Frontal": "Front engraved name",
+    "1 Expositor (18,00 €)": "1 Display Stand (18,00 €)",
+    "Pack Ahorro 2 Expositores (32,00 € • 16€/ud)": "2-Stand Savings Pack (32,00 € • 16€/ea)",
+    "Morado": "Purple",
+    "Rojo": "Red",
+    "Pack x2: 1 Rojo + 1 Morado": "Pack x2: 1 Red + 1 Purple",
+    "Con Nombres": "With names",
+    "Sin Nombres": "Without names",
+    "Vacío para rellenar a tu gusto (40,00 €)": "Empty to fill yourself (40,00 €)",
+    "Con 24 Sorpresas (24 Charms K-Pop Demon Hunters) (45,00 € • Envío Gratis)": "With 24 Surprises (24 K-Pop Demon Hunters Charms) (45,00 €)",
+    "Morado Army": "Army Purple",
+    "Rojo McDonald's": "McDonald's Red",
+    "Ninguno (Liso)": "None (Plain)"
+};
+
+function translateVariantLabel(str) {
+    if (getCurrentLang() !== "en") return str;
+    return VARIANT_EN_MAP[str] || str;
+}
 
 function getLocalizedProduct(p) {
     if (!p) return p;
