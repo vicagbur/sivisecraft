@@ -12,5 +12,9 @@
       "database_name": "sivisecraft-db",
       "database_id": "09130607-32a7-4088-920c-5b44eab3e160"
     }
-  ]
+  ],
+  "vars": {
+    "NOTIFY_FROM_EMAIL": "SiviseCraft <pedidos@sivisecraft.es>",
+    "OWNER_EMAIL": "info@sivisestudio.es"
+  }
 }
