@@ -9,8 +9,8 @@ const STORE_CONFIG = {
     owner: "Víctor Aguado",
     city: "Madrid",
     freeShippingThreshold: 45.00, // Envío GRATIS > 45€ (Península)
-    bizumPhone: "681 01 59 83",    // Teléfono oficial Bizum SiviseCraft
-    whatsappNumber: "34681015983", // Teléfono oficial WhatsApp SiviseCraft
+    bizumPhone: "654 95 06 45",    // Teléfono oficial Bizum SiviseCraft
+    whatsappNumber: "34654950645", // Teléfono oficial WhatsApp SiviseCraft
     contactEmail: "hola@sivisecraft.es",
     etsyUrl: "https://www.etsy.com/es/shop/SiviseCraft",
     wallapopText: "5★ (35 val. • +26 ventas)",

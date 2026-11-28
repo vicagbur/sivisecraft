@@ -939,7 +939,7 @@ function buildOrderEmailsAndPush(order, verifiedItems, isPaidStripe) {
     const bizumBanner = !isPaidStripe ? `
         <div style="background:#fef2f2; border:1.5px solid #f87171; color:#991b1b; padding:14px; border-radius:10px; margin:16px 0; font-size:14px;">
             <strong>⚠️ AVISO IMPORTANTE (PAGO POR BIZUM):</strong><br>
-            Este pedido <strong>no se fabricará ni se enviará hasta la confirmación del pago por Bizum</strong> de <strong>${totalStr}</strong> al móvil <strong>681 01 59 83</strong> indicando en el concepto: <strong>${order.order_id}</strong>.
+            Este pedido <strong>no se fabricará ni se enviará hasta la confirmación del pago por Bizum</strong> de <strong>${totalStr}</strong> al móvil <strong>654 95 06 45</strong> indicando en el concepto: <strong>${order.order_id}</strong>.
         </div>
     ` : `
         <div style="background:#ecfdf5; border:1.5px solid #34d399; color:#065f46; padding:14px; border-radius:10px; margin:16px 0; font-size:14px;">
@@ -979,7 +979,7 @@ function buildOrderEmailsAndPush(order, verifiedItems, isPaidStripe) {
                     Tel: ${order.customer_phone}${order.notes ? `<br><strong>Notas:</strong> ${order.notes}` : ""}
                 </div>
                 <p style="font-size:12px; color:#64748b; margin-top:20px;">
-                    ¿Alguna duda? Responde a este correo o escríbenos por WhatsApp al 681 01 59 83.
+                    ¿Alguna duda? Responde a este correo o escríbenos por WhatsApp al 654 95 06 45.
                 </p>
             </div>
         </div>
