@@ -91,6 +91,7 @@ const COUNTRY_TO_TIER = {
     SE: "ue", EU_OTHER: "ue",
     FI: "finlandia",
     US: "usa",
+    CA: "usa",
     MX: "mexico",
     AU: "australia",
     PY: "paraguay",

@@ -106,6 +106,7 @@ const SHIPPING_COUNTRIES = [
     { code: "EU_OTHER", name: "🇪🇺 Otro país de la Unión Europea", nameEn: "🇪🇺 Other EU Country", tier: "ue" },
     { code: "FI", name: "🇫🇮 Finlandia", nameEn: "🇫🇮 Finland", tier: "finlandia" },
     { code: "US", name: "🇺🇸 Estados Unidos (USA)", nameEn: "🇺🇸 United States (USA)", tier: "usa" },
+    { code: "CA", name: "🇨🇦 Canadá", nameEn: "🇨🇦 Canada", tier: "usa" },
     { code: "MX", name: "🇲🇽 México", nameEn: "🇲🇽 Mexico", tier: "mexico" },
     { code: "AU", name: "🇦🇺 Australia", nameEn: "🇦🇺 Australia", tier: "australia" },
     { code: "PY", name: "🇵🇾 Paraguay", nameEn: "🇵🇾 Paraguay", tier: "paraguay" },
@@ -600,12 +601,12 @@ const VERIFIED_REVIEWS = [
 // ============================================================================
 const PASSPORT_DATA = {
     stats: {
-        totalOrders: 169,
-        totalCountries: 15,
-        totalCities: 55,
+        totalOrders: 170,
+        totalCountries: 16,
+        totalCities: 56,
         averageRating: "4.9★",
-        kmTraveled: "+41.200 km",
-        bambuHours: "+1.930 h"
+        kmTraveled: "+47.200 km",
+        bambuHours: "+1.960 h"
     },
     unlockedCountries: [
         {
@@ -742,9 +743,26 @@ const PASSPORT_DATA = {
             orders: 1,
             percentage: 1,
             cities: ["Cluj-Napoca"]
+        },
+        {
+            code: "CA",
+            flag: "🇨🇦",
+            name: "Canadá",
+            status: "Transatlántico",
+            orders: 1,
+            percentage: 1,
+            cities: ["New Ross"]
         }
     ],
     milestones: [
+        {
+            date: "28 Noviembre 2026",
+            badge: "Nuevo País Desbloqueado",
+            badgeType: "gold",
+            title: "🇨🇦 ¡Canadá (New Ross) desbloqueado con el 1er Calendario Derpy!",
+            desc: "Natasha desde New Ross (Canadá) estrena nuestro primer Calendario de Adviento de Derpy con 24 charms y convierte a Canadá en el territorio nº 16 del Pasaporte SiviseCraft.",
+            icon: "🍁"
+        },
         {
             date: "12 Octubre 2026",
             badge: "Nuevo País Desbloqueado",
@@ -1010,6 +1028,8 @@ function onVariantChange(productId, containerPrefix = "card") {
 
 // Renderizar una tarjeta de producto
 function buildProductCardHTML(p) {
+    const isEn = typeof getCurrentLang === "function" && getCurrentLang() === "en";
+    const lp = typeof getLocalizedProduct === "function" ? getLocalizedProduct(p) : p;
     const badgeClass = p.badgeType === "teal" ? "teal" : (p.badgeType === "gold" ? "gold" : "");
     const galleryCount = p.gallery ? p.gallery.length : 1;
 
@@ -1031,35 +1051,35 @@ function buildProductCardHTML(p) {
 
     return `
         <article class="product-card" data-category="${p.category}" data-id="${p.id}">
-            <div class="product-media" onclick="openProductDetail('${p.id}')" title="Ver galería de fotos reales y detalles">
-                ${p.badge ? `<span class="product-badge ${badgeClass}">${p.badge}</span>` : ""}
-                <img src="${p.image}" alt="${p.name}" loading="lazy">
-                ${galleryCount > 1 ? `<span class="product-gallery-count">📷 ${galleryCount} fotos</span>` : ""}
+            <div class="product-media" onclick="openProductDetail('${p.id}')" title="${isEn ? "View real photo gallery & details" : "Ver galería de fotos reales y detalles"}">
+                ${lp.badge ? `<span class="product-badge ${badgeClass}">${lp.badge}</span>` : ""}
+                <img src="${p.image}" alt="${lp.name}" loading="lazy">
+                ${galleryCount > 1 ? `<span class="product-gallery-count">📷 ${galleryCount} ${isEn ? "photos" : "fotos"}</span>` : ""}
             </div>
             <div class="product-details">
                 ${p.designer ? `
                     <div style="font-size:0.75rem; color:var(--accent-stripe); font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:4px;">
-                        🤝 Diseñado por <strong>${p.designer.name}</strong>
+                        🤝 ${isEn ? "Designed by" : "Diseñado por"} <strong>${p.designer.name}</strong>
                     </div>
                 ` : `
                     <div style="font-size:0.72rem; color:var(--accent-pichi); font-weight:700; margin-bottom:4px;">
-                        ${p.channelInfo || "Fabricado en nuestro taller de Madrid"}
+                        ${isEn ? "3D printed in our Madrid workshop" : (p.channelInfo || "Fabricado en nuestro taller de Madrid")}
                     </div>
                 `}
                 <div class="product-header-row">
-                    <h3 onclick="openProductDetail('${p.id}')">${p.name}</h3>
+                    <h3 onclick="openProductDetail('${p.id}')">${lp.name}</h3>
                     <div class="product-price-box">
                         <span class="product-price" id="card-price-${p.id}">${formatPrice(p.price)}</span>
-                        ${p.oldPrice ? `<span class="product-old-price" title="Precio en plataformas con comisiones">${formatPrice(p.oldPrice)}</span>` : ""}
+                        ${p.oldPrice ? `<span class="product-old-price" title="${isEn ? "Price on marketplace platforms" : "Precio en plataformas con comisiones"}">${formatPrice(p.oldPrice)}</span>` : ""}
                     </div>
                 </div>
-                <p class="product-desc">${p.desc}</p>
+                <p class="product-desc">${lp.desc}</p>
                 ${variantsHTML}
                 <div class="product-card-actions">
-                    <button class="btn-icon-only" onclick="openProductDetail('${p.id}')" title="Ver todas las fotos y descripción">
+                    <button class="btn-icon-only" onclick="openProductDetail('${p.id}')" title="${isEn ? "View all photos & details" : "Ver todas las fotos y descripción"}">
                         🔍
                     </button>
-                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'card')">Añadir al Carrito</button>
+                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'card')">${isEn ? "🛒 Add to Cart" : "Añadir al Carrito"}</button>
                 </div>
             </div>
         </article>
@@ -1131,20 +1151,27 @@ function openProductDetail(productId) {
                 `}
                 <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px;">
                     <span class="config-price" id="detail-price-${p.id}">${formatPrice(p.price)}</span>
-                    ${p.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-secondary); font-size:0.9rem;">En Etsy: ${formatPrice(p.oldPrice)}</span>` : ""}
+                    ${p.oldPrice ? `<span style="text-decoration:line-through; color:var(--text-secondary); font-size:0.9rem;">${(typeof getCurrentLang === "function" && getCurrentLang() === "en") ? "On Etsy:" : "En Etsy:"} ${formatPrice(p.oldPrice)}</span>` : ""}
                 </div>
                 <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:14px;">
-                    ${p.desc}
+                    ${(typeof getLocalizedProduct === "function" ? getLocalizedProduct(p) : p).desc}
                 </p>
                 ${variantsHTML}
                 <div style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;">
-                    <div>🚚 <strong>España a Domicilio (Correos):</strong> 6,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
-                    <div>🌍 <strong>Unión Europea Certificado:</strong> 15,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 90€)</span></div>
-                    <div>✈️ <strong>Internacional (USA, México, Australia...):</strong> Con número de seguimiento oficial</div>
-                    <div>🎁 <strong>Detalle sorpresa 3D incluido</strong> en cada paquete</div>
+                    ${(typeof getCurrentLang === "function" && getCurrentLang() === "en") ? `
+                        <div>🚚 <strong>Spain Home Delivery:</strong> 6,00 € <span style="color:var(--accent-pichi);font-weight:700;">(FREE over 45€)</span></div>
+                        <div>🇪🇺 <strong>European Union Tracked:</strong> 15,00 € <span style="color:var(--accent-pichi);font-weight:700;">(FREE over 90€)</span></div>
+                        <div>✈️ <strong>Worldwide (USA, Canada, Mexico, Australia...):</strong> Tracked shipping</div>
+                        <div>🎁 <strong>Free 3D-printed gift keychain included</strong> in every parcel</div>
+                    ` : `
+                        <div>🚚 <strong>España a Domicilio (Correos):</strong> 6,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 45€)</span></div>
+                        <div>🌍 <strong>Unión Europea Certificado:</strong> 15,00 € <span style="color:var(--accent-pichi);font-weight:700;">(GRATIS en pedidos > 90€)</span></div>
+                        <div>✈️ <strong>Internacional (USA, Canadá, México, Australia...):</strong> Con número de seguimiento oficial</div>
+                        <div>🎁 <strong>Detalle sorpresa 3D incluido</strong> en cada paquete</div>
+                    `}
                 </div>
                 <div style="margin-top:auto;">
-                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'detail')">🛒 Añadir al Carrito y Ver Cesta</button>
+                    <button class="btn btn-primary" onclick="addProductToCartFromDOM('${p.id}', 'detail')">${(typeof getCurrentLang === "function" && getCurrentLang() === "en") ? "🛒 Add to Cart & View Bag" : "🛒 Añadir al Carrito y Ver Cesta"}</button>
                 </div>
             </div>
         </div>
@@ -2026,10 +2053,10 @@ function replaceFlagEmojisWithImg(text) {
     const emojiMap = {
         "🇪🇸": "es", "🇩🇪": "de", "🇫🇷": "fr", "🇮🇹": "it",
         "🇬🇧": "gb", "🇳🇱": "nl", "🇧🇪": "be", "🇵🇹": "pt",
-        "🇺🇸": "us", "🇨🇭": "ch", "🇦🇹": "at", "🇵🇱": "pl",
-        "🇸🇪": "se", "🇩🇰": "dk", "🇷🇴": "ro"
+        "🇺🇸": "us", "🇨🇦": "ca", "🇨🇭": "ch", "🇦🇹": "at",
+        "🇵🇱": "pl", "🇸🇪": "se", "🇩🇰": "dk", "🇷🇴": "ro"
     };
-    return text.replace(/🇪🇸|🇩🇪|🇫🇷|🇮🇹|🇬🇧|🇳🇱|🇧🇪|🇵🇹|🇺🇸|🇨🇭|🇦🇹|🇵🇱|🇸🇪|🇩🇰|🇷🇴/g, (match) => {
+    return text.replace(/🇪🇸|🇩🇪|🇫🇷|🇮🇹|🇬🇧|🇳🇱|🇧🇪|🇵🇹|🇺🇸|🇨🇦|🇨🇭|🇦🇹|🇵🇱|🇸🇪|🇩🇰|🇷🇴/g, (match) => {
         const code = emojiMap[match];
         return `<img src="img/flags/${code}.svg" class="inline-flag-img" alt="Bandera ${code.toUpperCase()}" loading="lazy">`;
     });
@@ -2037,29 +2064,30 @@ function replaceFlagEmojisWithImg(text) {
 
 // Renderizar página completa del Pasaporte SiviseCraft
 function renderPassportPage() {
+    const isEn = typeof getCurrentLang === "function" && getCurrentLang() === "en";
     const statsMount = document.getElementById("passport-stats-mount");
     if (statsMount) {
         const s = PASSPORT_DATA.stats;
         statsMount.innerHTML = `
             <div class="passport-stat-card">
                 <div class="passport-stat-num highlight">${s.totalCountries}</div>
-                <div class="passport-stat-label">Países Desbloqueados</div>
+                <div class="passport-stat-label">${isEn ? "Countries Unlocked" : "Países Desbloqueados"}</div>
             </div>
             <div class="passport-stat-card">
                 <div class="passport-stat-num">${s.totalCities}</div>
-                <div class="passport-stat-label">Ciudades Destino</div>
+                <div class="passport-stat-label">${isEn ? "Cities Reached" : "Ciudades Destino"}</div>
             </div>
             <div class="passport-stat-card">
                 <div class="passport-stat-num">${s.totalOrders}</div>
-                <div class="passport-stat-label">Envíos Entregados</div>
+                <div class="passport-stat-label">${isEn ? "Orders Delivered" : "Envíos Entregados"}</div>
             </div>
             <div class="passport-stat-card">
                 <div class="passport-stat-num highlight">${s.averageRating}</div>
-                <div class="passport-stat-label">Valoración Media</div>
+                <div class="passport-stat-label">${isEn ? "Average Rating" : "Valoración Media"}</div>
             </div>
             <div class="passport-stat-card">
                 <div class="passport-stat-num">${s.kmTraveled}</div>
-                <div class="passport-stat-label">Km Recorridos</div>
+                <div class="passport-stat-label">${isEn ? "Km Traveled" : "Km Recorridos"}</div>
             </div>
         `;
     }
@@ -2083,27 +2111,37 @@ function renderPassportPage() {
 
     const countriesMount = document.getElementById("passport-countries-mount");
     if (countriesMount) {
-        countriesMount.innerHTML = PASSPORT_DATA.unlockedCountries.map(c => `
+        const countryEnNames = {
+            ES: "Spain", DE: "Germany", FR: "France", IT: "Italy", GB: "United Kingdom",
+            NL: "Netherlands", BE: "Belgium", PT: "Portugal", US: "United States",
+            CH: "Switzerland", AT: "Austria", PL: "Poland", SE: "Sweden",
+            DK: "Denmark", RO: "Romania", CA: "Canada"
+        };
+        countriesMount.innerHTML = PASSPORT_DATA.unlockedCountries.map(c => {
+            const dispName = isEn ? (countryEnNames[c.code] || c.name) : c.name;
+            const orderWord = isEn ? (c.orders === 1 ? "order" : "orders") : (c.orders === 1 ? "pedido" : "pedidos");
+            return `
             <div class="country-card">
                 <div class="country-card-header">
                     <div class="country-title-box">
-                        <img src="img/flags/${c.code.toLowerCase()}.svg" class="country-flag-img" alt="Bandera de ${c.name}" loading="lazy">
+                        <img src="img/flags/${c.code.toLowerCase()}.svg" class="country-flag-img" alt="${dispName}" loading="lazy">
                         <div>
-                            <div class="country-name">${c.name}</div>
+                            <div class="country-name">${dispName}</div>
                             <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">${c.status}</span>
                         </div>
                     </div>
-                    <div class="country-orders-badge">${c.orders} ${c.orders === 1 ? 'pedido' : 'pedidos'}</div>
+                    <div class="country-orders-badge">${c.orders} ${orderWord}</div>
                 </div>
-                <div class="country-progress-bar" title="${c.percentage}% del total de envíos">
+                <div class="country-progress-bar" title="${c.percentage}%">
                     <div class="country-progress-fill" style="width: ${c.percentage}%"></div>
                 </div>
-                <div class="country-cities-label">Ciudades alcanzadas (${c.cities.length}):</div>
+                <div class="country-cities-label">${isEn ? "Cities reached" : "Ciudades alcanzadas"} (${c.cities.length}):</div>
                 <div class="city-chips-wrap">
                     ${c.cities.map(city => `<span class="city-chip">${city}</span>`).join("")}
                 </div>
             </div>
-        `).join("");
+        `;
+        }).join("");
     }
 }
 
@@ -2233,14 +2271,97 @@ function injectLanguageToggle() {
     }
 }
 
+// Traducciones al inglés de los 13 productos del catálogo
+const PRODUCTS_EN = {
+    exp_tinytan_7: {
+        name: "Tiny Tan BTS McDonald's Display Stand (7 Figures)",
+        badge: "INTERNATIONAL BESTSELLER",
+        desc: "Custom 3D-printed display stand for all 7 Tiny Tan BTS McDonald's figures. Precision-fitted slots, optional engraved names, and savings bundles (Pack x2 / Pack x4)."
+    },
+    exp_dragon_ball: {
+        name: "Dragon Ball Burger King Display Stand with LED Light",
+        badge: "LED EDITION",
+        desc: "Two-tier display stand for the Burger King Dragon Ball figure collection featuring translucent illuminated pedestals and 3D embossed Dragon Ball logo."
+    },
+    exp_mandalorian: {
+        name: "The Mandalorian & Grogu Display Stand (Star Wars)",
+        badge: "COLLECTOR'S PICK",
+        desc: "Star Wars inspired stand with iconic Mandalorian helmet backdrop and custom slots for all 7 Burger King Mandalorian & Grogu capsules."
+    },
+    exp_stranger_things: {
+        name: "Stranger Things 'Welcome to Hawkins' Display Stand",
+        badge: "4-TIER STAND",
+        desc: "4-tier display rack for McDonald's Stranger Things figures and houses, topped with the iconic 'Welcome to Hawkins' 3D sign."
+    },
+    exp_stitch: {
+        name: "Stitch Burger King Display Stand",
+        badge: "FAN FAVORITE",
+        desc: "3D-printed Stitch silhouette display stand in vibrant blue tones, custom-designed for Burger King Stitch figures."
+    },
+    adviento_derpy: {
+        name: "Derpy Advent Calendar / 24-Drawer Jewelry Box (K-Pop)",
+        badge: "24 DRAWERS",
+        desc: "Reusable 24-drawer Advent calendar and jewelry organizer inspired by Derpy (K-Pop Demon Hunters). Available empty or filled with 24 3D-printed surprise charms."
+    },
+    exp_mariokart: {
+        name: "Mario Kart McDonald's Complete Display Stand (10 Karts)",
+        badge: "10 KARTS",
+        desc: "Two-level racing stand with embossed Mario Kart cup emblems designed to showcase all 10 McDonald's Mario Kart racers."
+    },
+    exp_friends: {
+        name: "Friends McDonald's Display Stand (Monica's Door)",
+        badge: "ICONIC FRAME",
+        desc: "Purple display stand inspired by Monica's apartment door with the iconic yellow peephole frame, fitted for all 6 McDonald's Friends figures."
+    },
+    exp_minecraft: {
+        name: "Minecraft McDonald's Collection Display Stand (6 Figures)",
+        badge: "6 FIGURES",
+        desc: "Stepped display stand in bold red with pixelated golden 'M' emblem designed for the 6 McDonald's Minecraft collectible figures."
+    },
+    exp_miercoles: {
+        name: "Wednesday Addams Display Stand (Nevermore Coffin)",
+        badge: "NEVERMORE",
+        desc: "Gothic coffin-shaped display shelf with embossed Wednesday lettering and Nevermore Academy crest in black and purple."
+    },
+    exp_tinytan_ind: {
+        name: "Single Tiny Tan BTS McDonald's Display Stand",
+        badge: "SINGLE STAND",
+        desc: "Individual display stand with back card slot and custom engraved member name (RM, Jin, Suga, J-Hope, Jimin, V, or Jung Kook)."
+    },
+    lampara_meninas: {
+        name: "Velázquez 'Las Meninas' 3D Lithophane LED Lamp (25x25 cm)",
+        badge: "ART LIGHTING",
+        desc: "25x25 cm 3D-printed lithophane art lamp revealing Velázquez's masterpiece 'Las Meninas' with warm integrated LED lighting."
+    },
+    reloj_toystory: {
+        name: "Toy Story Inspired Wall Clock (Andy's Room Clouds)",
+        badge: "WALL CLOCK",
+        desc: "3D-printed wall clock featuring Andy's iconic blue sky and white clouds wallpaper with silent quartz movement."
+    }
+};
+
+function getLocalizedProduct(p) {
+    if (!p) return p;
+    if (getCurrentLang() !== "en") return p;
+    const en = PRODUCTS_EN[p.id];
+    if (!en) return p;
+    return { ...p, name: en.name || p.name, badge: en.badge || p.badge, desc: en.desc || p.desc };
+}
+
 function applyEnglishTranslationsIfNeeded() {
     if (getCurrentLang() !== "en") return;
     document.documentElement.lang = "en";
+    const setText = (sel, txt) => { const el = document.querySelector(sel); if (el) el.textContent = txt; };
+    const setHTML = (sel, html) => { const el = document.querySelector(sel); if (el) el.innerHTML = html; };
 
     // 1. Top promo bar
     const promoBar = document.querySelector(".top-promo-bar");
     if (promoBar) {
-        promoBar.innerHTML = `🎁 <strong>FREE SHIPPING</strong> Spain >45€ • 🇪🇺 EU >90€<span class="promo-desktop-only"> <span class="sep">|</span> 🚚 Spain <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Secure Stripe Checkout</span>`;
+        if (window.location.pathname.includes("pasaporte")) {
+            promoBar.innerHTML = `🌍 <strong>PASSPORT:</strong> 16 Countries & +56 Cities<span class="promo-desktop-only"> <span class="sep">|</span> 🚚 Spain <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Stripe / Bizum</span>`;
+        } else {
+            promoBar.innerHTML = `🎁 <strong>FREE SHIPPING</strong> Spain >45€ • 🇪🇺 EU >90€<span class="promo-desktop-only"> <span class="sep">|</span> 🚚 Spain <strong>6,00 €</strong> • 🇪🇺 EU <strong>15,00 €</strong> • ✈️ Worldwide Tracked <span class="sep">|</span> 💳 Secure Stripe Checkout</span>`;
+        }
     }
 
     // 2. Navigation links & buttons
@@ -2250,7 +2371,8 @@ function applyEnglishTranslationsIfNeeded() {
         "Expositores": "Display Stands",
         "Navidad": "Christmas",
         "Relojes": "Clocks",
-        "Lámparas": "Lamps"
+        "Lámparas": "Lamps",
+        "🌍 Pasaporte": "🌍 Passport"
     };
     document.querySelectorAll("header nav a").forEach(a => {
         const txt = a.textContent.trim();
@@ -2271,17 +2393,215 @@ function applyEnglishTranslationsIfNeeded() {
         if (sp.textContent.trim() === "Cesta") sp.textContent = "Cart";
     });
 
-    // 3. Home Hero & Key Headings
+    // 3. HOME PAGE (index.html) full translation
     const heroH1 = document.querySelector(".hero h1");
     if (heroH1 && heroH1.textContent.includes("artesanía")) {
+        setText(".hero .tag", "✨ 3D Digital Workshop in Madrid • Collectibles & Custom Designs");
         heroH1.innerHTML = `Where technology meets <span>craftsmanship</span>`;
-        const heroP = document.querySelector(".hero p");
-        if (heroP) {
-            heroP.textContent = "Collectible display stands, LED lamps, and custom 3D-printed accessories designed in Madrid. Precision-engineered in eco-friendly PLA and shipped worldwide with tracking.";
+        setText(".hero p", "Collectible display stands, LED art lighting, and custom 3D-printed accessories designed in Madrid. Precision-engineered in eco-friendly PLA and shipped worldwide with tracking.");
+
+        const heroBtns = document.querySelectorAll(".hero .hero-cta-row a");
+        if (heroBtns[0]) heroBtns[0].textContent = "View full catalog";
+        if (heroBtns[1]) heroBtns[1].textContent = "Meet the designer";
+
+        const statPs = document.querySelectorAll(".hero-stats .stat-item p");
+        if (statPs[0]) statPs[0].textContent = "Satisfaction";
+        if (statPs[1]) statPs[1].textContent = "Avg. rating";
+        if (statPs[2]) statPs[2].textContent = "Orders shipped";
+        if (statPs[3]) statPs[3].textContent = "Countries 🌍";
+
+        const showcaseCard = document.querySelector(".hero .hero-showcase-card");
+        if (showcaseCard) {
+            const spans = showcaseCard.querySelectorAll("div:first-child span");
+            if (spans[0]) spans[0].textContent = "// OUR WORKSHOP CREATIONS";
+            if (spans[1]) spans[1].textContent = "4 Disciplines";
+            const foot = showcaseCard.lastElementChild;
+            if (foot) foot.innerHTML = `✨ <strong>Collectible display stands, art lighting & original pieces</strong>`;
+        }
+
+        // Trust strip (4 items)
+        const trustItems = document.querySelectorAll(".trust-strip .trust-item");
+        const trustEn = [
+            ["Best Price Guaranteed", "Up to 25% cheaper than Etsy by cutting out marketplace commissions and fees."],
+            ["Free 3D Gift Keychain", "Every parcel includes a surprise 3D-printed keychain and a handwritten thank-you note."],
+            ["Tracked Worldwide Delivery", "Spain 6,00€ (FREE >45€), EU 15,00€ (FREE >90€), USA, Canada, Mexico & Australia."],
+            ["Secure Stripe or Bizum", "Pay in seconds with Card, Apple Pay, Google Pay, or Bizum, with direct WhatsApp support."]
+        ];
+        trustItems.forEach((item, i) => {
+            if (!trustEn[i]) return;
+            const h4 = item.querySelector("h4");
+            const p = item.querySelector("p");
+            if (h4) h4.textContent = trustEn[i][0];
+            if (p) p.textContent = trustEn[i][1];
+        });
+
+        // Specialty section (#especialidad-expositores)
+        const spec = document.getElementById("especialidad-expositores");
+        if (spec) {
+            const tag = spec.querySelector(".tag");
+            if (tag) tag.textContent = "🎯 Workshop Specialty • 1,000+ hours of precision calibration";
+            const h2 = spec.querySelector("h2");
+            if (h2) h2.innerHTML = `Custom display stands for your <span>favorite collections</span>`;
+            const p = spec.querySelector("p");
+            if (p) p.innerHTML = `We design and 3D-print millimeter-accurate stands for <strong>McDonald's &amp; Burger King</strong> figures (<em>Tiny Tan BTS, LED Dragon Ball, Mandalorian &amp; Grogu, Stranger Things, Stitch, Mario Kart, Friends, Minecraft, Wednesday</em>) and collectible organizers.`;
+            const ctas = spec.querySelectorAll(".hero-cta-row a");
+            if (ctas[0]) ctas[0].innerHTML = "View all 10 display stands &rarr;";
+            if (ctas[1]) ctas[1].textContent = "View best sellers";
+            const caption = spec.querySelector(".hero-showcase-card > div:last-child");
+            if (caption) caption.innerHTML = `📷 <strong>Real workshop photos</strong> • Click any item to open full gallery &amp; video`;
+        }
+
+        // Custom / Personalization section (#personalizacion)
+        const pers = document.getElementById("personalizacion");
+        if (pers) {
+            const tag = pers.querySelector(".tag");
+            if (tag) tag.textContent = "✨ Custom 3D Design • In-House Madrid Workshop";
+            const h2 = pers.querySelector("h2");
+            if (h2) h2.innerHTML = `Have a unique idea? <span style="color: var(--accent-stripe);">We customize anything</span>`;
+            const p = pers.querySelector("p");
+            if (p) p.textContent = "We go beyond our catalog: we design and 3D-print 100% custom pieces with your preferred colors, dimensions, engraved names, or any collection you want to showcase.";
+            const cards = pers.querySelectorAll("h4");
+            const cardPs = pers.querySelectorAll("div[style*='grid'] p");
+            const persCards = [
+                ["Custom colors & engraved names", "Change the color of any display stand or add your name, date, or embossed message."],
+                ["Stands for any collection", "Funko, LEGO, Hot Wheels, Kinder, or a new series? We CAD-design it to fit your figures."],
+                ["Unique gifts & exclusives", "Custom photo lithophane lamps, event keychains, trophies, or celebration favors."]
+            ];
+            persCards.forEach((c, i) => {
+                if (cards[i]) cards[i].textContent = c[0];
+                if (cardPs[i]) cardPs[i].textContent = c[1];
+            });
+            const waBtn = pers.querySelector("a.btn-teal");
+            if (waBtn) waBtn.textContent = "💬 Tell us your idea on WhatsApp (No obligation)";
+        }
+
+        // Best sellers section (#superventas)
+        const sv = document.getElementById("superventas");
+        if (sv) {
+            const kicker = sv.querySelector(".kicker");
+            if (kicker) kicker.textContent = "// OFFICIAL SIVISECRAFT CATALOG";
+            const h2 = sv.querySelector("h2");
+            if (h2) h2.textContent = "Best sellers";
+            const p = sv.querySelector(".section-header p");
+            if (p) p.textContent = "Choose color, version (standard or LED light), or savings bundle right on each card and add it to your cart.";
+            const tabs = sv.querySelectorAll(".filter-tabs .filter-btn");
+            const tabLabels = ["All (13)", "Display Stands (10)", "Christmas (1)", "Clocks (1)", "Lamps (1)"];
+            tabs.forEach((b, i) => { if (tabLabels[i]) b.textContent = tabLabels[i]; });
+            const moreBtn = sv.querySelector("a.btn-teal");
+            if (moreBtn) moreBtn.innerHTML = "Open catalog search &rarr;";
+        }
+
+        // Reviews section (#resenas)
+        const rev = document.getElementById("resenas");
+        if (rev) {
+            const kicker = rev.querySelector(".kicker");
+            if (kicker) kicker.textContent = "// VERIFIED CUSTOMER REVIEWS";
+            const h2 = rev.querySelector("h2");
+            if (h2) h2.textContent = "What collectors worldwide say";
+            const p = rev.querySelector(".section-header p");
+            if (p) p.textContent = "Real verified reviews from collectors who received our 3D-printed display stands and gifts.";
+        }
+
+        // Shipping & workshop section (#envios)
+        const envSec = document.getElementById("envios");
+        if (envSec) {
+            const kicker = envSec.querySelector(".kicker");
+            if (kicker) kicker.textContent = "// TRANSPARENT WORLDWIDE SHIPPING";
+            const h2 = envSec.querySelector("h2");
+            if (h2) h2.textContent = "Shipping rates & workshop";
+            const p = envSec.querySelector(".section-header p");
+            if (p) p.textContent = "Your shipping rate is calculated automatically in the cart based on your destination country.";
+
+            const shipCards = envSec.querySelectorAll("div[style*='grid'] > div");
+            const shipEn = [
+                ["Spain Home Delivery", "6,00 €", "Fast tracked home delivery with Correos (48h) across Mainland Spain & Balearic Islands."],
+                ["Spain Orders > 45 €", "FREE SHIPPING", "Automatically unlocked in your cart on national orders over 45,00 €."],
+                ["European Union", "15,00 €", "Tracked international EU shipping. <strong>FREE on orders over 90 €!</strong>"],
+                ["Worldwide", "From 20,00 €", "Finland (20€), USA, Canada, Mexico, Australia (25€), and Rest of World with tracking."]
+            ];
+            shipCards.forEach((card, i) => {
+                if (!shipEn[i]) return;
+                const h3 = card.querySelector("h3");
+                const priceDiv = card.querySelector("div[style*='font-mono']");
+                const cp = card.querySelector("p");
+                if (h3) h3.textContent = shipEn[i][0];
+                if (priceDiv) priceDiv.textContent = shipEn[i][1];
+                if (cp) cp.innerHTML = shipEn[i][2];
+            });
+        }
+
+        const taller = document.getElementById("taller");
+        if (taller) {
+            const h3 = taller.querySelector("h3");
+            if (h3) h3.textContent = "Designed by a collector, printed with Bambu Lab precision";
+            const ps = taller.querySelectorAll("p");
+            if (ps[0]) ps[0].innerHTML = `Behind every <strong>SiviseCraft</strong> stand are hours of parametric CAD design measuring each base, capsule, and figure so it fits snugly on the first try. We print on demand in our Madrid workshop using eco-friendly plant-based PLA with premium textured finishes.`;
+            if (ps[1]) ps[1].textContent = "Looking for a custom color or a display stand for another collection? Leave a note at checkout or message us on WhatsApp and we will make it for you.";
         }
     }
 
-    // 4. Country dropdowns -> English country names
+    // 4. CATALOG PAGE (catalogo.html)
+    if (window.location.pathname.includes("catalogo")) {
+        const mainH1 = document.querySelector("main h1");
+        if (mainH1) mainH1.textContent = "Official SiviseCraft Catalog";
+        const mainKicker = document.querySelector("main span[style*='font-mono']");
+        if (mainKicker) mainKicker.textContent = "// COMPLETE WORKSHOP CATALOG • 13 ACTIVE REFERENCES";
+        const mainP = document.querySelector("main > p");
+        if (mainP) mainP.textContent = "Filter by collection, search your favorite series, or click any product photo to open its real photo gallery and videos.";
+        const searchIn = document.getElementById("search-input");
+        if (searchIn) searchIn.placeholder = "Search display stand (e.g. Dragon Ball, Tiny Tan, Mandalorian, Stranger Things, Stitch, Mario Kart, Friends)...";
+        setText("label[for='sort-select']", "Sort by:");
+        const sortSel = document.getElementById("sort-select");
+        if (sortSel && sortSel.options.length >= 3) {
+            sortSel.options[0].textContent = "Featured / Best Sellers";
+            sortSel.options[1].textContent = "Price: Low to High";
+            sortSel.options[2].textContent = "Price: High to Low";
+        }
+        const catTabs = document.querySelectorAll(".filter-tabs .filter-btn");
+        const catEn = ["All Collections (13)", "Display Stands (10)", "Christmas (1)", "Clocks (1)", "Lamps (1)"];
+        catTabs.forEach((b, i) => { if (catEn[i]) b.textContent = catEn[i]; });
+    }
+
+    // 5. PASSPORT PAGE (pasaporte.html)
+    if (window.location.pathname.includes("pasaporte")) {
+        setText("main .tag", "✈️ OFFICIAL SIVISECRAFT PASSPORT // LIVE DESTINATION MAP");
+        setText("main h1", "From our Madrid workshop to the world");
+        const pIntro = document.querySelector("main > div > p");
+        if (pIntro) pIntro.innerHTML = `Every display stand, clock, and lithophane is carefully 3D-printed on our <strong>Bambu Lab A1</strong> and shipped safely to collectors across Europe and the Americas.`;
+        const secH2s = document.querySelectorAll("main section h2");
+        if (secH2s[0]) secH2s[0].textContent = "New Country Unlocked! & Workshop Chronicles";
+        if (secH2s[1]) secH2s[1].textContent = "Countries, Shipments & Destination Cities";
+        const unlock = document.querySelector(".unlock-cta-card");
+        if (unlock) {
+            const badge = unlock.querySelector(".unlock-reward-badge");
+            if (badge) badge.textContent = "🎯 SIVISECRAFT UNLOCK CHALLENGE";
+            const h3 = unlock.querySelector("h3");
+            if (h3) h3.textContent = "Is your country or city not on the map yet?";
+            const up = unlock.querySelector("p");
+            if (up) up.innerHTML = `If you order from a country or city that is not yet on our Passport, <strong>mention it in your order notes</strong>: we'll make you an official ambassador and include an <strong>exclusive 3D-printed Passport keychain 100% FREE</strong> in your box.`;
+            const uBtns = unlock.querySelectorAll("a.btn");
+            if (uBtns[0]) uBtns[0].innerHTML = "View Catalog & Unlock &rarr;";
+            if (uBtns[1]) uBtns[1].textContent = "Ask about special shipping on WhatsApp";
+        }
+    }
+
+    // 6. Footer translation (all pages)
+    const footerCopy = document.querySelector("footer .container > div:nth-child(2)");
+    if (footerCopy) {
+        footerCopy.innerHTML = `&copy; 2026 <strong>www.sivisecraft.es</strong> — 3D Design &amp; Printing in Madrid by Víctor Aguado.`;
+    }
+    const footerMap = {
+        "Inicio": "Home", "Catálogo": "Catalog", "🌍 Pasaporte": "🌍 Passport",
+        "Superventas": "Best Sellers", "Reseñas Reales (4.9★)": "Verified Reviews (4.9★)",
+        "Reseñas (4.9★)": "Reviews (4.9★)", "Envíos y Taller": "Shipping & Workshop",
+        "Etsy Oficial": "Official Etsy"
+    };
+    document.querySelectorAll("footer a").forEach(a => {
+        const t = a.textContent.trim();
+        if (footerMap[t]) a.textContent = footerMap[t];
+    });
+
+    // 7. Country dropdowns -> English country names
     ["cart-country-select", "checkout-country-select"].forEach(selId => {
         const sel = document.getElementById(selId);
         if (!sel) return;
@@ -2295,8 +2615,8 @@ function applyEnglishTranslationsIfNeeded() {
         });
     });
 
-    // 5. Cart Drawer & Checkout Modal texts
-    const setText = (sel, txt) => { const el = document.querySelector(sel); if (el) el.textContent = txt; };
+    // 8. Cart Drawer, Tracking & Checkout Modals
+    setText("#tracking-modal .modal-header h2", "📦 Order & Shipment Tracking");
     setText(".cart-header h2", "Your Shopping Cart");
     setText("label[for='cart-country-select']", "Destination Country (Auto Shipping)");
     setText("label[for='checkout-country-select']", "Destination Country (shipping calculated automatically)");
@@ -2305,6 +2625,11 @@ function applyEnglishTranslationsIfNeeded() {
     setText("#pay-tab-bizum .sub", "0% Fees • Spain Mobile Only");
     setText("#pay-tab-stripe span:first-child", "💳 Card / Apple Pay");
     setText("#pay-tab-stripe .sub", "★ Recommended • Secure Stripe Checkout");
+
+    const cartRows = document.querySelectorAll(".cart-footer .cart-totals-row span:first-child");
+    if (cartRows[0]) cartRows[0].textContent = "Products subtotal";
+    if (cartRows[1]) cartRows[1].textContent = "Shipping";
+    if (cartRows[2]) cartRows[2].textContent = "Total to pay";
 
     const payBoxBizum = document.getElementById("pay-box-bizum");
     if (payBoxBizum) {
@@ -2328,28 +2653,23 @@ function applyEnglishTranslationsIfNeeded() {
         `;
     }
 
-    // Placeholders
     const phMap = {
         "chk-name": "Full Name *",
         "chk-phone": "Mobile Phone *",
         "chk-email": "Email address for tracking *",
         "chk-zip": "ZIP / Postal Code *",
         "chk-city": "City / State *",
-        "chk-notes": "Optional notes (custom colors, names...)"
+        "chk-notes": "Optional notes (custom colors, names...)",
+        "tracking-search-input": "Search by order code (e.g. SC-48291)..."
     };
     Object.entries(phMap).forEach(([id, ph]) => {
         const el = document.getElementById(id);
         if (el) el.placeholder = ph;
     });
 
-    // Buttons on product cards
-    document.querySelectorAll(".product-card button.btn-primary").forEach(btn => {
-        if (btn.textContent.includes("Añadir")) btn.textContent = "🛒 Add to Cart";
-    });
     const cartCheckoutBtn = document.querySelector(".cart-footer .btn-primary");
     if (cartCheckoutBtn) cartCheckoutBtn.textContent = "Proceed to Checkout →";
 
-    // Default to Stripe for English visitors
     if (typeof activePaymentMethod !== "undefined" && activePaymentMethod === "bizum") {
         activePaymentMethod = "stripe";
     }
