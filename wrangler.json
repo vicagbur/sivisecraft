@@ -15,6 +15,7 @@
   ],
   "vars": {
     "NOTIFY_FROM_EMAIL": "SiviseCraft <pedidos@sivisecraft.es>",
+    "NTFY_TOPIC": "sivisecraft-pedidos-8492",
     "OWNER_EMAIL": "info@sivisestudio.es"
   }
 }
